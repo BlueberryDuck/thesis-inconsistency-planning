@@ -1,5 +1,4 @@
 \documentclass[proposal,english,palatino]{AIGpaper}
-% Please read the README.md file for additional information on the parameters and overall usage of AIGpaper
 
 %%%% Package Imports %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}					    % enhanced support for graphics
@@ -22,11 +21,11 @@
 \input{meta.tex}
 \author{\authorname}
 
-\title{Die Verbreitung des Begriffes \glqq{}Mustermann\grqq{} im Zusammenhang mit Beispieltexten}
+\title{Inconsistency Measurement in Classical Planning Problems}
 
 %%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \englishabstract{
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+    Classical planning problems become inconsistent when no valid action sequence can transform the initial state to satisfy the goal conditions. While inconsistency measurement has been extensively studied in knowledge representation, its application to planning domains remains largely unexplored. This thesis proposes to bridge this gap by developing a systematic framework for adapting established inconsistency measures to classical planning problems. The research will investigate formal mappings between planning representations and inconsistency measurement frameworks, develop efficient computational approaches for measuring inconsistency in planning instances, and provide comprehensive experimental evaluation on standard benchmark problems. The expected contributions include theoretical foundations, algorithmic innovations, and practical tools that will establish inconsistency measurement as a new research direction in automated planning.
 }
 
 \begin{document}
@@ -35,45 +34,102 @@
 
 % ===================== Beginning of the actual text section =====================
 
-\section{Lorem Ipsum}
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+\section{Introduction and Motivation}
 
-Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+Classical planning problems in artificial intelligence involve finding sequences of actions that transform an initial state into a goal state. These problems become inconsistent when no valid action sequence exists to achieve the specified goals. While inconsistency measurement has developed into a mature field within knowledge representation, providing sophisticated metrics for quantifying inconsistency in logical knowledge bases, its application to planning domains remains largely unexplored.
 
-\section{Example Figures and Tables}
-Figure \ref{fig:af} shows an example of an abstract argumentation framework \cite{dung1995acceptability}.
+The motivation for measuring inconsistency in planning problems is multifaceted. First, inconsistency measures provide diagnostic information about why planning instances are unsolvable, enabling targeted problem reformulation or constraint relaxation. Second, they facilitate the development of robust planning systems capable of reasoning about partially inconsistent requirements or conflicting objectives. Third, inconsistency measures can serve as informed heuristics for planning algorithms, potentially enabling early detection of unsolvable instances and improving computational efficiency.
 
-\begin{figure}[ht]
-    \centering
-    \begin{tikzpicture}[node distance=1cm]
-        \node[args](args1){a};
-        \node[args, below=of args1](args2){b};
-        \node[args, right=of args1](args3){c};
-        \node[args, right=of args2](args4){d};
+Despite these potential benefits, the transfer of inconsistency measurement techniques from knowledge representation to planning faces significant challenges. Planning problems have distinct structural properties, computational requirements, and semantic interpretations that necessitate careful adaptation of existing measures. This thesis aims to systematically address these challenges by developing a comprehensive framework for inconsistency measurement in classical planning problems.
 
-        \path(args3) edge [->] (args1);
-        \path(args3) edge [->, bend right] (args4);
-        \path(args4) edge [->, bend right] (args3);
-        \path(args4) edge [->] (args2);
-    \end{tikzpicture}
-    \caption{An abstract argumentation framework.}
-    \label{fig:af}
-\end{figure}
+\section{Background and State of the Art}
 
-\begin{table*}[ht]
-    \begin{center}
-        \begin{tabular}{lll}
-            \hline
-            1 & 2 & 3 \\
-            4 & 5 & 6 \\
-            \hline
-        \end{tabular}
-    \end{center}
-    \caption{Table caption.} \label{tab:t1}
-\end{table*}
+\subsection{Inconsistency Measurement}
 
-\subsection{Encoding Test}
-Cities, Countries, Rivers
+Inconsistency measurement has emerged as a fundamental research area in knowledge representation, addressing the challenge of quantifying inconsistency degrees in logical knowledge bases. The field has developed numerous measures, including contention-based measures that count conflicting formulas, hitting set measures that identify minimal inconsistent subsets, and distance-based measures that compute the minimal changes needed to restore consistency.
+
+Foundational work \cite{Eriksson2018} establishes the theoretical connection between unsolvable planning problems and inconsistency, providing crucial groundwork for this research direction. However, this work focuses primarily on proof systems for demonstrating unsolvability rather than developing quantitative measures of inconsistency degrees in planning contexts.
+
+\subsection{Classical Planning}
+
+Classical planning operates within a state-based formalism where states are characterized by sets of ground facts, and actions are defined through preconditions and effects. The STRIPS (Stanford Research Institute Problem Solver) representation exemplifies this approach, providing a foundational framework for many modern planning systems. A planning problem becomes unsolvable when no sequence of applicable actions can transform the initial state to satisfy the goal conditions.
+
+The computational complexity of planning is well-established, with plan existence being PSPACE-complete \cite{Russell2016}. While significant progress has been made in developing efficient planning algorithms and heuristics, the systematic measurement of inconsistency degrees in unsolvable planning instances represents an important but underexplored research direction.
+
+\subsection{Computational Approaches}
+
+Answer Set Programming (ASP) has demonstrated particular effectiveness for inconsistency measurement across various logical formalisms. Research by \cite{Ulbricht2016} establishes ASP's utility for measuring inconsistency within answer set programs themselves, while recent comparative studies \cite{Kuhlmann2025} demonstrate that ASP-based algorithms can outperform SAT-based approaches for inconsistency measurement in propositional knowledge bases.
+
+The declarative nature of ASP makes it particularly well-suited for implementing complex inconsistency measures that require reasoning about multiple possible worlds or model sets. This characteristic suggests strong potential for adapting ASP-based approaches to the planning domain, where similar reasoning patterns naturally arise when analyzing action sequences and state spaces.
+
+\section{Research Objectives and Questions}
+
+This research addresses three fundamental questions at the intersection of inconsistency measurement and automated planning:
+
+\begin{enumerate}
+    \item \textbf{Theoretical Adaptation}: How can established inconsistency measures from knowledge representation be systematically mapped onto classical planning instances while preserving their essential theoretical properties and semantic interpretations?
+
+    \item \textbf{Computational Efficiency}: What algorithmic modifications and optimizations are necessary to ensure that adapted inconsistency measures remain computationally tractable for realistic planning problems?
+
+    \item \textbf{Practical Utility}: To what extent do inconsistency measures provide meaningful diagnostic information and practical value for planning applications, including problem debugging, constraint relaxation, and algorithm design?
+\end{enumerate}
+
+These research questions collectively aim to establish inconsistency measurement as a valuable analytical tool within the automated planning community while maintaining rigorous theoretical foundations.
+
+\section{Methodology}
+
+\subsection{Literature Survey and Theoretical Foundation}
+
+The research will commence with a systematic literature review encompassing:
+\begin{itemize}
+    \item Foundational work on unsolvable planning as inconsistency \cite{Eriksson2018}
+    \item Comprehensive survey of inconsistency measures in knowledge representation
+    \item State-of-the-art computational approaches to inconsistency measurement \cite{Ulbricht2016,Kuhlmann2025}
+    \item Classical planning algorithms and complexity theory \cite{Russell2016}
+\end{itemize}
+
+This phase will establish the theoretical landscape and identify the most promising inconsistency measures for adaptation to planning contexts.
+
+\subsection{Formal Framework Development}
+
+The core theoretical contribution will involve:
+\begin{itemize}
+    \item Selecting 2-3 representative inconsistency measures from different theoretical families (e.g., contention-based, hitting set-based, distance-based)
+    \item Developing formal translation mechanisms from planning problem representations to inconsistency measurement frameworks
+    \item Establishing computational encodings that preserve the semantic properties of both planning problems and inconsistency measures
+    \item Proving theoretical properties of the adapted measures, including monotonicity, consistency, and computational complexity bounds
+\end{itemize}
+
+\subsection{Algorithm Design and Implementation}
+
+The implementation phase will focus on:
+\begin{itemize}
+    \item Developing efficient algorithms for computing adapted inconsistency measures in planning contexts
+    \item Implementing prototypes using declarative programming approaches (e.g., Answer Set Programming)
+    \item Creating interfaces with standard planning representations (PDDL, SAS+) and existing planning tools
+    \item Optimizing computational performance through heuristic techniques and approximation methods where appropriate
+\end{itemize}
+
+\subsection{Experimental Evaluation}
+
+Comprehensive experimental evaluation will include:
+\begin{itemize}
+    \item Systematic testing on standard planning benchmarks from the International Planning Competition
+    \item Comparative analysis of computational costs and scalability across different inconsistency measures
+    \item Qualitative assessment of the interpretability and practical utility of computed inconsistency values
+    \item Validation of theoretical properties through empirical verification on diverse problem classes
+    \item Case studies demonstrating practical applications in problem diagnosis and constraint relaxation
+\end{itemize}
+
+\section{Summary and Outlook}
+
+This thesis proposes to establish inconsistency measurement as a new analytical tool for classical planning by systematically adapting established measures from knowledge representation. The research addresses a fundamental gap in current planning methodology, where unsolvable instances are typically treated as binary problems rather than being analyzed through quantitative inconsistency measures.
+
+The proposed work combines theoretical development with practical implementation, ensuring both rigorous foundations and concrete applicability. By focusing on standard planning representations and benchmark problems, the research aims to integrate seamlessly with existing planning tools and methodologies. The systematic evaluation approach will provide insights into both the computational characteristics and practical utility of different inconsistency measures in planning contexts.
+
+If successful, this research will provide the planning community with new diagnostic capabilities for understanding why planning problems fail, tools for guided problem reformulation, and potential heuristics for improving planning algorithm efficiency. The theoretical framework developed may also serve as a foundation for extending inconsistency measurement to more complex planning formalisms, temporal planning, or multi-agent planning scenarios.
+
+The interdisciplinary nature of this work, bridging knowledge representation and automated planning, positions it to contribute to both research communities and potentially inspire further cross-pollination between these related fields.
 
 % References
 \addreferences
