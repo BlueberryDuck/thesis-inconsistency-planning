@@ -44,7 +44,7 @@ The motivation for this work comes from observing that many unsolvable planning 
 
 It seems reasonable that quantifying the degree of inconsistency could help identify conflict sources and guide problem reformulation. This could be particularly useful when working with complex planning domains or automatically generated problems, where manually debugging failures can be tedious.
 
-However, adapting inconsistency measures from knowledge representation to planning is not straightforward. Planning problems have a temporal structure and involve sequences of actions and state changes, which differs significantly from static logical knowledge bases. The types of conflicts that arise in planning may also be quite different from those in propositional logic. This suggests that existing measures will need careful adaptation to capture the specific characteristics of planning problems.
+However, adapting inconsistency measures from knowledge representation to planning is not straightforward. Planning problems have a temporal structure and involve sequences of actions and state changes, which is significantly different from static logical knowledge bases. The types of conflicts that arise in planning may also be quite different from those in propositional logic. This means existing measures will need careful adaptation to capture the specific characteristics of planning problems.
 
 \section{Technical Foundations and Related Work}
 
@@ -52,72 +52,95 @@ However, adapting inconsistency measures from knowledge representation to planni
 
 Inconsistency measurement is a research area in knowledge representation that deals with quantifying the degree of inconsistency in logical knowledge bases. Several types of measures have been developed:
 
-\textbf{Distance-based measures} calculate the minimal changes needed to make a knowledge base consistent. For example, the Max-Distance and Sum-Distance measures compute the Hamming distance between inconsistent models and their nearest consistent versions \cite{Kuhlmann2025}.
+\textbf{Distance-based measures} calculate the minimal changes needed to make a knowledge base consistent. For example, the Max-Distance and Sum-Distance measures compute the Hamming distance between an inconsistent knowledge base and a nearest consistent version \cite{Kuhlmann2025}.
+% TODO: Different source
 
-\textbf{Hitting-set-based measures} work by identifying minimal inconsistent subsets and quantifying their overlaps. The Hitting-Set and Hit-Distance measures fall into this category and appear to be computationally reasonable \cite{Kuhlmann2025}.
+\textbf{Hitting-set-based measures} identify minimal inconsistent subsets and quantify their overlaps. The Hitting-Set and Hit-Distance measures fall into this category and are considered computationally reasonable to compute \cite{Kuhlmann2025}.
+% TODO: Different source
 
-\textbf{Contention-based measures} count conflicting formulas or statements. The Contention measure seems to be one of the most studied in the literature \cite{Kuhlmann2025}.
+\textbf{Contention-based measures} count conflicting formulas or statements. The Contention measure is one of the most studied in the literature \cite{Kuhlmann2025}.
+% TODO: Different source
 
-Recent work suggests that Answer Set Programming (ASP)-based algorithms for computing inconsistency measures can sometimes outperform SAT-based approaches, especially for more complex measures \cite{Kuhlmann2025}. This might be relevant for planning applications, since ASP's declarative nature could be well-suited for modeling planning scenarios.
+Recent work shows that ASP-based algorithms for computing inconsistency measures can outperform SAT-based approaches for many measures \cite{Kuhlmann2025}. This is relevant for planning applications, since ASP's declarative nature could be well-suited for modeling planning scenarios.
 
-Additionally, Ulbricht et al. \cite{Ulbricht2016} developed inconsistency measures specifically for Answer Set Programs, showing that classical monotonicity properties don't hold in non-monotonic logics. This could be relevant when adapting measures to planning, where non-monotonic aspects might also play a role.
+Additionally, Ulbricht et al. \cite{Ulbricht2016} developed inconsistency measures specifically for Answer Set Programs, demonstrating that classical monotonicity properties do not hold in non-monotonic logics. This insight could be useful when adapting measures to planning, where reasoning may involve non-monotonic aspects (for example, when using ASP to model the planning problem).
 
 \subsection{Classical Planning}
 
-Classical planning works with a state-based formalism where states are described by sets of facts, and actions are defined through preconditions and effects. The STRIPS (Stanford Research Institute Problem Solver) representation is foundational for many modern planning systems \cite{Russell2016}.
+Classical planning works with a state-based formalism where states are described by sets of facts, and actions are defined by preconditions and effects. The STRIPS (Stanford Research Institute Problem Solver) representation is foundational for many modern planning systems \cite{Russell2016}.
 
-A planning problem becomes unsolvable when no sequence of applicable actions can transform the initial state into a goal state. The computational complexity of determining plan existence is PSPACE-complete \cite{Russell2016}, which has motivated research into efficient heuristics and algorithms.
+A planning problem becomes unsolvable when no sequence of applicable actions can transform the initial state into a goal state. The computational complexity of determining whether a plan exists is PSPACE-complete \cite{Russell2016}, which has motivated research into efficient heuristics and specialized algorithms.
 
-\textbf{PDDL (Planning Domain Definition Language)} is the standard for describing planning problems and is used in international planning competitions. Adapting inconsistency measures to work with PDDL representations would be important for practical applicability.
+\textbf{PDDL (Planning Domain Definition Language)} is a standard language for describing planning problems and is used in international planning competitions. Adapting inconsistency measures to work with PDDL representations will be important for practical applicability.
 
-Modern planning systems use various search strategies and heuristics, but when they encounter unsolvable problems, they typically just report failure without much analysis of why the problem failed or what might be done about it.
+Modern planning systems use various search strategies and heuristics. However, when they encounter an unsolvable problem, they typically only report failure without providing analysis of why the problem is unsolvable or what could be changed to make it solvable.
 
 \subsection{Planning and Inconsistency: Foundation Work}
 
-Eriksson et al. \cite{Eriksson2018} established the theoretical connection between unsolvable planning problems and inconsistency. Their work focuses on proof systems for demonstrating unsolvability in planning, particularly examining why certain planning problems cannot be solved using STRIPS-based approaches.
+Eriksson et al. \cite{Eriksson2018} established a theoretical connection between unsolvable planning problems and inconsistency. Their work proposes a proof system for demonstrating unsolvability in planning, examining why certain planning tasks cannot be solved using STRIPS-based approaches.
 
-However, their work is primarily concerned with qualitative aspects of unsolvability rather than quantitative measures of inconsistency degrees. While they provide important groundwork by formalizing the relationship between planning failures and logical inconsistency, the question of how to measure and compare different degrees of inconsistency in planning problems remains open.
+However, this work is primarily concerned with qualitative aspects of unsolvability rather than any quantitative measure of inconsistency. While Eriksson et al. provide important groundwork by formalizing how planning failures relate to logical inconsistency, the question of how to quantify different degrees of inconsistency in planning instances remains open.
 
-This gap suggests there might be value in adapting established inconsistency measures from knowledge representation to the planning domain, building on the theoretical foundations they established.
+Another line of research has approached unsolvable planning tasks from a diagnostic and explanatory perspective. Göbelbecker et al. \cite{Goebelbecker2010} introduced the concept of excuses for unsolvable planning tasks. An excuse is a minimal modification (such as removing or altering a specific goal or constraint) required to make an unsolvable problem solvable. This notion is analogous to identifying a minimal inconsistent subset in a logical knowledge base, providing a qualitative measure of how far a planning instance is from being solvable. More recently, Sreedharan et al. \cite{Sreedharan2019} developed methods to produce human-understandable explanations for unsolvable planning tasks by identifying unreachable subgoals. These efforts underscore the need for better diagnostic tools for planning failures, reinforcing the motivation to adapt inconsistency measurement techniques to this domain.
 
 \section{Problem Statement and Research Objectives}
 
-This thesis aims to explore how inconsistency measures from knowledge representation can be adapted to classical planning and whether they provide practical value for understanding planning failures.
+This thesis explores how inconsistency measures from knowledge representation can be adapted to classical planning and whether they provide practical value for understanding planning failures.
 
 \subsection{Problem Statement}
 
-Currently, when planning systems encounter unsolvable problems, they provide limited diagnostic information. This creates several challenges:
+When current planning systems encounter unsolvable problems, they provide very limited diagnostic information. This creates several challenges:
 
 \begin{itemize}
-    \item Users have little insight into why problems fail
-    \item There's no systematic way to analyze the structure of problematic planning instances
-    \item Support for reformulating problems is limited
-    \item Different types of planning failures are not distinguished quantitatively
+    \item Users have little insight into why a given planning problem failed.
+    \item There is no systematic way to analyze the structure of an unsolvable planning instance.
+    \item It is difficult to identify what minimal changes could make the problem solvable (no support for problem reformulation).
+    \item Different types of planning failures are not distinguished or quantified in any way.
 \end{itemize}
 
 \subsection{Research Questions and Objectives}
 
-This work will address the central research question:
+The central research question of this thesis is:
 
 \textbf{How can inconsistency measures from knowledge representation be effectively adapted to classical planning to provide practical diagnostic value for unsolvable planning problems?}
 
-This main question encompasses several sub-objectives:
+To address this question, the following objectives are defined:
 
-\textbf{Theoretical Adaptation:} Investigate how to systematically transfer representative inconsistency measures (contention-based, hitting-set-based, and distance-based) to classical planning, developing translation mechanisms between PDDL representations and inconsistency measure frameworks while examining which theoretical properties can be preserved.
+\textbf{Theoretical Adaptation:} Determine how representative inconsistency measures can be transferred to classical planning. This involves developing a translation between planning problem representations and the frameworks used for inconsistency measurement, and examining which theoretical properties of the measures carry over to the planning context.
 
-\textbf{Algorithmic Development:} Explore ASP-based algorithms for computing the adap-ted measures, implement prototypes that work with standard planning representations, and investigate optimization techniques where computational performance becomes critical.
+\textbf{Algorithmic Development:} Explore ASP-based algorithms for computing the adapt-ed measures in the context of planning. Prototype implementations will be developed that integrate with standard planning representations, and optimization techniques will be investigated to handle the combinatorial complexity.
 
-\textbf{Empirical Evaluation:} Evaluate the measures on planning benchmarks from international competitions, analyze computational costs and scalability, and assess whether the measures provide interpretable and practically useful information for planners.
+\textbf{Empirical Evaluation:} Evaluate the adapted measures on benchmark planning problems (e.g., unsolvable instances from international planning competition domains). The evaluation will assess computational feasibility, scalability, and whether the measures provide interpretable information that helps differentiate and diagnose unsolvable ca-ses.
 
-\textbf{Practical Applications:} Explore diagnostic tools for planning problems, investigate applications to problem debugging and constraint relaxation, and consider integration possibilities with existing planning tools and workflows.
+\textbf{Practical Applications:} Investigate how these inconsistency measures can support tools for planning problem diagnosis. This includes developing a proof-of-concept diagnostic tool or workflow that uses the measures to suggest potential problem relaxations or pinpoint conflicting constraints, and considering how the approach could integrate with existing planners or planning frameworks.
 
 \section{Planned Structure of the Master's Thesis}
 
-The master's thesis will be structured in eight chapters. After the introduction (Chapter 1), the foundations will cover classical planning formalisms, inconsistency measurement theory, and Answer Set Programming (Chapter 2). Related work will review unsolvable planning problems, state-of-the-art inconsistency measures, and computational approaches (Chapter 3). The theoretical core will develop formal translations of selected measures and analyze their properties and complexity (Chapter 4). The implementation phase will focus on ASP-based algorithms and PDDL integration (Chapter 5). Empirical evaluation will include experimental setup, benchmark evaluation, and performance analysis (Chapter 6). Applications and case studies will explore diagnostic tools and practical scenarios (Chapter 7). The conclusion will summarize results, discuss limitations, and outline future work (Chapter 8).
+The thesis will be organized into eight chapters:
+
+\begin{description}
+    \item[Chapter 1: Introduction] Overview of the problem domain, motivation, and summary of contributions.
+    \item[Chapter 2: Foundations] Background on classical planning formalisms, inconsistency measurement theory, and Answer Set Programming.
+    \item[Chapter 3: Related Work] Survey of unsolvable planning problems, current inconsistency measures, and diagnostic approaches.
+    \item[Chapter 4: Theoretical Framework] Formal adaptation of selected inconsistency measures to planning, with definitions, examples, and complexity analysis.
+    \item[Chapter 5: Implementation] ASP-based algorithms, PDDL integration, and software architecture.
+    \item[Chapter 6: Evaluation] Experimental setup, benchmark results, and final performance analysis.
+    \item[Chapter 7: Applications and Case Studies] Diagnostic tool prototypes and illustrative examples.
+    \item[Chapter 8: Conclusion] Summary of findings, limitations, and future work.
+\end{description}
 
 \section{Timeline}
 
-The planned timeline for the master's thesis spans 6 months with overlapping phases. Months 1-2 will focus on literature review and foundations, including in-depth study of inconsistency measures, familiarization with classical planning theory and tools, and completion of the theoretical groundwork (Chapters 2-3). Months 2-3 will emphasize theoretical development through formal adaptation of selected measures, proofs of theoretical properties, and complexity analysis (Chapter 4). Months 3-4 will concentrate on implementation, developing ASP-based algorithms, PDDL integration, and initial prototype testing (Chapter 5). Months 4-5 will involve systematic evaluation including benchmark testing, performance analysis, and comparative studies (Chapter 6). Finally, months 5-6 will focus on applications and finalization through case studies, diagnostic tool development, and completing the writing and revision process (Chapters 1, 7, 8).
+The project is planned over approximately six months, with overlapping phases:
+
+\begin{description}
+    \item[Months 1-2:] Literature review and foundations (Chapters 2-3).
+    \item[Months 2-3:] Theoretical development and formal adaptation of measures (Chapter 4).
+    \item[Months 3-4:] Implementation of ASP-based algorithms and PDDL integration (Chapter 5).
+    \item[Months 4-5:] Empirical evaluation on planning benchmarks (Chapter 6).
+    \item[Months 5-6:] Applications, case studies, and final write-up (Chapters 1, 7-8).
+\end{description}
+
 
 % References
 \addreferences
