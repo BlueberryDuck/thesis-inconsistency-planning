@@ -52,14 +52,11 @@ However, adapting inconsistency measures from knowledge representation to planni
 
 Inconsistency measurement is a research area in knowledge representation that deals with quantifying the degree of inconsistency in logical knowledge bases. Several types of measures have been developed:
 
-\textbf{Distance-based measures} calculate the minimal changes needed to make a knowledge base consistent. For example, the Max-Distance and Sum-Distance measures compute the Hamming distance between an inconsistent knowledge base and a nearest consistent version \cite{Kuhlmann2025}.
-% TODO: Different source
+\textbf{Distance-based measures} calculate the minimal changes needed to make a knowledge base consistent. For example, the Max-Distance and Sum-Distance measures compute the Hamming distance between an inconsistent knowledge base and a nearest consistent version \cite{Grant2017}.
 
-\textbf{Hitting-set-based measures} identify minimal inconsistent subsets and quantify their overlaps. The Hitting-Set and Hit-Distance measures fall into this category and are considered computationally reasonable to compute \cite{Kuhlmann2025}.
-% TODO: Different source
+\textbf{Hitting-set-based measures} identify minimal inconsistent subsets and quantify their overlaps. The Hitting-Set and Hit-Distance measures fall into this category and are considered computationally reasonable to compute \cite{Thimm2016}.
 
-\textbf{Contention-based measures} count conflicting formulas or statements. The Contention measure is one of the most studied in the literature \cite{Kuhlmann2025}.
-% TODO: Different source
+\textbf{Contension-based measures} count conflicting formulas or statements. The Contension measure is one of the most studied in the literature \cite{Grant2011}.
 
 Recent work shows that ASP-based algorithms for computing inconsistency measures can outperform SAT-based approaches for many measures \cite{Kuhlmann2025}. This is relevant for planning applications, since ASP's declarative nature could be well-suited for modeling planning scenarios.
 
@@ -71,7 +68,7 @@ Classical planning works with a state-based formalism where states are described
 
 A planning problem becomes unsolvable when no sequence of applicable actions can transform the initial state into a goal state. The computational complexity of determining whether a plan exists is PSPACE-complete \cite{Russell2016}, which has motivated research into efficient heuristics and specialized algorithms.
 
-\textbf{PDDL (Planning Domain Definition Language)} is a standard language for describing planning problems and is used in international planning competitions. Adapting inconsistency measures to work with PDDL representations will be important for practical applicability.
+\textbf{PDDL (Planning Domain Definition Language)} is a standard language for describing planning problems and is used in international planning competitions \cite{Ghallab1998}. Adapting inconsistency measures to work with PDDL representations will be important for practical applicability.
 
 Modern planning systems use various search strategies and heuristics. However, when they encounter an unsolvable problem, they typically only report failure without providing analysis of why the problem is unsolvable or what could be changed to make it solvable.
 
