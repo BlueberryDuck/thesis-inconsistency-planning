@@ -26,7 +26,7 @@
 
 %%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \englishabstract{
-    Unsolvable planning problems often contain conflicting constraints or incompatible goal combinations that create logical inconsistencies. While inconsistency measurement has been well-developed in knowledge representation, its application to planning domains has received limited attention. This thesis explores how established inconsistency measures can be adapted to classical planning problems, with a focus on developing \ac{ASP}-based algorithms for their computation. The work investigates the practical utility of these measures for analyzing and fixing planning problems, examining how \ac{STRIPS} formulations can be integrated with inconsistency measurement frameworks. The goal is to provide planners with quantitative tools for understanding unsolvable planning problems and supporting systematic approaches to problem repair.
+    Unsolvable planning problems often contain conflicting constraints or incompatible goal combinations that create logical inconsistencies. While inconsistency measurement has been well-developed in knowledge representation, its application to planning domains has received limited attention. This thesis explores how established inconsistency measures can be adapted to classical planning problems, with a focus on developing \ac{ASP}-based algorithms for their calculation. The work investigates the practical utility of these measures for analyzing and fixing planning problems, examining how \ac{STRIPS} formulations can be integrated with inconsistency measurement frameworks. The goal is to provide planners with quantitative tools for understanding unsolvable planning problems and supporting systematic approaches to problem repair.
 }
 
 \begin{document}
@@ -65,11 +65,11 @@ Among the various approaches that have been developed, three main categories are
 
 \textbf{Distance-based measures} quantify inconsistency by calculating how far a knowledge base is from being consistent. They identify the minimal modifications needed to resolve all conflicts, measuring this "distance to consistency" in different ways. For example, the Max-Distance measure finds the smallest number of formula modifications needed if one can change any single formula as much as necessary, while Sum-Distance counts the total number of individual changes across all formulas \cite{Grant2017}. These measures provide an intuitive notion of repair cost, directly answering "how much would we need to change to fix this?"
 
-\textbf{Hitting-set-based measures} quantify inconsistency by identifying all minimal conflicting subsets of a knowledge base, then computing the smallest sets of formulas (hitting sets) that "hit" every conflict. These measures use the size or overlap of those hitting sets to estimate how deeply entangled the inconsistencies are. The Hitting-Set and Hit-Distance measures fall into this category and are considered computationally reasonable to compute \cite{Thimm2016}. These measures focus on the structural aspects of inconsistency by analyzing which formulas participate in conflicts and how conflicts interconnect.
+\textbf{Hitting-set-based measures} quantify inconsistency by identifying all minimal conflicting subsets of a knowledge base, then calculating the smallest sets of formulas (hitting sets) that "hit" every conflict. These measures use the size or overlap of those hitting sets to estimate how deeply entangled the inconsistencies are. The Hitting-Set and Hit-Distance measures fall into this category and are considered computationally reasonable to calculate \cite{Thimm2016}. These measures focus on the structural aspects of inconsistency by analyzing which formulas participate in conflicts and how conflicts interconnect.
 
 \textbf{Contension-based measures} quantify inconsistency by finding the smallest set of propositions that must be marked "both true and false" to model the data, then counting those conflicting statements. This gives a clear, diagnostic indication of where and how many contradictions occur. The Contension measure is one of the most studied in the literature \cite{Grant2011}. These measures provide a direct count of problematic elements, making them particularly interpretable for diagnostic purposes.
 
-Recent advances show that \ac{ASP}-based algorithms for computing inconsistency measures can outperform \ac{SAT}-based approaches for many measures \cite{Kuhlmann2025}. This suggests significant potential for planning applications, as \ac{ASP} offers several key advantages: its declarative nature allows natural modeling of planning constraints and temporal relationships, and its support for non-monotonic reasoning aligns well with planning's inherent non-monotonic aspects such as the frame problem and default assumptions. Furthermore, \ac{ASP}'s ability to encode temporal constraints directly makes it particularly suitable for modeling planning scenarios with their inherent temporal structure and action sequences.
+Recent advances show that \ac{ASP}-based algorithms for calculating inconsistency measures can outperform \ac{SAT}-based approaches for many measures \cite{Kuhlmann2025}. This suggests significant potential for planning applications, as \ac{ASP} offers several key advantages: its declarative nature allows natural modeling of planning constraints and temporal relationships, and its support for non-monotonic reasoning aligns well with planning's inherent non-monotonic aspects such as the frame problem and default assumptions. Furthermore, \ac{ASP}'s ability to encode temporal constraints directly makes it particularly suitable for modeling planning scenarios with their inherent temporal structure and action sequences.
 
 Additionally, Ulbricht et al. \cite{Ulbricht2016} developed inconsistency measures specifically for Answer Set Programs, demonstrating that classical monotonicity properties do not hold in non-monotonic logics. This insight may prove useful when adapting measures to planning, where reasoning often involves non-monotonic aspects such as the frame problem and default assumptions about action effects.
 
@@ -124,7 +124,7 @@ This central question is addressed through three complementary research question
 
 \begin{description}
     \item[RQ1:] Which inconsistency measures from knowledge representation can be adapted to classical planning, and what theoretical properties do they retain?
-    \item[RQ2:] How can these adapted measures be efficiently computed for planning problems using Answer Set Programming?
+    \item[RQ2:] How can these adapted measures be efficiently calculated for planning problems using Answer Set Programming?
     \item[RQ3:] Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
 \end{description}
 
@@ -134,8 +134,8 @@ To address these research questions, the thesis pursues the following objectives
 
 \begin{description}
     \item[Theoretical Adaptation (RQ1):] Develop formal adaptations of selected inconsistency measures to classical planning and examine their theoretical properties in the planning context.
-    \item[Implementation (RQ2):] Create \ac{ASP}-based algorithms for computing the adapted measures, with prototype implementations for standard planning problem formats.
-    \item[Evaluation (RQ3):] Evaluate the adapted measures on benchmark planning problems to assess computational feasibility, scalability, and diagnostic utility for distinguishing different types of planning failures.
+    \item[Implementation (RQ2):] Develop \ac{ASP}-based algorithms for calculating the adapted inconsistency measures, including prototype implementations that handle standard planning problem formats.
+    \item[Evaluation (RQ3):] Evaluate the adapted measures on benchmark planning problems to assess calculational feasibility, scalability, and diagnostic utility for distinguishing different types of planning failures.
 \end{description}
 
 \section{Planned Structure of the Master's Thesis}
