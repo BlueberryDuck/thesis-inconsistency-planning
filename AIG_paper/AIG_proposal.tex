@@ -112,21 +112,31 @@ When current planning systems encounter unsolvable problems, they provide very l
     \item Different types of planning failures are not distinguished or quantified in any way.
 \end{itemize}
 
-\subsection{Research Questions and Objectives}
+\subsection{Research Questions}
 
 The central research question of this thesis is:
 
-\textbf{How can inconsistency measures from knowledge representation be effectively adapted to classical planning to provide practical diagnostic value for unsolvable planning problems?}
+\begin{description}
+    \item[RQ:] How can inconsistency measures from knowledge representation be adapted to classical planning to provide diagnostic value for unsolvable planning problems?
+\end{description}
 
-To address this question, the following specific objectives are defined:
+This central question is addressed through three complementary research questions:
 
-\begin{enumerate}
-    \item \textbf{Theoretical Adaptation:} Determine how representative inconsistency measures can be transferred to classical planning. This involves developing a translation between planning problem representations and the frameworks used for inconsistency measurement, and examining which theoretical properties of the measures carry over to the planning context.
+\begin{description}
+    \item[RQ1:] Which inconsistency measures from knowledge representation can be adapted to classical planning, and what theoretical properties do they retain?
+    \item[RQ2:] How can these adapted measures be efficiently computed for planning problems using Answer Set Programming?
+    \item[RQ3:] Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
+\end{description}
 
-    \item \textbf{Algorithmic Development:} Develop \ac{ASP}-based algorithms for computing the adapted measures in planning contexts. This involves creating prototype implementations that can work with standard planning problem formats and exploring techniques to make the computation practical for realistic problem sizes.
+\subsection{Research Objectives}
 
-    \item \textbf{Empirical Evaluation:} Evaluate the adapted measures on benchmark planning problems to assess their practical utility. The evaluation will examine computational feasibility, scalability characteristics, and whether the measures provide meaningful insights into planning failures. The goal is to demonstrate that the adapted measures can distinguish between different types of unsolvable planning problems and provide useful information for understanding conflicts, with performance evaluated on standard benchmark problems of varying complexity. While this approach may initially be limited to smaller planning problems due to computational complexity, the focus on practical diagnostic value should provide meaningful insights even for restricted problem classes.
-\end{enumerate}
+To address these research questions, the thesis pursues the following objectives:
+
+\begin{description}
+    \item[Theoretical Adaptation (RQ1):] Develop formal adaptations of selected inconsistency measures to classical planning and examine their theoretical properties in the planning context.
+    \item[Development (RQ2):] Create \ac{ASP}-based algorithms for computing the adapted measures, with prototype implementations for standard planning problem formats.
+    \item[Evaluation (RQ3):] Evaluate the adapted measures on benchmark planning problems to assess computational feasibility, scalability, and diagnostic utility for distinguishing different types of planning failures.
+\end{description}
 
 \section{Planned Structure of the Master's Thesis}
 
