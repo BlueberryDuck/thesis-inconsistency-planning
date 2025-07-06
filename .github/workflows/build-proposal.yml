@@ -13,14 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/texlive
-            ~/.texlive
-          key: ${{ runner.os }}-texlive-full
-          restore-keys: |
-            ${{ runner.os }}-texlive-
       - uses: xu-cheng/latex-action@v3
         with:
           root_file: AIG_proposal.tex
