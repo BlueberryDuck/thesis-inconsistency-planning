@@ -69,7 +69,7 @@ Among the various approaches that have been developed, three main categories are
 
 \textbf{Contension-based measures} quantify inconsistency by finding the smallest set of propositions that must be marked "both true and false" to model the data, then counting those conflicting statements. This gives a clear, diagnostic indication of where and how many contradictions occur. The Contension measure is one of the most studied in the literature \cite{Grant2011}. These measures provide a direct count of problematic elements, making them particularly interpretable for diagnostic purposes.
 
-Recent advances show that \ac{ASP}-based algorithms for calculating inconsistency measures can outperform \ac{SAT}-based approaches for many measures \cite{Kuhlmann2025}. This suggests significant potential for planning applications, as \ac{ASP} offers several key advantages: its declarative nature allows natural modeling of planning constraints and temporal relationships, and its support for non-monotonic reasoning aligns well with planning's inherent non-monotonic aspects such as the frame problem and default assumptions. Furthermore, \ac{ASP}'s ability to encode temporal constraints directly makes it particularly suitable for modeling planning scenarios with their inherent temporal structure and action sequences.
+Recent advances show that \ac{ASP}-based algorithms for computing inconsistency measures can outperform \ac{SAT}-based approaches for many measures \cite{Kuhlmann2025}. This suggests significant potential for planning applications, as \ac{ASP} offers several key advantages: its declarative nature allows natural modeling of planning constraints and temporal relationships, and its support for non-monotonic reasoning aligns well with planning's inherent non-monotonic aspects such as the frame problem and default assumptions. Furthermore, \ac{ASP}'s ability to encode temporal constraints directly makes it particularly suitable for modeling planning scenarios with their inherent temporal structure and action sequences.
 
 Additionally, Ulbricht et al. \cite{Ulbricht2016} developed inconsistency measures specifically for Answer Set Programs, demonstrating that classical monotonicity properties do not hold in non-monotonic logics. This insight may prove useful when adapting measures to planning, where reasoning often involves non-monotonic aspects such as the frame problem and default assumptions about action effects.
 
@@ -97,48 +97,37 @@ More recently, Sreedharan et al. \cite{Sreedharan2019} developed methods for pro
 
 These research efforts highlight both the need for better diagnostic tools and the limitations of current approaches. Unlike static knowledge bases, planning problems involve temporal sequences and procedural constraints that create new types of conflicts. While existing work provides valuable insights into individual aspects of planning failure, there is a clear gap in quantitative approaches that can systematically measure and compare the degree of inconsistency across different planning instances. This thesis addresses this gap by developing the first comprehensive framework for quantitative inconsistency measurement in planning, building upon but extending beyond the binary diagnostic approaches of prior work.
 
-\section{Problem Statement and Research Objectives}
+\section{Problem Statement}
 
-This section defines the core research problem and outlines the specific objectives of this thesis.
+When current planning systems encounter unsolvable problems, they provide very limited diagnostic information. This creates several challenges for users and researchers. Users have little insight into why a given planning problem failed, and there is no systematic way to analyze the structure of an unsolvable planning instance. This makes it difficult to identify what minimal changes could make the problem solvable, as different types of planning failures are not distinguished or quantified in any way. The lack of quantitative diagnostic capabilities forces users into trial-and-error processes, significantly limiting the practical applicability of automated planning in complex real-world scenarios.
 
-\subsection{Problem Statement}
-
-When current planning systems encounter unsolvable problems, they provide very limited diagnostic information. This creates several challenges:
-
-\begin{itemize}
-    \item Users have little insight into why a given planning problem failed.
-    \item There is no systematic way to analyze the structure of an unsolvable planning instance.
-    \item It is difficult to identify what minimal changes could make the problem solvable.
-    \item Different types of planning failures are not distinguished or quantified in any way.
-\end{itemize}
-
-\subsection{Research Questions}
+\section{Research Questions}
 
 The central research question of this thesis is:
 
-\begin{description}
-    \item[RQ:] How can inconsistency measures from knowledge representation be adapted to classical planning to provide diagnostic value for unsolvable planning problems?
-\end{description}
+\begin{quote}
+    How can inconsistency measures from knowledge representation be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
+\end{quote}
 
 This central question is addressed through three complementary research questions:
 
-\begin{description}
-    \item[RQ1:] Which inconsistency measures from knowledge representation can be adapted to classical planning, and what theoretical properties do they retain?
-    \item[RQ2:] How can these adapted measures be efficiently calculated for planning problems using Answer Set Programming?
-    \item[RQ3:] Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
-\end{description}
+\begin{enumerate}
+    \item Which inconsistency measures from knowledge representation can be adapted to classical planning, and what theoretical properties do they retain?
+    \item How can these adapted measures be efficiently computed for planning problems using Answer Set Programming?
+    \item Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
+\end{enumerate}
 
-\subsection{Research Objectives}
+\section{Research Objectives}
 
 To address these research questions, the thesis pursues the following objectives:
 
-\begin{description}
-    \item[Theoretical Adaptation (RQ1):] Develop formal adaptations of selected inconsistency measures to classical planning and examine their theoretical properties in the planning context.
-    \item[Implementation (RQ2):] Develop \ac{ASP}-based algorithms for calculating the adapted inconsistency measures, including prototype implementations that handle standard planning problem formats.
-    \item[Evaluation (RQ3):] Evaluate the adapted measures on benchmark planning problems to assess calculational feasibility, scalability, and diagnostic utility for distinguishing different types of planning failures.
-\end{description}
+\begin{enumerate}
+    \item Develop formal adaptations of selected inconsistency measures to classical planning and examine their theoretical properties in the planning context.
+    \item Implement \ac{ASP}-based algorithms for computing the adapted inconsistency measures, including prototype development that handles standard planning problem formats.
+    \item Evaluate the adapted measures on benchmark planning problems to assess calculational feasibility, scalability, and diagnostic utility for distinguishing different types of unsolvable planning problems.
+\end{enumerate}
 
-\section{Planned Structure of the Master's Thesis}
+\section{Planned Structure}
 
 The thesis will be organized into seven chapters:
 
@@ -147,8 +136,8 @@ The thesis will be organized into seven chapters:
     \item[Chapter 2: Foundations] Background on classical planning formalisms, inconsistency measurement theory, and \ac{ASP}.
     \item[Chapter 3: Related Work] Survey of existing work on planning diagnostics and inconsistency measures.
     \item[Chapter 4: Theoretical Adaptation] Formal adaptation of selected inconsistency measures to planning, with definitions and examples.
-    \item[Chapter 5: Implementation] \ac{ASP}-based algorithms, prototype implementation, and software architecture.
-    \item[Chapter 6: Evaluation] Experimental setup, benchmarking results, and performance analysis.
+    \item[Chapter 5: Implementation] \ac{ASP}-based algorithms and prototype development.
+    \item[Chapter 6: Evaluation] Experimental setup, benchmarking results, and analysis.
     \item[Chapter 7: Conclusion] Summary of findings, limitations, and future work.
 \end{description}
 
