@@ -19,7 +19,7 @@
 }
 
 %%%% Author and Title Information %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{meta.tex}
+\InputIfFileExists{meta.tex}{}{\newcommand{\authorname}{Max Mustermann}}
 \author{\authorname}
 
 \title{Inconsistency Measurement in Classical Planning Problems}
