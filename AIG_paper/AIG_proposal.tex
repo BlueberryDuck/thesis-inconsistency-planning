@@ -25,11 +25,6 @@
 
 \title{Inconsistency Measurement in Classical Planning Problems}
 
-%%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\englishabstract{
-    Unsolvable planning problems often contain conflicting constraints or incompatible goal combinations that create logical inconsistencies. While inconsistency measurement has been well-developed in knowledge representation and reasoning, its application to planning domains has received limited attention. This thesis explores how established inconsistency measures can be adapted to classical planning problems, with a focus on developing \ac{ASP}-based algorithms for their calculation. The work investigates the practical utility of these measures for analyzing and fixing planning problems, examining how \ac{STRIPS} formulations can be integrated with inconsistency measurement frameworks. The goal is to provide planners with quantitative tools for understanding unsolvable planning problems and supporting systematic approaches to problem repair.
-}
-
 \begin{document}
 
 % Acronym definitions
@@ -80,9 +75,11 @@ Among the various approaches that have been developed, three main categories are
 
 \textbf{Contension-based measures} quantify inconsistency by finding the smallest set of propositions that must be marked "both true and false" to model the data, then counting those conflicting statements. This gives a clear, diagnostic indication of where and how many contradictions occur. The Contension measure is one of the most studied in the literature \cite{Grant2011}. These measures provide a direct count of problematic elements, making them particularly interpretable for diagnostic purposes.}
 
-Recent advances show that \ac{ASP}-based algorithms for computing inconsistency measures can outperform \ac{SAT}-based approaches for many measures \cite{Kuhlmann2025}. This suggests significant potential for planning applications, as \ac{ASP} offers several key advantages: its declarative nature allows natural modeling of planning constraints and temporal relationships, and its support for non-monotonic reasoning aligns well with planning's inherent non-monotonic aspects such as the frame problem and default assumptions. Furthermore, \ac{ASP}'s ability to encode temporal constraints directly makes it particularly suitable for modeling planning scenarios with their inherent temporal structure and action sequences. % Todo: Clarify "ASP's ability to encode temporal constraints directly"
+Recent advances show that \ac{ASP}-based algorithms for computing inconsistency measures can outperform \ac{SAT}-based approaches for many measures \cite{Kuhlmann2025}. This suggests significant potential for planning applications, as \ac{ASP} offers several key advantages: its declarative nature allows natural modeling of planning constraints and temporal relationships, and its support for non-monotonic reasoning aligns well with planning's inherent non-monotonic aspects such as the frame problem and default assumptions. Crucially, \ac{ASP} can naturally represent temporal sequences through additional time arguments in atoms (e.g., \texttt{holds(fluent, T)}) and sequential rules, making it particularly well-suited for modeling planning scenarios with their inherent temporal structure and action sequences.
 
-Additionally, Ulbricht et al. \cite{Ulbricht2016} developed inconsistency measures specifically for Answer Set Programs, demonstrating that classical monotonicity properties do not hold in non-monotonic logics. This insight may prove useful when adapting measures to planning, where reasoning often involves non-monotonic aspects such as the frame problem and default assumptions about action effects.
+This temporal modeling approach was established by \cite{Dimopoulos1997}, who first demonstrated how to encode \ac{STRIPS}-like planning problems as non-monotonic logic programs with time-indexed actions and fluents, showing that answer sets correspond directly to valid plans. Building on this foundation, the approach has evolved significantly, with modern tools such as plasp 3 \cite{DIMOPOULOS2019} now providing efficient translations from standard \ac{PDDL} planning instances to \ac{ASP} encodings. These contemporary systems maintain the core temporal modeling principles while extending support to handle complex planning features through sophisticated domain-independent \ac{ASP} rule sets.
+
+Additionally, Ulbricht et al. \cite{Ulbricht2016} developed inconsistency measures specifically for \ac{ASP}, demonstrating that the monotonicity postulate does not hold in non-monotonic logics. This insight may prove useful when adapting measures to planning, where reasoning often involves non-monotonic aspects such as the frame problem and default assumptions about action effects.
 
 \subsection{Classical Planning}
 
@@ -92,7 +89,7 @@ A planning problem consists of three components: an initial state describing the
 
 Planning problems become unsolvable when no sequence of applicable actions can transform the initial state into a goal state. This can occur for several reasons: goals that are mutually exclusive and require contradictory states, required resources that are unavailable or insufficient, action preconditions that can never be satisfied, or action sequences that lead to dead-end states from which the goal cannot be reached. Determining whether a plan exists is computationally expensive, which has motivated extensive research into efficient algorithms and search techniques.
 
-\textbf{\ac{PDDL}} serves as the standard language for describing planning problems and is used in international planning competitions \cite{Ghallab1998}. \ac{PDDL} provides a structured way to specify domains and problems, making it essential for practical applications. However, given the complexity of \ac{PDDL}'s various extensions and features, this thesis initially focuses on \ac{STRIPS}-based formulations due to their foundational simplicity and well-understood semantics, which allow for systematic adaptation of inconsistency measures without the complications of advanced \ac{PDDL} constructs.
+\ac{PDDL} serves as the standard language for describing planning problems and is used in international planning competitions \cite{Ghallab1998}. \ac{PDDL} provides a structured way to specify domains and problems, making it essential for practical applications. However, given the complexity of \ac{PDDL}'s various extensions and features, this thesis initially focuses on \ac{STRIPS}-based formulations due to their foundational simplicity and well-understood semantics, which allow for systematic adaptation of inconsistency measures without the complications of advanced \ac{PDDL} constructs.
 
 Modern planning systems employ various search strategies such as forward state-space search, backward regression, and plan-space search, along with sophisticated guidance techniques. However, when these systems encounter an unsolvable problem, they typically only report failure without providing analysis of why the problem is unsolvable, which conflicts might be responsible, or what modifications could potentially make the problem solvable. This diagnostic gap represents a significant limitation for users trying to understand and fix problematic planning instances. % Todo: source
 
@@ -125,14 +122,14 @@ This central question is addressed through the following research questions and 
 \subsection{Research Question 1: Theoretical Adaptation}
 
 \begin{quote}
-    Which inconsistency measures from knowledge representation and reasoning can be adapted to classical planning, and what theoretical properties do they retain?
+    Which inconsistency measures from knowledge representation and reasoning can be adapted to classical planning, and what postulates do they retain?
 \end{quote}
 
 \begin{enumerate}
     \item[(1a)] Survey and categorize existing inconsistency measures from knowledge representation and reasoning.
     \item[(1b)] Analyze the structural differences between knowledge bases and planning problems, identifying adaptation challenges.
     \item[(1c)] Develop formal adaptations of 2-3 selected inconsistency measures to \ac{STRIPS}-based planning formulations.
-    \item[(1d)] Examine which theoretical properties (monotonicity, consistency, independence) are preserved or modified in the planning context.
+    \item[(1d)] Examine which postulates are preserved or modified in the planning context.
     \item[(1e)] Provide formal definitions and examples of the adapted measures.
 \end{enumerate}
 
@@ -162,7 +159,7 @@ This central question is addressed through the following research questions and 
     \item[(3d)] Assess whether the measures provide actionable insights for problem repair and modification strategies.
 \end{enumerate}
 
-\textbf{Note:} Research Question 3 is marked as optional due to the scope of Questions 1 and 2. The theoretical development and implementation work represents a significant contribution in itself, and the evaluation component may be pursued depending on time constraints and the complexity of the theoretical and implementation phases.
+\textbf{Note:} Research Question 3 is marked as optional due to the substantial scope of Questions 1 and 2. The theoretical development and implementation phases constitute the core contribution of this work, and the evaluation component will be pursued if time and complexity constraints permit.
 
 \section{Planned Structure}
 

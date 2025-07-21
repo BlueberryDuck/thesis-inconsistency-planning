@@ -481,7 +481,10 @@
     \cleardoublepage
 \fi
 
-\makeabstract
+\ifthesis%
+    \makeabstract
+\fi
+
 \ifthesis%
     \cleardoublepage
 \fi
