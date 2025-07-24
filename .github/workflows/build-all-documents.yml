@@ -6,7 +6,7 @@ on:
       documents:
         description: "Documents to build (comma-separated)"
         required: false
-        default: "beamer,bachelorthesis,masterthesis,proposal,research_lab,seminar,poster"
+        default: "proposal"
         type: string
       build_all:
         description: "Build all available documents"
