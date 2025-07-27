@@ -1,6 +1,9 @@
 # Redacted for privacy
 meta.tex
 
+# Local development files
+*.local.*
+
 # LaTeX build files
 *.aux
 *.bbl
