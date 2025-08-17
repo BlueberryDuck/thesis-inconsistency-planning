@@ -41,7 +41,7 @@
 
 \section{Introduction and Motivation}
 
-In practical applications of automated planning, systems regularly encounter unsolvable problems. A planning instance is unsolvable if no sequence of available actions can transform the initial state into a goal state~\cite{Russell2016}. Since determining solvability is PSPACE-complete~\cite{Bylander1994}, unsolvable instances arise naturally in complex domains rather than being merely edge cases. Consider a logistics scenario where a delivery company needs to route packages through a network of distribution centers. If the problem specifies that a package must be delivered to New York by noon while simultaneously requiring it to be processed at a facility in Los Angeles at the same time, the planning system will simply report ``unsolvable'' without explaining the conflicting requirements~\cite{Goebelbecker2010,Sreedharan2019}. Similarly, in robotics applications, a robot might be asked to manipulate objects in ways that violate physical constraints, or in manufacturing, production schedules might contain contradictory resource requirements.
+In practical applications of automated planning, systems regularly encounter unsolvable problems. A planning instance is unsolvable if no sequence of available actions can transform the initial state into a goal state~\cite{Russell2016}. Since determining solvability is PSPACE-complete~\cite{Bylander1994}, unsolvable instances arise naturally in complex domains rather than being merely edge cases. Consider a logistics scenario where a delivery company needs to route packages through a network of distribution centers. If the problem specifies that a package must be delivered to New York by noon while simultaneously requiring it to be processed at a facility in Los Angeles at the same time, the planning system will report ``unsolvable'' without explaining the conflicting requirements~\cite{Goebelbecker2010,Sreedharan2019}. Similarly, in robotics applications, a robot might be asked to manipulate objects in ways that violate physical constraints, or in manufacturing, production schedules might contain contradictory resource requirements.
 
 Beyond recognizing unsolvability, users require explanations of why the planner failed to find a solution. Current planning systems excel at finding solutions when they exist, but provide minimal diagnostic information when problems are unsolvable~\cite{Eriksson2018,Sreedharan2019}. This limitation becomes particularly problematic in complex domains where problems are automatically generated or when domain experts need to understand why their specifications cannot be satisfied~\cite{Sreedharan2019}. Manual debugging of such failures is impractical for large-scale problems with hundreds of constraints and actions, yet current approaches offer no systematic alternatives~\cite{Goebelbecker2010,Sreedharan2019}. The lack of quantitative diagnostic capabilities forces users into costly trial-and-error processes, significantly hindering the practical deployment of automated planning in real-world applications~\cite{Eriksson2018}.
 
@@ -71,7 +71,7 @@ Classical planning operates on factored representations, meaning the world state
 
 Actions are described by ground operators, which are fully instantiated actions with all variables replaced by specific objects, denoted as $o \in O$ and defined by the triple
 \begin{equation*}
-    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
+    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle\,,
 \end{equation*}
 where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects~\cite{Bylander1994}. An operator $o$ is applicable in state $s$ if and only if $s \models \text{precond}(o)$. The result of executing action $o$ in state $s$ is defined as $\text{RESULT}(s,o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$~\cite{Russell2016}. A plan is a sequence of operators $\langle o_1, o_2, \ldots, o_k \rangle$ such that applying this sequence from the initial state $I$ results in a state $s$ where $G \subseteq s$~\cite{Bylander1994}.
 
@@ -131,8 +131,8 @@ This central question is addressed through the following research questions and 
 
 \begin{enumerate}
     \item[(2a)] Analyze computational complexity of the adapted measures to ensure compatibility with \ac{ASP}.
-    \item[(2b)] Design \ac{ASP}-based encodings for the adapted inconsistency measures.
-    \item[(2c)] Develop algorithms that handle standard planning problem formats, including \ac{STRIPS} and optionally basic \ac{PDDL} representations.
+    \item[(2b)] Design an \ac{ASP}-based encoding for at least one adapted inconsistency measure.
+    \item[(2c)] Develop parsing algorithms that handle standard planning problem formats, including \ac{STRIPS} and optionally basic \ac{PDDL} representations.
     \item[(2d)] Implement a prototype system for at least one measure that can parse planning problems and compute the adapted measures.
 \end{enumerate}
 
