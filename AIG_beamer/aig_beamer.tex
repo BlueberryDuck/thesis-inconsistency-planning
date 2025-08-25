@@ -13,9 +13,10 @@
 \usetheme{aig}                  % Set beamer theme
 
 %=========================================================================================================================
-\title{AIG Beamer Template}
+\title{MSc Proposal\\Inconsistency Measurement for Classical Planning Problems}
 
-\author[S. Author]{Some Author}
+\InputIfFileExists{../meta.tex}{}{\newcommand{\authorname}{Erika Mustermann}\newcommand{\authname}{E. Mustermann}}
+\author[\authname]{\authorname}
 \institute{Artificial Intelligence Group,\\
 University of Hagen, Germany}
 \date{\today}
@@ -28,7 +29,7 @@ University of Hagen, Germany}
 %=========================================================================================================================
 
 \begin{frame}
-  \titlepage
+    \titlepage
 \end{frame}
 \nologo
 
@@ -41,14 +42,14 @@ University of Hagen, Germany}
             \item This is an item in a block.
         \end{itemize}
     \end{block}
-    
+
     \begin{alertblock}{Block}
         This is an alert block.
         \begin{itemize}
             \item This is an item in an alert block.
         \end{itemize}
     \end{alertblock}
-    
+
     \begin{exampleblock}{Block}
         This is an example block.
         \begin{itemize}
