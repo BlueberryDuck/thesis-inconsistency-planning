@@ -9,11 +9,15 @@
 \usepackage{tikz}               % For creating graphics
 \usepackage{url}                % For including urls
 \usepackage{tabularx}           % For better tables
+\usepackage{amsmath}            % Math environments
+\usepackage{amsfonts}           % Math fonts
+\usepackage{amssymb}            % Math symbols
+\usepackage{acronym}            % Acronym management
 
 \usetheme{aig}                  % Set beamer theme
 
 %=========================================================================================================================
-\title{MSc Proposal\\Inconsistency Measurement for Classical Planning Problems}
+\title{MSc Thesis Proposal \\Inconsistency Measurement for Classical Planning Problems}
 
 \InputIfFileExists{../meta.tex}{}{\newcommand{\authorname}{Erika Mustermann}\newcommand{\authname}{E. Mustermann}}
 \author[\authname]{\authorname}
@@ -24,6 +28,12 @@ University of Hagen, Germany}
 \logo{\includegraphics[width=3cm]{figures/logoaig2025_transparent.png}}
 %=========================================================================================================================
 
+% Acronym definitions
+\acrodef{ASP}{Answer Set Programming}
+\acrodef{PDDL}{Planning Domain Definition Language}
+\acrodef{STRIPS}{Stanford Research Institute Problem Solver}
+\acrodef{SAT}{Boolean Satisfiability}
+
 \begin{document}
 
 %=========================================================================================================================
@@ -33,49 +43,199 @@ University of Hagen, Germany}
 \end{frame}
 \nologo
 
-\section{Section}
+%=========================================================================================================================
 
-\begin{frame}{Blocks}
-    \begin{block}{Block}
-        This is a regular block.
+\section{Problem Motivation}
+
+\begin{frame}{Planning in Practice: When Things Go Wrong}
+    \begin{block}{Real-World Scenario: Logistics Planning}
+        A delivery company needs to route packages through distribution centers:
         \begin{itemize}
-            \item This is an item in a block.
+            \item Package must be delivered to New York by noon
+            \item Same package must be processed in Los Angeles at the same time
+            \item System reports: \yellowhighlight{``Unsolvable''}
         \end{itemize}
     \end{block}
 
-    \begin{alertblock}{Block}
-        This is an alert block.
+    \begin{alertblock}{The Problem}
         \begin{itemize}
-            \item This is an item in an alert block.
+            \item Planning systems excel when solutions exist
+            \item But provide minimal diagnostic information when problems are unsolvable
+            \item Users are left with costly trial-and-error debugging
         \end{itemize}
     \end{alertblock}
+\end{frame}
 
-    \begin{exampleblock}{Block}
-        This is an example block.
+\begin{frame}{Current Limitations}
+    \begin{block}{What Planners Tell Us}
         \begin{itemize}
-            \item This is an item in an example block.
+            \item Binary diagnosis: ``Solvable'' or ``Unsolvable''
+            \item No explanation of why the problem failed
+            \item No guidance on which constraints are problematic
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{What We Need}
+        \begin{itemize}
+            \item Quantitative measures of inconsistency degree
+            \item Identification of conflicting requirements
+            \item Systematic approaches to problem repair
         \end{itemize}
     \end{exampleblock}
 \end{frame}
 
+%=========================================================================================================================
 
-\subsection{Subsection}
+\section{Technical Foundations}
 
-\begin{frame}{Highlighting Text}
-    We can \highlight{highlight} text. There are also a \darkhighlight{darker} option, and a \yellowhighlight{yellow} option.\\
-    The same options are also available in math mode: $\mathhighlight{a} + \darkmathhighlight{b} = \yellowmathhighlight{c}$
+\begin{frame}{Classical Planning}
+    \begin{block}{Planning Problem Definition}
+        A planning problem $\langle P, O, I, G \rangle$ where:
+        \begin{itemize}
+            \item $P$: finite set of atomic propositions
+            \item $O$: finite set of operators (actions)
+            \item $I \subseteq P$: initial state
+            \item $G \subseteq P$: goal specification
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{When Problems Become Unsolvable}
+        \begin{itemize}
+            \item Goals that are mutually exclusive
+            \item Required resources that are unavailable
+            \item Action sequences leading to dead-end states
+        \end{itemize}
+    \end{block}
+
+    \textbf{Key Challenge:} Determining solvability is PSPACE-complete!
 \end{frame}
 
+\begin{frame}{Inconsistency Measurement}
+    \begin{block}{From Knowledge Representation}
+        Rather than binary inconsistency, assign numerical values reflecting conflict severity:
+        \begin{itemize}
+            \item \textbf{Minimal inconsistent sets:} Count conflicting formula groups
+            \item \textbf{Distance-based measures:} Minimal modifications for consistency
+            \item \textbf{Hitting-set measures:} Smallest interpretation sets
+            \item \textbf{Contension-based:} Paraconsistent logic approaches
+        \end{itemize}
+    \end{block}
 
-\appendix
+    \begin{exampleblock}{Success in Other Domains}
+        \begin{itemize}
+            \item Temporal logic for process specifications
+            \item Constraint satisfaction problems
+            \item Not yet systematically adapted to planning!
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
 
-\section{Appendix}
+\begin{frame}{Why Answer Set Programming?}
+    \begin{block}{Technical Advantages}
+        \begin{itemize}
+            \item Declarative modeling of planning problems
+            \item Support for temporal and combinatorial constraints
+            \item \ac{ASP}-based algorithms outperform \ac{SAT}-based approaches
+            \item Modern tools like plasp 3 provide efficient \ac{PDDL}-to-\ac{ASP} translation
+        \end{itemize}
+    \end{block}
 
-\begin{frame}{Appendix}
-    This is an appendix.
-    \begin{itemize}
-        \item Page numbers start from the beginning.
-    \end{itemize}
+    \begin{block}{Planning-Specific Advantages}
+        \begin{itemize}
+            \item \ac{ASP} inconsistency measures already exist
+            \item Monotonicity postulate fails in non-monotonic logics
+            \item Direct relevance to planning's frame problem and default assumptions
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+%=========================================================================================================================
+
+\section{Research Approach}
+
+\begin{frame}{Adaptation Challenges}
+    \begin{block}{Key Differences: Knowledge Bases vs. Planning}
+        \begin{itemize}
+            \item \textbf{Static vs. Dynamic:} KB formulas vs. action sequences over time
+            \item \textbf{Temporal Structure:} Planning involves state transitions
+            \item \textbf{Causality:} Actions have preconditions and effects
+        \end{itemize}
+    \end{block}
+
+    \begin{alertblock}{Core Research Challenges}
+        \begin{itemize}
+            \item How to define minimal inconsistent sets for planning problems?
+            \item What constitutes distance between planning instances?
+            \item Which postulates from logic still hold in planning context?
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Central Research Question}
+    \begin{block}{Central Research Question}
+        \Large \textbf{How can inconsistency measures from knowledge representation and reasoning be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Research Questions \& Objectives}
+    \begin{block}{RQ1: Theoretical Adaptation}
+        \textbf{Which measures can be adapted and what postulates do they retain?}
+        \begin{itemize}
+            \item Survey existing inconsistency measures
+            \item Formal adaptation of 2-3 selected measures to \ac{STRIPS}
+            \item Analyze postulate preservation in planning context
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{RQ2: Computational Implementation}
+        \textbf{How can adapted measures be efficiently computed using \ac{ASP}?}
+        \begin{itemize}
+            \item Complexity analysis for \ac{ASP} compatibility
+            \item Design \ac{ASP}-based encoding for at least one measure
+            \item Prototype implementation with \ac{STRIPS}/\ac{PDDL} parsing
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Research Questions \& Expected Contributions}
+    \begin{block}{RQ3: Practical Evaluation}
+        \textbf{Do adapted measures provide practical diagnostic value?}
+        \begin{itemize}
+            \item Experimental framework using benchmark planning problems
+            \item Computational feasibility and scalability evaluation
+            \item Diagnostic utility analysis for problem types
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Expected Contributions}
+        \begin{itemize}
+            \item First systematic adaptation of inconsistency measures to planning
+            \item \ac{ASP}-based prototype for quantitative planning diagnostics
+            \item Evaluation framework for unsolvable planning problem analysis
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Summary}
+    \begin{block}{Problem \& Solution}
+        Planning systems provide no diagnostics for unsolvable problems
+        \begin{itemize}
+            \item \textbf{Approach:} Adapt inconsistency measures to planning
+            \item \textbf{Method:} \ac{ASP}-based implementation
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Research Questions}
+        \begin{itemize}
+            \item \textbf{RQ1:} Which measures adapt? What postulates hold?
+            \item \textbf{RQ2:} How to compute efficiently with \ac{ASP}?
+            \item \textbf{RQ3:} Do they provide practical diagnostic value?
+        \end{itemize}
+    \end{block}
+
+    \begin{alertblock}{Expected Impact}
+        First systematic quantitative diagnostics for unsolvable planning problems
+    \end{alertblock}
 \end{frame}
 
 \end{document}
