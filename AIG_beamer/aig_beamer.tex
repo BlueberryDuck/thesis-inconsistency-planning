@@ -60,24 +60,24 @@ University of Hagen, Germany}
     \begin{alertblock}{The Problem}
         \begin{itemize}
             \item Planning systems excel when solutions exist
-            \item But provide minimal diagnostic information when problems are unsolvable
-            \item Users are left with costly trial-and-error debugging
+            \item But provide minimal diagnostic information when problems are unsolvable % Eriksson2018, Sreedharan2019
+            \item Users are left with costly trial-and-error debugging % Goebelbecker2010, Sreedharan2019
         \end{itemize}
     \end{alertblock}
 \end{frame}
 
 \begin{frame}{Current Limitations}
-    \begin{block}{What Planners Tell Us}
+    \begin{alertblock}{What Planners Tell Us}
         \begin{itemize}
             \item Binary diagnosis: ``Solvable'' or ``Unsolvable''
             \item No explanation of why the problem failed
             \item No guidance on which constraints are problematic
         \end{itemize}
-    \end{block}
+    \end{alertblock}
 
     \begin{exampleblock}{What We Need}
         \begin{itemize}
-            \item Quantitative measures of inconsistency degree
+            \item Quantitative measures of inconsistency
             \item Identification of conflicting requirements
             \item Systematic approaches to problem repair
         \end{itemize}
@@ -89,7 +89,7 @@ University of Hagen, Germany}
 \section{Technical Foundations}
 
 \begin{frame}{Classical Planning}
-    \begin{block}{Planning Problem Definition}
+    \begin{block}{Planning Problem Definition} % Russell2016, Bylander1994
         A planning problem $\langle P, O, I, G \rangle$ where:
         \begin{itemize}
             \item $P$: finite set of atomic propositions
@@ -107,25 +107,43 @@ University of Hagen, Germany}
         \end{itemize}
     \end{block}
 
-    \textbf{Key Challenge:} Determining solvability is PSPACE-complete!
+    Key Challenge: Determining solvability can become exponentially complex % Bylander1994
+\end{frame}
+
+\begin{frame}{Taxonomy of Planning Inconsistencies}
+    \begin{block}{Where Can Planning Go Wrong?} % Kuhlmann2025 (CogRob Workshop)
+        \begin{itemize}
+            \item Domain-level: Domain specification itself is inconsistent
+            \item Task-level: Planning problem is unsolvable (no valid plan exists)
+            \item Plan-level inconsistencies:
+                  \begin{itemize}
+                      \item Execution-level: Plan contains non-applicable actions
+                      \item Goal-level: Plan is executable but fails to achieve goals
+                  \end{itemize}
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Thesis Focus}
+        Task-level inconsistency: Quantifying the degree of unsolvability in planning problems where no solution exists
+    \end{block}
 \end{frame}
 
 \begin{frame}{Inconsistency Measurement}
-    \begin{block}{From Knowledge Representation}
+    \begin{block}{From Knowledge Representation} % Thimm2019 survey
         Rather than binary inconsistency, assign numerical values reflecting conflict severity:
         \begin{itemize}
-            \item \textbf{Minimal inconsistent sets:} Count conflicting formula groups
-            \item \textbf{Distance-based measures:} Minimal modifications for consistency
-            \item \textbf{Hitting-set measures:} Smallest interpretation sets
-            \item \textbf{Contension-based:} Paraconsistent logic approaches
+            \item Minimal inconsistent sets: Count conflicting formula groups % Hunter2008
+            \item Distance-based measures: Minimal modifications for consistency % Grant2013, Grant2017
+            \item Hitting-set measures: Smallest interpretation sets % Thimm2016
+            \item Contension-based: Paraconsistent logic approaches % Grant2011, Thimm2016
         \end{itemize}
     \end{block}
 
     \begin{exampleblock}{Success in Other Domains}
         \begin{itemize}
-            \item Temporal logic for process specifications
-            \item Constraint satisfaction problems
-            \item Not yet systematically adapted to planning!
+            \item Temporal logic for process specifications % Corea2022
+            \item Constraint satisfaction problems % Condotta2024
+            \item Not yet systematically adapted to planning
         \end{itemize}
     \end{exampleblock}
 \end{frame}
@@ -133,17 +151,17 @@ University of Hagen, Germany}
 \begin{frame}{Why Answer Set Programming?}
     \begin{block}{Technical Advantages}
         \begin{itemize}
-            \item Declarative modeling of planning problems
+            \item Declarative modeling of planning problems % Dimopoulos1997
             \item Support for temporal and combinatorial constraints
-            \item \ac{ASP}-based algorithms outperform \ac{SAT}-based approaches
-            \item Modern tools like plasp 3 provide efficient \ac{PDDL}-to-\ac{ASP} translation
+            \item \ac{ASP}-based algorithms outperform \ac{SAT}-based approaches % Kuhlmann2025
+            \item Modern tools like plasp 3 provide efficient \ac{PDDL}-to-\ac{ASP} translation % Dimopoulos2019
         \end{itemize}
     \end{block}
 
     \begin{block}{Planning-Specific Advantages}
         \begin{itemize}
-            \item \ac{ASP} inconsistency measures already exist
-            \item Monotonicity postulate fails in non-monotonic logics
+            \item \ac{ASP} inconsistency measures already exist % Ulbricht2016
+            \item Monotonicity postulate fails in non-monotonic logics % Ulbricht2016
             \item Direct relevance to planning's frame problem and default assumptions
         \end{itemize}
     \end{block}
@@ -154,88 +172,72 @@ University of Hagen, Germany}
 \section{Research Approach}
 
 \begin{frame}{Adaptation Challenges}
-    \begin{block}{Key Differences: Knowledge Bases vs. Planning}
+    \begin{block}{Adaptation Challenges}
         \begin{itemize}
-            \item \textbf{Static vs. Dynamic:} KB formulas vs. action sequences over time
-            \item \textbf{Temporal Structure:} Planning involves state transitions
-            \item \textbf{Causality:} Actions have preconditions and effects
+            \item How to adapt minimal inconsistent sets to unsolvable planning tasks?
+            \item Which inconsistency postulates hold in non-monotonic planning contexts? % Ulbricht2016
+            \item How to handle frame problem and default assumptions about action effects?
+            \item What constitutes meaningful distance measures between planning instances?
         \end{itemize}
     \end{block}
-
-    \begin{alertblock}{Core Research Challenges}
-        \begin{itemize}
-            \item How to define minimal inconsistent sets for planning problems?
-            \item What constitutes distance between planning instances?
-            \item Which postulates from logic still hold in planning context?
-        \end{itemize}
-    \end{alertblock}
 \end{frame}
 
 \begin{frame}{Central Research Question}
-    \begin{block}{Central Research Question}
-        \Large \textbf{How can inconsistency measures from knowledge representation and reasoning be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?}
+    \Large How can inconsistency measures from knowledge representation and reasoning be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
+\end{frame}
+
+\begin{frame}{Research Questions}
+    \begin{block}{RQ1: Which measures can be adapted and what postulates do they retain?}
+        \begin{itemize}
+            \item Survey existing inconsistency measures
+            \item Analyze differences between KBs and planning
+            \item Formal adaptation of 2-3 selected measures to \ac{STRIPS}
+            \item Analyze postulate preservation in classical planning
+            \item Formal definitions and examples
+        \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}{Research Questions \& Objectives}
-    \begin{block}{RQ1: Theoretical Adaptation}
-        \textbf{Which measures can be adapted and what postulates do they retain?}
-        \begin{itemize}
-            \item Survey existing inconsistency measures
-            \item Formal adaptation of 2-3 selected measures to \ac{STRIPS}
-            \item Analyze postulate preservation in planning context
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{RQ2: Computational Implementation}
-        \textbf{How can adapted measures be efficiently computed using \ac{ASP}?}
+\begin{frame}{Research Questions}
+    \begin{block}{RQ2: How can adapted measures be efficiently computed using \ac{ASP}?}
         \begin{itemize}
             \item Complexity analysis for \ac{ASP} compatibility
             \item Design \ac{ASP}-based encoding for at least one measure
-            \item Prototype implementation with \ac{STRIPS}/\ac{PDDL} parsing
+            \item Develop parsing algorithms for \ac{STRIPS} and optionally \ac{PDDL}
+            \item Prototype implementation for at least one measure
         \end{itemize}
     \end{block}
-\end{frame}
 
-\begin{frame}{Research Questions \& Expected Contributions}
-    \begin{block}{RQ3: Practical Evaluation}
-        \textbf{Do adapted measures provide practical diagnostic value?}
+    \begin{block}{RQ3: Do adapted measures provide practical diagnostic value?}
         \begin{itemize}
             \item Experimental framework using benchmark planning problems
             \item Computational feasibility and scalability evaluation
             \item Diagnostic utility analysis for problem types
+            \item Optionally assess impact on problem repair strategies
         \end{itemize}
     \end{block}
-
-    \begin{exampleblock}{Expected Contributions}
-        \begin{itemize}
-            \item First systematic adaptation of inconsistency measures to planning
-            \item \ac{ASP}-based prototype for quantitative planning diagnostics
-            \item Evaluation framework for unsolvable planning problem analysis
-        \end{itemize}
-    \end{exampleblock}
 \end{frame}
+
+%=========================================================================================================================
+
+\section*{Summary}
 
 \begin{frame}{Summary}
     \begin{block}{Problem \& Solution}
-        Planning systems provide no diagnostics for unsolvable problems
+        Planning systems provide limited diagnostics for unsolvable problems
         \begin{itemize}
-            \item \textbf{Approach:} Adapt inconsistency measures to planning
-            \item \textbf{Method:} \ac{ASP}-based implementation
+            \item Approach: Adapt inconsistency measures to classical planning
+            \item Method: \ac{ASP}-based implementation
         \end{itemize}
     \end{block}
 
     \begin{block}{Research Questions}
         \begin{itemize}
-            \item \textbf{RQ1:} Which measures adapt? What postulates hold?
-            \item \textbf{RQ2:} How to compute efficiently with \ac{ASP}?
-            \item \textbf{RQ3:} Do they provide practical diagnostic value?
+            \item RQ1: Which measures can be adapted and what postulates do they retain?
+            \item RQ2: How can adapted measures be efficiently computed using \ac{ASP}?
+            \item RQ3: Do adapted measures provide practical diagnostic value?
         \end{itemize}
     \end{block}
-
-    \begin{alertblock}{Expected Impact}
-        First systematic quantitative diagnostics for unsolvable planning problems
-    \end{alertblock}
 \end{frame}
 
 \end{document}
