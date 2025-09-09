@@ -17,7 +17,7 @@
 \usetheme{aig}                  % Set beamer theme
 
 %=========================================================================================================================
-\title{MSc Thesis Proposal \\Inconsistency Measurement for Classical Planning Problems}
+\title{MSc Thesis Proposal: \\Inconsistency Measurement for Classical Planning Problems}
 
 \InputIfFileExists{../meta.tex}{}{\newcommand{\authorname}{Erika Mustermann}\newcommand{\authname}{E. Mustermann}}
 \author[\authname]{\authorname}
@@ -48,40 +48,40 @@ University of Hagen, Germany}
 \section{Problem Motivation}
 
 \begin{frame}{Planning in Practice: When Things Go Wrong}
-    \begin{block}{Real-World Scenario: Logistics Planning}
+    \begin{exampleblock}{Real-World Scenario: Logistics Planning}
         A delivery company needs to route packages through distribution centers:
         \begin{itemize}
             \item Package must be delivered to New York by noon
             \item Same package must be processed in Los Angeles at the same time
             \item System reports: \yellowhighlight{``Unsolvable''}
         \end{itemize}
-    \end{block}
+    \end{exampleblock}
 
-    \begin{alertblock}{The Problem}
+    \begin{alertblock}{Problem}
         \begin{itemize}
             \item Planning systems excel when solutions exist
             \item But provide minimal diagnostic information when problems are unsolvable % Eriksson2018, Sreedharan2019
-            \item Users are left with costly trial-and-error debugging % Goebelbecker2010, Sreedharan2019
+            \item Users are left with intuition and trial-and-error debugging % Goebelbecker2010, Sreedharan2019
         \end{itemize}
     \end{alertblock}
 \end{frame}
 
 \begin{frame}{Current Limitations}
-    \begin{alertblock}{What Planners Tell Us}
+    \begin{block}{What Planners Tell Us}
         \begin{itemize}
             \item Binary diagnosis: ``Solvable'' or ``Unsolvable''
             \item No explanation of why the problem failed
             \item No guidance on which constraints are problematic
         \end{itemize}
-    \end{alertblock}
+    \end{block}
 
-    \begin{exampleblock}{What We Need}
+    \begin{block}{What We Need}
         \begin{itemize}
             \item Quantitative measures of inconsistency
-            \item Identification of conflicting requirements
+            \item Identification of problematic constraints
             \item Systematic approaches to problem repair
         \end{itemize}
-    \end{exampleblock}
+    \end{block}
 \end{frame}
 
 %=========================================================================================================================
@@ -111,7 +111,7 @@ University of Hagen, Germany}
 \end{frame}
 
 \begin{frame}{Taxonomy of Planning Inconsistencies}
-    \begin{block}{Where Can Planning Go Wrong?} % Kuhlmann2025 (CogRob Workshop)
+    \begin{block}{Where Can Planning Go Wrong?} % Kuhlmann2025
         \begin{itemize}
             \item Domain-level: Domain specification itself is inconsistent
             \item Task-level: Planning problem is unsolvable (no valid plan exists)
@@ -129,30 +129,30 @@ University of Hagen, Germany}
 \end{frame}
 
 \begin{frame}{Inconsistency Measurement}
-    \begin{block}{From Knowledge Representation} % Thimm2019 survey
+    \begin{block}{From Knowledge Representation and Reasoning} % Thimm2019 survey
         Rather than binary inconsistency, assign numerical values reflecting conflict severity:
         \begin{itemize}
             \item Minimal inconsistent sets: Count conflicting formula groups % Hunter2008
             \item Distance-based measures: Minimal modifications for consistency % Grant2013, Grant2017
-            \item Hitting-set measures: Smallest interpretation sets % Thimm2016
+            \item Hitting-set measure: Smallest set of interpretations % Thimm2016
             \item Contension-based: Paraconsistent logic approaches % Grant2011, Thimm2016
         \end{itemize}
     \end{block}
 
-    \begin{exampleblock}{Success in Other Domains}
+    \begin{exampleblock}{Adaptations for Other Domains}
         \begin{itemize}
-            \item Temporal logic for process specifications % Corea2022
-            \item Constraint satisfaction problems % Condotta2024
+            \item Process specifications using temporal logic % Corea2022
+            \item Temporal constraint problems % Condotta2024
             \item Not yet systematically adapted to planning
         \end{itemize}
     \end{exampleblock}
 \end{frame}
 
-\begin{frame}{Why Answer Set Programming?}
+\begin{frame}{Answer Set Programming for Planning}
     \begin{block}{Technical Advantages}
         \begin{itemize}
             \item Declarative modeling of planning problems % Dimopoulos1997
-            \item Support for temporal and combinatorial constraints
+            \item Support for temporal and combinatorial constraints % Dimopoulos2019 % e.g., resource limits, scheduling
             \item \ac{ASP}-based algorithms outperform \ac{SAT}-based approaches % Kuhlmann2025
             \item Modern tools like plasp 3 provide efficient \ac{PDDL}-to-\ac{ASP} translation % Dimopoulos2019
         \end{itemize}
@@ -163,6 +163,7 @@ University of Hagen, Germany}
             \item \ac{ASP} inconsistency measures already exist % Ulbricht2016
             \item Monotonicity postulate fails in non-monotonic logics % Ulbricht2016
             \item Direct relevance to planning's frame problem and default assumptions
+                  % frame problem: determining what remains unchanged after actions
         \end{itemize}
     \end{block}
 \end{frame}
@@ -172,14 +173,12 @@ University of Hagen, Germany}
 \section{Research Approach}
 
 \begin{frame}{Adaptation Challenges}
-    \begin{block}{Adaptation Challenges}
-        \begin{itemize}
-            \item How to adapt minimal inconsistent sets to unsolvable planning tasks?
-            \item Which inconsistency postulates hold in non-monotonic planning contexts? % Ulbricht2016
-            \item How to handle frame problem and default assumptions about action effects?
-            \item What constitutes meaningful distance measures between planning instances?
-        \end{itemize}
-    \end{block}
+    \begin{itemize}
+        \item How to adapt minimal inconsistent sets to unsolvable planning tasks?
+        \item Which inconsistency postulates hold in non-monotonic planning contexts? % Ulbricht2016
+        \item How to handle frame problem and default assumptions about action effects?
+        \item What constitutes meaningful distance measures between planning instances?
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Central Research Question}
