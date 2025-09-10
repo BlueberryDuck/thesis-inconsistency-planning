@@ -19,7 +19,11 @@
 %=========================================================================================================================
 \title{MSc Thesis Proposal: \\Inconsistency Measurement for Classical Planning Problems}
 
-\InputIfFileExists{../meta.tex}{}{\newcommand{\authorname}{Erika Mustermann}\newcommand{\authname}{E. Mustermann}}
+% if meta.tex does not exist, use default values
+\InputIfFileExists{../meta.tex}{}{
+    \newcommand{\authorname}{Erika Mustermann}
+    \newcommand{\authname}{E. Mustermann}
+}
 \author[\authname]{\authorname}
 \institute{Artificial Intelligence Group,\\
 University of Hagen, Germany}

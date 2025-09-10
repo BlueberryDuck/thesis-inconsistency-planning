@@ -238,6 +238,12 @@
     \\
     \vspace{0.01cm}
     \noindent
+    \IfFileExists{../meta.tex}{
+        \myCity, \today
+        \hfill
+        \IfFileExists{figures/signature.png}{\includegraphics[width=6cm]{figures/signature.png}\\}
+        \noindent\makebox[\linewidth]{\dotfill}
+    }
     \dotfill\\
     \begin{small}
         \ifenglish%
