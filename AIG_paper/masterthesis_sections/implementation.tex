@@ -1,4 +1,32 @@
 \section{Implementation}
 \label{sec:implementation}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+This chapter presents the computational implementation of the adapted inconsistency measures using \ac{ASP}-based algorithms. The implementation focuses on translating the theoretical adaptations into efficient computational procedures that can handle real-world planning problems of varying complexity.
+
+\subsection{Computational Complexity Analysis}
+
+This section provides a detailed analysis of the computational complexity of the adapted inconsistency measures, examining their tractability and identifying which measures are suitable for \ac{ASP}-based implementation within the constraints of the second level of the polynomial hierarchy.
+
+\subsection{\ac{ASP}-Based Encoding Design}
+
+This section presents the \ac{ASP} encoding design for computing the adapted inconsistency measures. The section covers the translation of planning problems to \ac{ASP} representations, the encoding of inconsistency detection and quantification logic, and optimization techniques for efficient computation.
+
+\subsection{System Architecture and Components}
+
+This section describes the overall architecture of the prototype system, including the planning problem parser, the \ac{ASP} encoding generator, the solver interface, and the results interpretation component. The design emphasizes modularity and extensibility to support future measure implementations.
+
+\subsection{Planning Problem Parsing}
+
+This section details the implementation of parsing algorithms that handle standard planning problem formats, including \ac{STRIPS} representations and basic \ac{PDDL} constructs. The parser converts planning problems into internal representations suitable for \ac{ASP} encoding.
+
+\subsection{Integration with plasp 3}
+
+This section examines the integration with plasp 3~\cite{Dimopoulos2019} for \ac{PDDL}-to-\ac{ASP} translation, leveraging existing tools while extending them to support inconsistency measure computation and ensuring compatibility with the adapted measures.
+
+\subsection{Prototype Implementation Details}
+
+Complete implementation details for at least one adapted inconsistency measure are provided, including code structure, key algorithms, optimization strategies, and interface specifications. The prototype serves as a proof-of-concept for the computational feasibility of the approach.
+
+\subsection{Performance Considerations and Optimizations}
+
+This section discusses performance optimization techniques, including encoding optimizations, solver parameter tuning, and algorithmic improvements to enhance scalability and reduce computation time for larger planning problems.

@@ -1,4 +1,28 @@
 \section{Theoretical Adaptation}
 \label{sec:theoretical_adaptation}
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+This chapter presents the formal adaptation of selected inconsistency measures from knowledge representation and reasoning to classical planning domains. The adaptation process addresses the fundamental structural differences between propositional knowledge bases and planning problems, where conflicts arise not only from contradictory static constraints but also from temporal action sequences and unreachable goal combinations.
+
+\subsection{Adaptation Challenges and Requirements}
+
+This section analyzes the key challenges in adapting inconsistency measures to planning domains, including the temporal nature of planning, the role of actions and state transitions, and the need to preserve meaningful diagnostic properties while handling the unique characteristics of planning problems.
+
+\subsection{Adapted Minimal Inconsistent Set-Based Measures}
+
+This section develops adaptations of minimal inconsistent set-based measures~\cite{Hunter2008} to planning contexts, examining how minimal conflicting subsets of goals, actions, and constraints can be identified and quantified to provide diagnostic insights into planning failures.
+
+\subsection{Adapted Distance-Based Measures}
+
+This section presents the adaptation of distance-based measures~\cite{Grant2013,Grant2017} to planning problems, exploring how the concept of minimal modifications required to restore solvability can be formalized and computed in the planning domain.
+
+\subsection{Adapted Hitting-Set Measures}
+
+This section examines the adaptation of hitting-set measures~\cite{Thimm2016} to planning, investigating how the notion of interpretations satisfying formulas translates to the planning context and what diagnostic value such measures provide for unsolvable planning instances.
+
+\subsection{Postulate Analysis}
+
+This section analyzes which postulates from classical inconsistency measurement are preserved, modified, or violated in the planning adaptations, providing theoretical grounding for the validity and interpretation of the adapted measures.
+
+\subsection{Formal Definitions and Examples}
+
+Complete formal definitions of the adapted measures are provided, along with concrete examples demonstrating their application to representative unsolvable planning problems and illustrating their diagnostic capabilities.
