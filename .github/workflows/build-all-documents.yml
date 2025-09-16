@@ -1,6 +1,8 @@
 name: Build AIG Documents
 
 on:
+  push:
+    branches: [inconsistency-planning]
   workflow_dispatch:
     inputs:
       documents:
@@ -28,7 +30,7 @@ jobs:
       # Build main documents
 
       - name: Build Beamer Presentation
-        if: ${{ inputs.build_all || contains(inputs.documents, 'beamer') }}
+        if: ${{ github.event_name == 'push' || inputs.build_all || contains(inputs.documents, 'beamer') }}
         uses: xu-cheng/latex-action@v3
         with:
           root_file: aig_beamer.tex
@@ -44,7 +46,7 @@ jobs:
         continue-on-error: true
 
       - name: Build Master Thesis
-        if: ${{ inputs.build_all || contains(inputs.documents, 'masterthesis') }}
+        if: ${{ github.event_name == 'push' || inputs.build_all || contains(inputs.documents, 'masterthesis') }}
         uses: xu-cheng/latex-action@v3
         with:
           root_file: AIG_masterthesis.tex
@@ -52,7 +54,7 @@ jobs:
         continue-on-error: true
 
       - name: Build Proposal
-        if: ${{ inputs.build_all || contains(inputs.documents, 'proposal') }}
+        if: ${{ github.event_name == 'push' || inputs.build_all || contains(inputs.documents, 'proposal') }}
         uses: xu-cheng/latex-action@v3
         with:
           root_file: AIG_proposal.tex
