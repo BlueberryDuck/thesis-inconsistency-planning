@@ -133,21 +133,23 @@ University of Hagen, Germany}
 \end{frame}
 
 \begin{frame}{Inconsistency Measurement}
-    \begin{block}{From Knowledge Representation and Reasoning} % Thimm2019 survey
+    \begin{block}{From Propositional Logic} % Thimm2019 survey
         Rather than binary inconsistency, assign numerical values reflecting conflict severity:
         \begin{itemize}
             \item Minimal inconsistent sets: Count conflicting formula groups % Hunter2008
             \item Distance-based measures: Minimal modifications for consistency % Grant2013, Grant2017
             \item Hitting-set measure: Smallest set of interpretations % Thimm2016
-            \item Contension-based: Paraconsistent logic approaches % Grant2011, Thimm2016
+            \item Measures based on paraconsistent semantics % Grant2011, Thimm2016
         \end{itemize}
     \end{block}
 
     \begin{exampleblock}{Adaptations for Other Domains}
         \begin{itemize}
+            \item Database repairs
+            \item Non-monotonic reasoning
             \item Process specifications using temporal logic % Corea2022
             \item Temporal constraint problems % Condotta2024
-            \item Not yet systematically adapted to planning
+                  % Not yet systematically adapted to planning
         \end{itemize}
     \end{exampleblock}
 \end{frame}
@@ -179,21 +181,21 @@ University of Hagen, Germany}
 \begin{frame}{Adaptation Challenges}
     \begin{itemize}
         \item How to adapt minimal inconsistent sets to unsolvable planning tasks?
-        \item Which inconsistency postulates hold in non-monotonic planning contexts? % Ulbricht2016
+        \item Which rationality postulates for inconsistency measurement hold in non-monotonic planning contexts? % Ulbricht2016
         \item How to handle frame problem and default assumptions about action effects?
         \item What constitutes meaningful distance measures between planning instances?
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Central Research Question}
-    \Large How can inconsistency measures from knowledge representation and reasoning be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
+    \Large How can inconsistency measures from propositional logic be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
 \end{frame}
 
 \begin{frame}{Research Questions}
     \begin{block}{RQ1: Which measures can be adapted and what postulates do they retain?}
         \begin{itemize}
             \item Survey existing inconsistency measures
-            \item Analyze differences between KBs and planning
+            \item Analyze differences between propositional logic and planning
             \item Formal adaptation of 2-3 selected measures to \ac{STRIPS}
             \item Analyze postulate preservation in classical planning
             \item Formal definitions and examples
@@ -226,7 +228,7 @@ University of Hagen, Germany}
 \section*{Summary}
 
 \begin{frame}{Summary}
-    \begin{block}{Problem \& Solution}
+    \begin{block}{Problem and Solution}
         Planning systems provide limited diagnostics for unsolvable problems
         \begin{itemize}
             \item Approach: Adapt inconsistency measures to classical planning
