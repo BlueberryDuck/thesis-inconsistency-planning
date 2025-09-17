@@ -1,55 +1,122 @@
 \section{Foundations}
-\label{sec:foundations}
 
-This section establishes the theoretical foundations by examining inconsistency measurement techniques, classical planning formalisms, and existing work connecting the domains.
+This section establishes the theoretical foundations by developing formal definitions for knowledge bases and inconsistency measurement, followed by an examination of classical planning formalisms and their adaptation challenges.
 
-\subsection{Inconsistency Measurement in Knowledge Representation and Reasoning}
+\subsection{Mathematical Foundations of Inconsistency Measurement}
 
-Inconsistency measurement provides formal methods for quantifying the degree of inconsistency within logical knowledge bases. Rather than treating inconsistency as a binary property, these measures assign numerical values that reflect the severity or extent of conflicts, enabling comparative analysis and systematic approaches to conflict resolution~\cite{Thimm2019}. A multitude of measures have been introduced, each capturing different aspects of logical conflicts and providing users with tools to identify which parts of a knowledge base contribute most significantly to its inconsistency~\cite{Thimm2018}.
+Inconsistency measurement provides formal methods for quantifying the degree of inconsistency within logical knowledge bases. Rather than treating inconsistency as a binary property, these measures assign numerical values that reflect the severity or extent of conflicts, enabling comparative analysis and systematic approaches to conflict resolution~\cite{Thimm2019}.
 
-\subsubsection{Minimal Inconsistent and Maximal Consistent Sets}
-Minimal inconsistent and maximal consistent set-based measures focus on the structural properties of conflicts. These structural concepts enable systematic analysis of how individual formulas participate in conflicts.
+\subsubsection{Formal Definition of Knowledge Bases}
+
+The fundamental concept of a knowledge base in propositional logic is defined as follows.
+
+\begin{defn}
+    \label{defn:knowledge-base}
+    Let $\mathcal{L}$ be a propositional language over a finite alphabet $\Sigma$ of propositional atoms. A \emph{knowledge base} $K$ is a finite set of propositional formulas from $\mathcal{L}$, i.e., $K = \{\phi_1, \phi_2, \ldots, \phi_n\}$ where each $\phi_i \in \mathcal{L}$.
+\end{defn}
+
+A knowledge base $K$ is \emph{consistent} if there exists an interpretation $\mathcal{I}$ such that $\mathcal{I} \models \phi$ for every $\phi \in K$. Otherwise, $K$ is \emph{inconsistent}.
+
+The set of all interpretations of $\mathcal{L}$ is denoted as $\text{Mod}(\mathcal{L})$. The set of models of a formula set $K$ is defined as:
+\begin{equation*}
+    \text{Mod}(K) = \{\mathcal{I} \in \text{Mod}(\mathcal{L}) : \mathcal{I} \models \phi \text{ for all } \phi \in K\}
+\end{equation*}
+
+\subsubsection{Formal Definition of Inconsistency Measures}
+
+An inconsistency measure provides a systematic way to assign numerical values reflecting the degree of inconsistency.
+
+\begin{defn}
+    \label{defn:inconsistency-measure}
+    An \emph{inconsistency measure} is a function $I : \mathcal{K} \to \mathbb{R}_{\geq 0}$ that maps every knowledge base from a given class $\mathcal{K}$ to a non-negative real number, where $I(K) = 0$ if and only if $K$ is consistent.
+\end{defn}
+
+Inconsistency measures are typically required to satisfy certain rationality postulates that capture intuitive properties of inconsistency quantification~\cite{Hunter2008,Thimm2019}. However, these postulates may vary depending on the specific context or domain of application:
+
+\begin{enumerate}
+    \item \textbf{Consistency:} $I(K) = 0$ if and only if $K$ is consistent.
+    \item \textbf{Monotonicity:} If $K \subseteq K'$, then $I(K) \leq I(K')$.
+    \item \textbf{Dominance:} If $K \subseteq K'$ and $K'$ is inconsistent, then $I(K) < I(K')$.
+    \item \textbf{Free Formula Independence:} $I(K \cup \{\phi\}) = I(K)$ if $\phi$ is not involved in any inconsistency of $K \cup \{\phi\}$.
+\end{enumerate}
+
+\subsubsection{Formal Definition of Minimal Inconsistent and Maximal Consistent Sets}
+
+The structural approach to inconsistency measurement focuses on identifying specific subsets that characterize conflicts within knowledge bases.
 
 \begin{defn}
     \label{defn:mis}
-    A minimal inconsistent subset of a knowledge base $K$ is a subset $M \subseteq K$ such that $M$ is inconsistent and for every $M' \subset M$, the set $M'$ is consistent.
+    A \emph{\ac{MIS}} of a knowledge base $K$ is a subset $M \subseteq K$ such that:
+    \begin{enumerate}
+        \item $M$ is inconsistent (i.e., $\text{Mod}(M) = \emptyset$), and
+        \item For every proper subset $M' \subset M$, the set $M'$ is consistent (i.e., $\text{Mod}(M') \neq \emptyset$).
+    \end{enumerate}
+    The set of all \ac{MIS}s of $K$ is denoted as $\text{MIS}(K)$.
 \end{defn}
 
 \begin{defn}
     \label{defn:mcs}
-    A maximal consistent subset of a knowledge base $K$ is a subset $C \subseteq K$ such that $C$ is consistent and for every $\phi \in K \setminus C$, the set $C \cup \{\phi\}$ is inconsistent.
+    A \emph{\ac{MCS}} of a knowledge base $K$ is a subset $C \subseteq K$ such that:
+    \begin{enumerate}
+        \item $C$ is consistent (i.e., $\text{Mod}(C) \neq \emptyset$), and
+        \item For every $\phi \in K \setminus C$, the set $C \cup \{\phi\}$ is inconsistent (i.e., $\text{Mod}(C \cup \{\phi\}) = \emptyset$).
+    \end{enumerate}
+    The set of all \ac{MCS}s of $K$ is denoted as $\text{MCS}(K)$.
 \end{defn}
 
-These structural concepts give rise to quantitative inconsistency measures:
+These structural concepts give rise to quantitative inconsistency measures that count or analyze these sets:
 
 \begin{defn}
     \label{defn:imi}
-    The MI-based inconsistency value of a knowledge base $K$ is defined as:
+    The \emph{\ac{MIS}-based inconsistency measure} of a knowledge base $K$ is defined as:
     \begin{equation*}
-        I_{\text{MI}}(K) = |\text{MI}(K)|
+        I_{\text{MIS}}(K) = |\text{MIS}(K)|
     \end{equation*}
-    where $\text{MI}(K)$ denotes the set of all minimal inconsistent subsets of $K$.
+    This measure counts the total number of minimal inconsistent subsets in $K$.
 \end{defn}
 
 \begin{defn}
     \label{defn:imc}
-    The MC-based inconsistency value of a knowledge base $K$ is defined as:
+    The \emph{\ac{MCS}-based inconsistency measure} of a knowledge base $K$ is defined as:
     \begin{equation*}
-        I_{\text{MC}}(K) = \min\{|K \setminus C| : C \in \text{MC}(K)\}
+        I_{\text{MCS}}(K) = \min\{|K \setminus C| : C \in \text{MCS}(K)\}
     \end{equation*}
-    where $\text{MC}(K)$ denotes the set of all maximal consistent subsets of $K$.
+    This measure quantifies the minimum number of formulas that must be removed to restore consistency.
 \end{defn}
 
-\subsubsection{Other Inconsistency Measures}
-Distance-based measures treat inconsistency as the distance from consistency, employing concepts such as Dalal distance to quantify the minimal modifications required to restore consistency~\cite{Grant2013,Grant2017}. The hitting-set measure seeks the smallest set of interpretations such that each formula is satisfied by at least one interpretation~\cite{Thimm2016}. The contension-based measure employs paraconsistent or many-valued logics, building on Priest's logic of paradox~\cite{Priest1979} which introduces a third truth value $B$ for ``both true and false'', counting the minimal number of atoms that must be assigned this value to render the knowledge base consistent under paraconsistent semantics~\cite{Grant2011,Thimm2016}. Forgetting-based measures analyze atom occurrences in inconsistent formulas, using variants of forgetting operations to quantify the effort required to restore consistency~\cite{Besnard2016}.
+\subsubsection{Additional Inconsistency Measures}
 
-\subsubsection{Adaptations to Other Domains}
-While originally developed for logical knowledge bases, inconsistency measurement techniques have also been adapted to other domains, providing important precedents for domain-specific adaptations. Notably, \cite{Corea2022} has developed inconsistency measures for temporal logic applied to process specifications, where traditional measures cannot adequately handle temporal operators or distinguish conflicts that affect different numbers of future states.
+Beyond structural measures, several other approaches to inconsistency quantification have been developed, each capturing different aspects of logical conflicts.
 
-More significantly for this work, \cite{Condotta2024} has introduced a comprehensive framework for measuring inconsistency in \ac{DTP}s, successfully adapting classical measures to temporal constraint reasoning. Their framework includes five distinct measures: $I_{\text{MC}}(D) = \min\{|C'| : C' \subseteq C, (V, C \setminus C') \in \text{MC}(D)\}$ quantifies the minimum number of constraints that must be removed to restore consistency; $I_{\text{MI}}(D) = |\text{MI}(D)|$ counts the total number of minimal inconsistent subsets; $I_p(D) = |C \setminus \text{Free}(D)|$ calculates the number of constraints participating in conflicts; and two novel temporal-specific measures $I_\omega(D)$ and $I_\theta(D)$ based on local constraint relaxation. This temporal adaptation demonstrates that MI-based and MC-based measures can be successfully extended beyond propositional logic to domains involving temporal reasoning, establishing important theoretical precedent for adaptation to planning domains.
+\textbf{Distance-based measures} treat inconsistency as the distance from consistency, employing concepts such as Dalal distance to quantify the minimal modifications required to restore consistency~\cite{Grant2013,Grant2017}. For a knowledge base $K$, the Dalal distance measure is defined as $I_{d}(K) = \min\{d(\mathcal{I}, \text{Mod}(K)) : \mathcal{I} \in \text{Mod}(\mathcal{L})\}$ where $d$ measures the minimal number of atom value changes needed to reach a model.
 
-\subsubsection{Computational Approaches}
-Planning applications require computational efficiency and compatibility with non-monotonic reasoning systems. Experimental comparisons demonstrate that \ac{ASP}-based algorithms often outperform \ac{SAT}-based approaches for computing inconsistency measures~\cite{Kuhlmann2025}, making \ac{ASP} a promising foundation for planning applications. The theoretical groundwork for \ac{ASP}-based planning was established by~\cite{Dimopoulos1997}, with modern tools like plasp 3~\cite{Dimopoulos2019} providing efficient translations from \ac{PDDL} to \ac{ASP}. Importantly, inconsistency measures for \ac{ASP} have been developed~\cite{Ulbricht2016}, with the crucial observation that the monotonicity postulate does not hold in non-monotonic logics, a consideration directly relevant for planning domains with their frame problem and default assumptions about action effects.
+The \textbf{hitting-set measure} seeks the smallest set of interpretations such that each formula is satisfied by at least one interpretation~\cite{Thimm2016}. The hitting-set inconsistency measure is defined as $I_{hs}(K) = \min\{|H| : H \subseteq \text{Mod}(\mathcal{L}) \text{ and } \forall \phi \in K \exists \mathcal{I} \in H : \mathcal{I} \models \phi\}$.
+
+The \textbf{contention-based measure} employs paraconsistent or many-valued logics, building on Priest's logic of paradox~\cite{Priest1979} which introduces a third truth value $B$ for ``both true and false''. These measures count the minimal number of atoms that must be assigned the value $B$ to render the knowledge base consistent under paraconsistent semantics~\cite{Grant2011,Thimm2016}.
+
+\subsubsection{Domain Adaptations}
+
+While originally developed for propositional knowledge bases, inconsistency measurement techniques have been successfully adapted to other logical domains, establishing important precedents for domain-specific adaptations.
+
+\textbf{Temporal Logic Adaptations:} \cite{Corea2022} developed inconsistency measures for temporal logic applied to process specifications, where traditional measures cannot adequately handle temporal operators or distinguish conflicts affecting different numbers of future states.
+
+\textbf{Temporal Constraint Networks:} Most significantly for this work, \cite{Condotta2024} introduced a comprehensive framework for measuring inconsistency in \ac{DTP}s, successfully adapting classical measures to temporal constraint reasoning. Their framework includes:
+\begin{itemize}
+    \item $I_{\text{MCS}}(D) = \min\{|C'| : C' \subseteq C, (V, C \setminus C') \in \text{MCS}(D)\}$ -- minimum constraints to remove
+    \item $I_{\text{MIS}}(D) = |\text{MIS}(D)|$ -- count of minimal inconsistent constraint sets
+    \item $I_p(D) = |C \setminus \text{Free}(D)|$ -- number of constraints participating in conflicts
+    \item Novel temporal-specific measures $I_\omega(D)$ and $I_\theta(D)$ based on local constraint relaxation
+\end{itemize}
+
+This temporal adaptation demonstrates that \ac{MIS}-based and \ac{MCS}-based measures can be successfully extended beyond propositional logic to domains involving temporal reasoning, establishing crucial theoretical precedent for adaptation to planning domains.
+
+\subsubsection{Computational Approaches and Non-Monotonic Considerations}
+
+Planning applications require computational efficiency and compatibility with non-monotonic reasoning systems. Experimental comparisons demonstrate that \ac{ASP}-based algorithms often outperform \ac{SAT}-based approaches for computing inconsistency measures~\cite{Kuhlmann2025}, making \ac{ASP} a promising foundation for planning applications.
+
+The theoretical groundwork for \ac{ASP}-based planning was established by~\cite{Dimopoulos1997}, with modern tools like plasp 3~\cite{Dimopoulos2019} providing efficient translations from \ac{PDDL} to \ac{ASP}. Importantly, inconsistency measures for \ac{ASP} have been developed~\cite{Ulbricht2016}, with the crucial observation that the \emph{monotonicity postulate} does not hold in non-monotonic logics.
+
+This non-monotonic behavior is directly relevant for planning domains: adding information (such as additional actions or initial state facts) can actually reduce inconsistency by enabling new solution paths. This violates the classical monotonicity postulate and requires careful consideration when adapting inconsistency measures to planning contexts.
 
 \subsection{Classical Planning}
 
@@ -85,4 +152,4 @@ The fundamental challenge lies in the temporal and causal nature of planning. In
 
 Furthermore, planning domains involve the frame problem, where unmentioned fluents are assumed to persist unchanged unless explicitly affected by actions. This introduces default assumptions that complicate the direct application of traditional inconsistency measures, which assume explicit representation of all relevant information. The closed-world assumption in planning domains means that conflicts may arise from the absence of enabling conditions rather than the presence of contradictory assertions.
 
-The adaptation of MI-based measures to planning must therefore address how to define minimal inconsistent subsets in the context of action sequences, state transitions, and goal reachability. Unlike temporal constraint problems where constraints operate on continuous variables with explicit temporal intervals, planning involves discrete state transitions governed by preconditions and effects, requiring a fundamentally different approach to identifying and quantifying inconsistencies.
+The adaptation of \ac{MIS}-based measures to planning must therefore address how to define minimal inconsistent subsets in the context of action sequences, state transitions, and goal reachability. Unlike temporal constraint problems where constraints operate on continuous variables with explicit temporal intervals, planning involves discrete state transitions governed by preconditions and effects, requiring a fundamentally different approach to identifying and quantifying inconsistencies.
