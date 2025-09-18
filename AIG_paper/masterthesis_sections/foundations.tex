@@ -11,13 +11,10 @@ Inconsistency measurement provides formal methods for quantifying the degree of 
 The fundamental concept of a knowledge base in propositional logic is defined as follows.
 
 \begin{defn}
-    \label{defn:knowledge-base}
     Let $\mathcal{L}$ be a propositional language over a finite alphabet $\Sigma$ of propositional atoms. A \emph{knowledge base} $K$ is a finite set of propositional formulas from $\mathcal{L}$, i.e., $K = \{\phi_1, \phi_2, \ldots, \phi_n\}$ where each $\phi_i \in \mathcal{L}$.
 \end{defn}
 
-A knowledge base $K$ is \emph{consistent} if there exists an interpretation $\mathcal{I}$ such that $\mathcal{I} \models \phi$ for every $\phi \in K$. Otherwise, $K$ is \emph{inconsistent}.
-
-The set of all interpretations of $\mathcal{L}$ is denoted as $\text{Mod}(\mathcal{L})$. The set of models of a formula set $K$ is defined as:
+A knowledge base $K$ is \emph{consistent} if there exists an interpretation $\mathcal{I}$ such that $\mathcal{I} \models \phi$ for every $\phi \in K$. Otherwise, $K$ is \emph{inconsistent}. The set of all interpretations of $\mathcal{L}$ is denoted as $\text{Mod}(\mathcal{L})$. The set of models of a formula set $K$ is defined as:
 \begin{equation*}
     \text{Mod}(K) = \{\mathcal{I} \in \text{Mod}(\mathcal{L}) : \mathcal{I} \models \phi \text{ for all } \phi \in K\}
 \end{equation*}
@@ -27,7 +24,6 @@ The set of all interpretations of $\mathcal{L}$ is denoted as $\text{Mod}(\mathc
 An inconsistency measure provides a systematic way to assign numerical values reflecting the degree of inconsistency.
 
 \begin{defn}
-    \label{defn:inconsistency-measure}
     An \emph{inconsistency measure} is a function $I : \mathcal{K} \to \mathbb{R}_{\geq 0}$ that maps every knowledge base from a given class $\mathcal{K}$ to a non-negative real number, where $I(K) = 0$ if and only if $K$ is consistent.
 \end{defn}
 
@@ -42,33 +38,32 @@ Inconsistency measures are typically required to satisfy certain rationality pos
 
 \subsubsection{Formal Definition of Minimal Inconsistent and Maximal Consistent Sets}
 
-The structural approach to inconsistency measurement focuses on identifying specific subsets that characterize conflicts within knowledge bases.
+The syntactic approach to inconsistency measurement focuses on identifying specific subsets that characterize conflicts within knowledge bases.
 
 \begin{defn}
-    \label{defn:mis}
     A \emph{\ac{MIS}} of a knowledge base $K$ is a subset $M \subseteq K$ such that:
     \begin{enumerate}
         \item $M$ is inconsistent (i.e., $\text{Mod}(M) = \emptyset$), and
         \item For every proper subset $M' \subset M$, the set $M'$ is consistent (i.e., $\text{Mod}(M') \neq \emptyset$).
     \end{enumerate}
+    Intuitively, a \ac{MIS} represents a smallest conflicting set of formulas where removing any single formula would eliminate the conflict.
     The set of all \ac{MIS}s of $K$ is denoted as $\text{MIS}(K)$.
 \end{defn}
 
 \begin{defn}
-    \label{defn:mcs}
     A \emph{\ac{MCS}} of a knowledge base $K$ is a subset $C \subseteq K$ such that:
     \begin{enumerate}
         \item $C$ is consistent (i.e., $\text{Mod}(C) \neq \emptyset$), and
         \item For every $\phi \in K \setminus C$, the set $C \cup \{\phi\}$ is inconsistent (i.e., $\text{Mod}(C \cup \{\phi\}) = \emptyset$).
     \end{enumerate}
+    Intuitively, a \ac{MCS} represents a largest consistent subset that cannot be extended with any remaining formula without introducing a conflict.
     The set of all \ac{MCS}s of $K$ is denoted as $\text{MCS}(K)$.
 \end{defn}
 
-These structural concepts give rise to quantitative inconsistency measures that count or analyze these sets:
+These syntactic concepts give rise to quantitative inconsistency measures that count or analyze these sets:
 
 \begin{defn}
-    \label{defn:imi}
-    The \emph{\ac{MIS}-based inconsistency measure} of a knowledge base $K$ is defined as:
+    The inconsistency measure $I_{\text{MIS}}$ of a knowledge base $K$ is defined as:
     \begin{equation*}
         I_{\text{MIS}}(K) = |\text{MIS}(K)|
     \end{equation*}
@@ -76,8 +71,7 @@ These structural concepts give rise to quantitative inconsistency measures that 
 \end{defn}
 
 \begin{defn}
-    \label{defn:imc}
-    The \emph{\ac{MCS}-based inconsistency measure} of a knowledge base $K$ is defined as:
+    The inconsistency measure $I_{\text{MCS}}$ of a knowledge base $K$ is defined as:
     \begin{equation*}
         I_{\text{MCS}}(K) = \min\{|K \setminus C| : C \in \text{MCS}(K)\}
     \end{equation*}

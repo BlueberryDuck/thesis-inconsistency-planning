@@ -11,11 +11,11 @@ However, while these approaches have been primarily applied to logical knowledge
 
 This research aims to bridge inconsistency measurement and planning by exploring how techniques from propositional logic can be adapted to quantify the degree of inconsistency in unsolvable planning instances. The thesis develops quantitative diagnostics that characterize which goals or constraints drive a task's unsolvability. The approach focuses on \ac{ASP}-based algorithms~\cite{Ulbricht2016}, which are well-suited for this task due to their declarative modeling capabilities and support for temporal and combinatorial constraints~\cite{Dimopoulos1997,Dimopoulos2019}. Recent work demonstrates that \ac{ASP}-based approaches generally outperform \ac{SAT}-based methods for computing inconsistency measures~\cite{Kuhlmann2025}, supporting the choice of \ac{ASP} for this domain adaptation. If successful, such quantitative measures could provide systematic approaches to analyzing and fixing planning problems, filling a critical gap in current planning methodology.
 
-\section{Problem Statement}
+\subsection{Problem Statement}
 
 Current planning systems provide minimal diagnostic information when encountering unsolvable problems. Users lack insight into why problems are unsolvable and have no systematic way to analyze the structure of unsolvable instances. This makes it difficult to identify minimal changes that could restore solvability, as different types of unsolvable planning problems are not distinguished or quantified. The lack of quantitative diagnostic capabilities forces users into trial-and-error processes, significantly limiting the practical applicability of automated planning in complex real-world scenarios.
 
-\section{Research Questions and Objectives}
+\subsection{Research Questions and Objectives}
 
 The central research question of this thesis is:
 
@@ -25,7 +25,7 @@ The central research question of this thesis is:
 
 This central question is addressed through the following research questions and their corresponding objectives:
 
-\subsection{Research Question 1: Theoretical Adaptation}
+\subsubsection{Research Question 1: Theoretical Adaptation}
 
 \begin{quote}
     Which inconsistency measures from propositional logic can be adapted to classical planning, and what postulates do they retain?
@@ -39,7 +39,7 @@ This central question is addressed through the following research questions and 
     \item[(1e)] Provide formal definitions and examples of the adapted measures.
 \end{enumerate}
 
-\subsection{Research Question 2: Computational Implementation}
+\subsubsection{Research Question 2: Computational Implementation}
 
 \begin{quote}
     How can the adapted measures be efficiently computed for planning problems using Answer Set Programming?
@@ -52,7 +52,7 @@ This central question is addressed through the following research questions and 
     \item[(2d)] Implement a prototype system for at least one measure that can parse planning problems and compute the adapted measures.
 \end{enumerate}
 
-\subsection{Research Question 3: Practical Evaluation}
+\subsubsection{Research Question 3: Practical Evaluation}
 
 \begin{quote}
     Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
