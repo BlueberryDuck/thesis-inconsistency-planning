@@ -1,0 +1,44 @@
+Corea2024
+
+2. Preliminaries
+
+\begin{quotation}
+    The traditional setting for inconsistency measurement is that of propositional logic. For that, let $\text{At}$ be some fixed propositional signature, i. e., a (possibly infinite) set of propositions, and let $\mathcal{L}(\text{At})$ be the corresponding propositional language constructed using the usual connectives $\land$ (conjunction), $\lor$ (disjunction), and $\neg$ (negation). A literal is a proposition $p$ or negated proposition $\neg p$.
+
+    \begin{defn}
+        A knowledge base $\mathcal{K}$ is a finite set of formulas $\mathcal{K} \subset \mathcal{L}(\text{At})$. Let $\mathbb{K}$ be the set of all knowledge bases.
+    \end{defn}
+
+    For a set of formulas $X$ we denote the set of propsitions in $X$ by $\text{At}(X)$. The semantics for a propositional language is given by interpretations where an interpretation $\omega$ on $\text{At}$ is a function $\omega : \text{At} \rightarrow \{0, 1\}$ (where $0$ stands for false and $1$ stands for true). Let $\Omega(\text{At})$ denote the set of all interpretations for $\text{At}$. An interpretation $\omega$ satisfies (or is a model of) an atom $a \in \text{At}$, denoted by $\omega \models a$, if and only if $\omega(a) = 1$. The satisfaction relation $\models$ is extended to formulas in the usual way. For $\phi \in \mathcal{L}(\text{At})$ we also define $\omega \models \top$ if and only if $\omega \models \phi$ for every $\phi$. Furthermore, for every set of formulas $X$, the set of models is $\text{Mod}(X) = \{\omega \in \Omega(\text{At}) \mid \omega \models X\}$. Define $X \models Y$ for (sets of) formulas $X$ and $Y$ if $\omega \models X$ implies $\omega \models Y$ for all $\omega$.
+
+    Let $\top$ denote any tautology and $\bot$ any contradiction. If $\text{Mod}(X) = \emptyset$ we write $X \models \bot$ and say that $X$ is inconsistent.
+\end{quotation}
+
+2.1 Inconsistency Measurement
+\begin{quotation}
+    Inconsistency as defined above is a binary concept. To provide more fine-grained insights on inconsistency beyond such a binary classification, the field of inconsistency measurement \cite{Thimm2019} has evolved. The main objects of study in this field are inconsistency measures, which are quantitative measures that assess the degree of inconsistency for a knowledge base $\mathcal{K}$ with a non-negative numerical value. Intuitively, a higher value reflects a higher degree, or severity, of inconsistency. This can be useful for determining if one set of formulas is ``more'' inconsistent than another. Let $\mathbb{R}_{\geq 0}^\infty$ be the set of non-negative real values including $\infty$. Then, an inconsistency measure is defined as follows.
+
+    \begin{defn}
+        An inconsistency measure $\mathcal{I}$ is any function $\mathcal{I} : \mathbb{K} \rightarrow \mathbb{R}_{\geq 0}^\infty$.
+    \end{defn}
+
+    To contrain the desired behavior of concrete inconsistency measures, several properties, called rationality postulates, have been proposed. A well-agreed upon property is that of consistency, which states that an inconsistency measure should return a value of 0 if and only if there is no inconsistency.
+
+    \begin{description}
+        \item[Consistency (CO)] $\mathcal{I}(\mathcal{K}) = 0$ if and only if $\mathcal{K}$ is consistent.
+    \end{description}
+
+    In the following, we consider only inconsistency measures that satisfy CO. But even CO, by itself, is too weak to characterize functions that intuitively measure inconsistency. Further important postulates introduced in \cite{Hunter2006} are monotony, dominance and free-formula independence, which we will define below. For that, we need some further notation.
+
+    First, a set $M \subseteq \mathcal{K}$ is called a \ac{MIS} of $\mathcal{K}$ if $M \models \bot$ and there is no $M' \subset M$ with $M' \models \bot$. Let $\text{MI}(\mathcal{K})$ be the set of all \ac{MIS}s of $\mathcal{K}$. Second, a formula $\alpha \in \mathcal{K}$ is called a free formula if $\alpha \notin \bigcup \text{MI}(\mathcal{K})$. Let $\text{Free}(\mathcal{K})$ denote the set of all free formulas of $\mathcal{K}$. Similarly, we call $\alpha \in \mathcal{K}$ problematic if $\alpha \in \bigcup \text{MI}(\mathcal{K})$, and denote $\text{Problematic}(\mathcal{K})$ as the set of all problematic formulas. For example, if $\mathcal{K} = \{a, b, \neg b, c, \neg c, d \lor e\}$, then $\text{MI}(\mathcal{K}) = \{\{b, \neg b\}, \{c, \neg c\}\}$, $\text{Free}(\mathcal{K}) = \{a, d \lor e\}$, and $\text{Problematic}(\mathcal{K}) = \{b, \neg b, c, \neg c\}$.
+
+    For the remainder of this section, let $\mathcal{I}$ be an inconsistency measure, $\mathcal{K}, \mathcal{K}' \in \mathbb{K}$, and $\alpha, \beta \in \mathcal{L}(\text{At})$. Then, the basic postulates from \cite{Hunter2006} are defined as follows.
+
+    \begin{description}
+        \item[Monotony (MO)] If $\mathcal{K} \subset \mathcal{K}'$ then $\mathcal{I}(\mathcal{K}) \leq \mathcal{I}(\mathcal{K}')$.
+        \item[Free-formula independence (IN)] If $\alpha \in \text{Free}(\mathcal{K})$ then $\mathcal{I}(\mathcal{K}) = \mathcal{I}(\mathcal{K} \setminus \{\alpha\})$.
+        \item[Dominance (DO)] If $\alpha \not\models \bot$ and $\alpha \models \beta$ then $\mathcal{I}(\mathcal{K} \cup \{\alpha\}) \geq \mathcal{I}(\mathcal{K} \cup \{\beta\})$.
+    \end{description}
+
+    MO states that adding formulas to the knowledge base cannot decrease the inconsistency value. IN means that removing free formulas from the knowledge base does not change the inconsistency value. DO consists of several cases, depending on the presence or absence of $\alpha$ or $\beta$ in $\mathcal{K}$: the idea is that substituting a consistent formula $\alpha$ by a weaker formula cannot increase the inconsistency.
+\end{quotation}
