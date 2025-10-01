@@ -96,22 +96,20 @@ University of Hagen, Germany}
     \begin{block}{Planning Problem Definition} % Russell2016, Bylander1994
         A planning problem $\langle P, O, I, G \rangle$ where:
         \begin{itemize}
-            \item $P$: finite set of atomic propositions
-            \item $O$: finite set of operators (actions)
-            \item $I \subseteq P$: initial state
-            \item $G \subseteq P$: goal state
+            \item $P$: finite set of atomic propositions % facts/predicates (e.g., at(robot, room1), holding(block))
+            \item $O$: finite set of operators (actions) % available actions (e.g., move, pickup, putdown)
+            \item $I \subseteq P$: initial state % what's true at start
+            \item $G \subseteq P$: goal state % what must be true at end
         \end{itemize}
     \end{block}
 
-    \begin{block}{When Problems Become Unsolvable}
+    \begin{block}{Key Challenge}
+        Determining solvability is PSPACE-complete % Bylander1994
         \begin{itemize}
-            \item Goals that are mutually exclusive
-            \item Required resources that are unavailable
-            \item Action sequences leading to dead-end states
+            \item Exponential time and space complexity in worst case
+            \item Makes debugging unsolvable problems computationally hard
         \end{itemize}
     \end{block}
-
-    Key Challenge: Determining solvability can become exponentially complex % Bylander1994
 \end{frame}
 
 \begin{frame}{Taxonomy of Planning Inconsistencies}
@@ -128,18 +126,18 @@ University of Hagen, Germany}
     \end{block}
 
     \begin{block}{Thesis Focus}
-        Task-level inconsistency: Quantifying the degree of unsolvability in planning problems where no solution exists
+        Task-level inconsistency: Quantifying the degree of inconsistency in planning problems where no solution exists
     \end{block}
 \end{frame}
 
 \begin{frame}{Inconsistency Measurement}
     \begin{block}{From Propositional Logic} % Thimm2019 survey
-        Rather than binary inconsistency, assign numerical values reflecting conflict severity:
+        Rather than treating inconsistency as binary, assign numerical values that reflect severity or extent of conflicts:
         \begin{itemize}
-            \item Minimal inconsistent sets: Count conflicting formula groups % Hunter2008
+            \item Minimal inconsistent and maximal consistent set-based measures % "Shapely" Hunter2008
             \item Distance-based measures: Minimal modifications for consistency % Grant2013, Grant2017
             \item Hitting-set measure: Smallest set of interpretations % Thimm2016
-            \item Measures based on paraconsistent semantics % Grant2011, Thimm2016
+            \item Contension-based measure: Paraconsistent semantics % Grant2011, Thimm2016
         \end{itemize}
     \end{block}
 
@@ -148,7 +146,6 @@ University of Hagen, Germany}
             \item Database repairs
             \item Non-monotonic reasoning
             \item Process specifications using temporal logic % Corea2022
-            \item Temporal constraint problems % Condotta2024
                   % Not yet systematically adapted to planning
         \end{itemize}
     \end{exampleblock}
@@ -160,15 +157,16 @@ University of Hagen, Germany}
             \item Declarative modeling of planning problems % Dimopoulos1997
             \item Support for temporal and combinatorial constraints % Dimopoulos2019 % e.g., resource limits, scheduling
             \item \ac{ASP}-based algorithms outperform \ac{SAT}-based approaches % Kuhlmann2025
-            \item Modern tools like plasp 3 provide efficient \ac{PDDL}-to-\ac{ASP} translation % Dimopoulos2019
+            \item Tools like plasp 3 provide \ac{PDDL}-to-\ac{ASP} translation % Dimopoulos2019
         \end{itemize}
     \end{block}
 
-    \begin{block}{Planning-Specific Advantages}
+    \begin{block}{Why \ac{ASP} for Inconsistency Measurement in Planning?}
         \begin{itemize}
-            \item \ac{ASP} inconsistency measures already exist % Ulbricht2016
-            \item Monotonicity postulate fails in non-monotonic logics % Ulbricht2016
-            \item Direct relevance to planning's frame problem and default assumptions
+            \item Existing \ac{ASP} inconsistency measures provide adaptation foundation % Ulbricht2016
+            \item \ac{ASP}'s non-monotonic semantics match planning's reasoning requirements % Ulbricht2016
+                  % monotonicity postulate fails in non-monotonic logics
+            \item Natural handling of frame problem and default assumptions
                   % frame problem: determining what remains unchanged after actions
         \end{itemize}
     \end{block}
@@ -205,6 +203,10 @@ University of Hagen, Germany}
 
 \begin{frame}{Research Questions}
     \begin{block}{RQ2: How can adapted measures be efficiently computed using \ac{ASP}?}
+        % If asked to specify: (1) complexity analysis ensures tractability,
+        % (2) ASP encoding = declarative rules computing the measure,
+        % (3) practical implementation = PDDL/STRIPS input -> ASP translation -> measure computation,
+        % (4) ASP chosen for non-monotonic semantics + existing inconsistency measures + performance
         \begin{itemize}
             \item Complexity analysis for \ac{ASP} compatibility
             \item Design \ac{ASP}-based encoding for at least one measure
@@ -243,6 +245,26 @@ University of Hagen, Germany}
             \item RQ3: Do adapted measures provide practical diagnostic value?
         \end{itemize}
     \end{block}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Summary}
+    \begin{block}{Problem and Solution}
+        Planning systems provide limited diagnostics for unsolvable problems
+        \begin{itemize}
+            \item Approach: Adapt inconsistency measures to classical planning
+            \item Method: \ac{ASP}-based implementation
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Research Questions}
+        \begin{itemize}
+            \item RQ1: Which measures can be adapted and what postulates do they retain?
+            \item RQ2: How can adapted measures be efficiently computed using \ac{ASP}?
+            \item RQ3: Do adapted measures provide practical diagnostic value?
+        \end{itemize}
+    \end{block}
+
+    \hfill Thank you!
 \end{frame}
 
 \end{document}
