@@ -59,33 +59,16 @@ University of Hagen, Germany}
             \item Same package must be processed in Los Angeles at the same time
             \item System reports: \yellowhighlight{``Unsolvable''}
         \end{itemize}
+        \textbf{Question}: Which constraint is causing the conflict?
     \end{exampleblock}
 
-    \begin{alertblock}{Problem}
+    \begin{alertblock}{The Diagnostic Gap}
         \begin{itemize}
             \item Planning systems excel when solutions exist
             \item But provide minimal diagnostic information when problems are unsolvable % Eriksson2018, Sreedharan2019
-            \item Users are left with intuition and trial-and-error debugging % Goebelbecker2010, Sreedharan2019
+            \item No quantitative analysis of \textit{why} or \textit{where} conflicts occur % Goebelbecker2010, Sreedharan2019
         \end{itemize}
     \end{alertblock}
-\end{frame}
-
-\begin{frame}{Current Limitations}
-    \begin{block}{What Planners Tell Us}
-        \begin{itemize}
-            \item Binary diagnosis: ``Solvable'' or ``Unsolvable''
-            \item No explanation of why the problem failed
-            \item No guidance on which constraints are problematic
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{What We Need}
-        \begin{itemize}
-            \item Quantitative measures of inconsistency % contension based (number of inconsistent states)
-            \item Identification of problematic constraints % element based (identify problematic actions/goals)
-            \item Systematic approaches to problem repair
-        \end{itemize}
-    \end{block}
 \end{frame}
 
 %=========================================================================================================================
@@ -93,13 +76,13 @@ University of Hagen, Germany}
 \section{Technical Foundations}
 
 \begin{frame}{Classical Planning}
-    \begin{block}{Planning Problem Definition} % Russell2016, Bylander1994
-        A planning problem $\langle P, O, I, G \rangle$ where:
+    \begin{block}{Planning Problem} % Russell2016, Bylander1994
+        A planning problem consists of:
         \begin{itemize}
-            \item $P$: finite set of atomic propositions % facts/predicates (e.g., at(robot, room1), holding(block))
-            \item $O$: finite set of operators (actions) % available actions (e.g., move, pickup, putdown)
-            \item $I \subseteq P$: initial state % what's true at start
-            \item $G \subseteq P$: goal state % what must be true at end
+            \item Facts: What can be true about the world % e.g., at(robot, room1), holding(block)
+            \item Actions: Available operations % e.g., move, pickup, putdown
+            \item Initial state: What's true at the start
+            \item Goal: What must be achieved
         \end{itemize}
     \end{block}
 
@@ -132,12 +115,12 @@ University of Hagen, Germany}
 
 \begin{frame}{Inconsistency Measurement}
     \begin{block}{From Propositional Logic} % Thimm2019 survey
-        Rather than treating inconsistency as binary, assign numerical values that reflect severity or extent of conflicts:
+        Rather than treating inconsistency as binary, assign numerical values that reflect severity of conflicts:
         \begin{itemize}
             \item Minimal inconsistent and maximal consistent set-based measures % "Shapely" Hunter2008
-            \item Distance-based measures: Minimal modifications for consistency % Grant2013, Grant2017
-            \item Hitting-set measure: Smallest set of interpretations % Thimm2016
-            \item Contension-based measure: Paraconsistent semantics % Grant2011, Thimm2016
+            \item Distance-based measures % Grant2013, Grant2017
+            \item Hitting-set measure % Thimm2016
+            \item Contension-based measure % Grant2011, Thimm2016
         \end{itemize}
     \end{block}
 
@@ -151,39 +134,25 @@ University of Hagen, Germany}
     \end{exampleblock}
 \end{frame}
 
-\begin{frame}{Answer Set Programming for Planning}
-    \begin{block}{Technical Advantages}
+\begin{frame}{Answer Set Programming}
+    \begin{block}{\ac{ASP} for Inconsistency Measurement in Planning}
         \begin{itemize}
-            \item Declarative modeling of planning problems % Dimopoulos1997
-            \item Support for temporal and combinatorial constraints % Dimopoulos2019 % e.g., resource limits, scheduling
-            \item \ac{ASP}-based algorithms outperform \ac{SAT}-based approaches % Kuhlmann2025
-            \item Tools like plasp 3 provide \ac{PDDL}-to-\ac{ASP} translation % Dimopoulos2019
+            \item Existing \ac{ASP} inconsistency measures provide adaptation foundation % Ulbricht2016
+            \item \ac{ASP} algorithms outperform \ac{SAT} for computing inconsistency measures % Kuhlmann2025
+            \item Non-monotonic semantics essential for planning's frame problem % Ulbricht2016
+                  % frame problem: determining what remains unchanged after actions
+            \item \ac{ASP} already used for planning (plasp 3 translates \ac{PDDL} to \ac{ASP}) % Dimopoulos2019
         \end{itemize}
     \end{block}
 
-    \begin{block}{Why \ac{ASP} for Inconsistency Measurement in Planning?}
-        \begin{itemize}
-            \item Existing \ac{ASP} inconsistency measures provide adaptation foundation % Ulbricht2016
-            \item \ac{ASP}'s non-monotonic semantics match planning's reasoning requirements % Ulbricht2016
-                  % monotonicity postulate fails in non-monotonic logics
-            \item Natural handling of frame problem and default assumptions
-                  % frame problem: determining what remains unchanged after actions
-        \end{itemize}
+    \begin{block}{Thesis Approach}
+        Adapt existing \ac{ASP} inconsistency measures to planning problems
     \end{block}
 \end{frame}
 
 %=========================================================================================================================
 
 \section{Research Approach}
-
-% \begin{frame}{Adaptation Challenges}
-%     \begin{itemize}
-%         \item How to adapt minimal inconsistent sets to unsolvable planning tasks?
-%         \item Which rationality postulates for inconsistency measurement hold in non-monotonic planning contexts? % Ulbricht2016
-%         \item How to handle frame problem and default assumptions about action effects?
-%         \item What constitutes meaningful distance measures between planning instances?
-%     \end{itemize}
-% \end{frame}
 
 \begin{frame}{Central Research Question}
     \Large How can inconsistency measures from propositional logic be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
@@ -203,10 +172,9 @@ University of Hagen, Germany}
 
 \begin{frame}{Research Questions}
     \begin{block}{RQ2: How can adapted measures be efficiently computed using \ac{ASP}?}
-        % If asked to specify: (1) complexity analysis ensures tractability,
-        % (2) ASP encoding = declarative rules computing the measure,
-        % (3) practical implementation = PDDL/STRIPS input -> ASP translation -> measure computation,
-        % (4) ASP chosen for non-monotonic semantics + existing inconsistency measures + performance
+        % Ensures the adapted measures don't exceed what ASP solvers can handle.
+        % up to the second level of the polynomial hierarchy
+        % Encoding vs Prototype: Encoding = ASP rules/algorithm; Prototype = full system (parser + translation + solver)
         \begin{itemize}
             \item Complexity analysis for \ac{ASP} compatibility
             \item Design \ac{ASP}-based encoding for at least one measure
