@@ -9,7 +9,45 @@ This section establishes the experimental framework used for evaluation, includi
 
 \subsection{Benchmark Problem Selection}
 
-This section describes the systematic selection of planning problems from standard benchmarks, ensuring coverage of different domain characteristics, problem sizes, and types of unsolvability. The selection includes problems from International Planning Competition datasets and specifically constructed unsolvable instances representing various conflict patterns.
+The evaluation employs planning problems from established benchmark repositories to ensure coverage of different domain characteristics, problem complexities, and types of unsolvability.
+
+\subsubsection{Primary Benchmark Source}
+
+The primary evaluation dataset is the curated collection of unsolvable PDDL benchmarks~\cite{Eriksson2019}, available through Zenodo. This collection combines benchmarks from the Unsolvability IPC 2016~\cite{Lipovetzky2016} and the Saarland University unsatisfiable benchmark collection, with all solvable problems removed to provide a focused dataset of exclusively unsolvable instances. The repository includes five diverse planning domains:
+
+\begin{itemize}
+    \item \textbf{Bottleneck}: Resource allocation with capacity constraints
+    \item \textbf{Pegsol}: Peg solitaire puzzles with dead-end states
+    \item \textbf{Nomystery}: Transportation with fuel limitations
+    \item \textbf{Rovers}: Planetary exploration with spatial and resource constraints
+    \item \textbf{TPP}: Market logistics with routing and purchasing constraints
+\end{itemize}
+
+These domains represent different categories of planning challenges and constraint interactions, enabling evaluation across varied structural characteristics.
+
+\subsubsection{Complementary Benchmark Sources}
+
+Additional benchmark repositories complement the primary dataset and enable comparison with broader planning literature:
+
+\paragraph{Planning.domains API} The planning.domains repository~\cite{Muise2020} provides programmatic access to PDDL benchmark collections from IPC competitions spanning 1998 to present. Selected instances validate that adapted measures correctly distinguish solvable from unsolvable problems.
+
+\paragraph{Potassco PDDL Instances} The potassco/pddl-instances repository~\cite{Gebser2024} maintains PDDL benchmark instances from IPC 1998-2014, encompassing 87 domains and 291 problem variants with documented characteristics for cross-domain comparative analysis.
+
+\paragraph{AI-Planning Classical Domains} The classical-domains collection~\cite{APO2024} provides reference benchmarks for validating measure implementations on well-studied planning problems.
+
+\subsubsection{Selection Criteria}
+
+Benchmark selection follows systematic criteria:
+
+\begin{enumerate}
+    \item \textbf{Unsolvability Focus}: Confirmed unsolvable instances for direct assessment of diagnostic capabilities
+    \item \textbf{Domain Diversity}: Structurally different domains to test measure generalizability
+    \item \textbf{Complexity Range}: Problems spanning different sizes for scalability assessment
+    \item \textbf{Conflict Type Variety}: Different sources of unsolvability (goal conflicts, resource constraints, action precondition conflicts, dead-end states)
+    \item \textbf{Established Provenance}: Widely-recognized benchmarks enabling comparison and reproducibility
+\end{enumerate}
+
+The experimental framework integrates benchmarks with plasp 3~\cite{Dimopoulos2019}, converting PDDL specifications to ASP facts for processing by the implemented measure encodings.
 
 \subsection{Computational Feasibility Assessment}
 
