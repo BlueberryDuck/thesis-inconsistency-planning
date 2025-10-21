@@ -108,7 +108,7 @@ These successful adaptations across argumentation, non-monotonic reasoning, and 
 
 Planning applications require computational efficiency and compatibility with non-monotonic reasoning systems. Experimental comparisons demonstrate that \ac{ASP}-based algorithms often outperform SAT-based approaches for computing inconsistency measures~\cite{Kuhlmann2025}, making \ac{ASP} a promising foundation for planning applications.
 
-The theoretical groundwork for \ac{ASP}-based planning was established by~\cite{Dimopoulos1997}, with modern tools like plasp 3~\cite{Dimopoulos2019} providing efficient translations from \ac{PDDL} to \ac{ASP}. Importantly, inconsistency measures for \ac{ASP} have been developed~\cite{Ulbricht2016}, with the crucial observation that the \emph{monotonicity postulate} does not hold in non-monotonic logics.
+The theoretical groundwork for \ac{ASP}-based planning was established by~\cite{Dimopoulos1997}, with modern tools like plasp 3~\cite{Dimopoulos2019} providing efficient translations from \ac{PDDL} to \ac{ASP}. Importantly, inconsistency measures for \ac{ASP} have been developed~\cite{Ulbricht2016}, with the crucial observation that the monotonicity postulate does not hold in non-monotonic logics.
 
 This non-monotonic behavior is directly relevant for planning domains: adding information (such as additional actions or initial state facts) can actually reduce inconsistency by enabling new solution paths. This violates the classical monotonicity postulate and requires careful consideration when adapting inconsistency measures to planning contexts.
 
