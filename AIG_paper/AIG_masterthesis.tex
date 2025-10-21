@@ -44,23 +44,17 @@
 \advisorinfo{Artificial Intelligence Group}
 
 \englishabstract{
-Classical planning systems excel at finding solutions when they exist, but provide minimal diagnostic information when encountering unsolvable problems, forcing users into costly trial-and-error debugging processes. This thesis investigates the adaptation of inconsistency measures from propositional logic to provide quantitative diagnostics for unsolvable planning instances. The research explores how selected inconsistency measures can be systematically adapted to classical planning domains, addressing the fundamental challenges posed by temporal action sequences and state transitions that distinguish planning from static knowledge bases. The adaptation approach employs Answer Set Programming (ASP) implementations, building on recent findings that ASP-based approaches show promise for inconsistency computation. This work aims to develop a systematic framework for quantifying inconsistencies in planning instances and explore whether adapted measures can distinguish between different types of unsolvable problems. The goal is to investigate whether such diagnostic capabilities can help users identify conflicting constraint sets and provide insights for problem repair, potentially addressing a methodological gap in automated planning tools.
+Classical planning systems excel at finding solutions when they exist, but provide minimal diagnostic information when encountering unsolvable problems, forcing users into costly trial-and-error debugging processes. This thesis investigates the adaptation of paraconsistent inconsistency measures from propositional logic to provide quantitative diagnostics for unsolvable planning instances. The focus is on the contension measure, which employs three-valued logic to identify minimal sets of conflicting propositions. The research addresses fundamental challenges posed by temporal action sequences and state transitions that distinguish planning from static knowledge bases, where propositions exist in binary states rather than allowing the ``both true and false'' semantics of paraconsistent logic. Formal adaptations are developed and implemented using Answer Set Programming, building on findings that ASP-based approaches show promise for inconsistency computation. This work aims to establish whether paraconsistent measures can distinguish between different types of unsolvable planning problems and help users identify conflicting components for problem repair, potentially addressing a methodological gap in automated planning tools.
 }
 \germanabstract{
-Klassische Planungssysteme sind hervorragend darin, Lösungen zu finden, wenn sie existieren, aber bieten minimale diagnostische Informationen bei unlösbaren Problemen, was Nutzende zu kostspieligem trial-and-error Debugging zwingt. Diese Arbeit untersucht die Anpassung von Inkonsistenzmaßen aus der Aussagenlogik, um quantitative Diagnostiken für unlösbare Planungsinstanzen bereitzustellen. Die Forschung erforscht, wie ausgewählte Inkonsistenzmaße systematisch auf klassische Planungsdomänen angepasst werden können, wobei die fundamentalen Herausforderungen durch zeitliche Aktionssequenzen und Zustandsübergänge adressiert werden, die Planung von statischen Wissensbasen unterscheiden. Der Anpassungsansatz verwendet Answer Set Programming (ASP) und baut auf neueren Erkenntnissen auf, dass ASP-basierte Ansätze vielversprechend für Inkonsistenzberechnungen sind. Diese Arbeit zielt darauf ab, ein systematisches Framework zur Quantifizierung von Inkonsistenzen in Planungsinstanzen zu entwickeln und zu erforschen, ob angepasste Maße zwischen verschiedenen Typen unlösbarer Probleme unterscheiden können. Das Ziel ist zu untersuchen, ob solche diagnostischen Fähigkeiten Nutzenden helfen können, konflikthafte Constraint-Mengen zu identifizieren und Einsichten für Problemreparatur bereitzustellen, wodurch möglicherweise eine methodische Lücke in automatisierten Planungstools adressiert wird.
+Klassische Planungssysteme sind hervorragend darin, Lösungen zu finden, wenn sie existieren, aber bieten minimale diagnostische Informationen bei unlösbaren Problemen, was Nutzende zu kostspieligem trial-and-error Debugging zwingt. Diese Arbeit untersucht die Anpassung parakonsistenter Inkonsistenzmaße aus der Aussagenlogik, um quantitative Diagnostiken für unlösbare Planungsinstanzen bereitzustellen. Der Fokus liegt auf dem Contension-Maß, welches dreiwertige Logik verwendet, um minimale Mengen konfliktierender Propositionen zu identifizieren. Die Forschung adressiert fundamentale Herausforderungen durch zeitliche Aktionssequenzen und Zustandsübergänge, die Planung von statischen Wissensbasen unterscheiden, wo Propositionen in binären Zuständen existieren anstatt die ``sowohl wahr als auch falsch'' Semantik parakonsistenter Logik zu erlauben. Formale Adaptionen werden entwickelt und mit Answer Set Programming implementiert, aufbauend auf Erkenntnissen dass ASP-basierte Ansätze vielversprechend für Inkonsistenzberechnungen sind. Diese Arbeit zielt darauf ab zu etablieren, ob parakonsistente Maße zwischen verschiedenen Typen unlösbarer Planungsprobleme unterscheiden können und Nutzenden helfen, konflikthafte Komponenten für Problemreparatur zu identifizieren, wodurch möglicherweise eine methodische Lücke in automatisierten Planungstools adressiert wird.
 }
 
 \begin{document}
 
 % Acronym definitions
 \acrodef{ASP}{Answer Set Programming}
-\acrodef{DTP}{Disjunctive Temporal Problem}
-\acrodef{FF}{Fast Forward}
-\acrodef{HSP}{Heuristic Search Planner}
-\acrodef{MCS}{Maximal Consistent Subset}
-\acrodef{MIS}{Minimal Inconsistent Subset}
 \acrodef{PDDL}{Planning Domain Definition Language}
-\acrodef{SAT}{Boolean Satisfiability}
 \acrodef{STRIPS}{Stanford Research Institute Problem Solver}
 
 \pagenumbering{roman}
@@ -69,8 +63,8 @@ Klassische Planungssysteme sind hervorragend darin, Lösungen zu finden, wenn si
 \tableofcontents
 \cleardoublepage
 
-% list of figures
 \listoffigures
+\listoftables
 \cleardoublepage
 
 \pagenumbering{arabic}
