@@ -1,28 +1,210 @@
 \section{Theoretical Adaptation}
 \label{sec:theoretical_adaptation}
 
-This chapter presents the formal adaptation of selected inconsistency measures from propositional logic to classical planning domains. The adaptation process addresses the fundamental structural differences between propositional knowledge bases and planning problems, where conflicts arise not only from contradictory static constraints but also from temporal action sequences and unreachable goal combinations.
+This chapter presents preliminary proposals for adapting inconsistency measures to classical planning problems. This work develops planning-native measures that operate directly on planning structures: goals, operators, precondition-effect relationships, and resource constraints. The approach employs multi-faceted diagnostic profiles rather than single severity scores, providing actionable information for problem repair without making assumptions about which repairs are valid.
 
-\subsection{Adaptation Challenges and Requirements}
+The proposals presented here are \emph{informal and preliminary}, intended to establish the conceptual framework before formal mathematical definitions are developed. Each proposal is motivated by the structural taxonomy introduced in \ref{sec:taxonomy} and illustrated through concrete scenarios demonstrating varying degrees of inconsistency within each structural category.
 
-This section analyzes the key challenges in adapting inconsistency measures to planning domains, including the temporal nature of planning, the role of actions and state transitions, and the need to preserve meaningful diagnostic properties while handling the unique characteristics of planning problems.
+\subsection{Design Philosophy and Approach}
 
-\subsection{Adapted Minimal Inconsistent Set-Based Measures}
+The adaptation strategy is guided by several key principles that distinguish this work from traditional inconsistency measurement approaches. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide \emph{diagnostic profiles} consisting of multiple complementary values. This design choice recognizes that different aspects of unsolvability (such as the number of affected goals versus the extent of broken dependencies) serve different debugging purposes.
 
-This section develops adaptations of minimal inconsistent set-based measures~\cite{Hunter2008} to planning contexts, examining how minimal conflicting subsets of goals, actions, and constraints can be identified and quantified to provide diagnostic insights into planning failures.
+A fundamental principle guiding these proposals is to ``measure what IS, not what SHOULD BE.'' Traditional repair-based inconsistency measures implicitly encode assumptions about valid repairs by counting minimal changes needed to restore consistency. In planning contexts, however, determining which components ``should'' exist (missing operators, initial state facts, or goal modifications) requires domain expertise that automated measures cannot provide. The proposed measures therefore report objective structural properties (reachable propositions, dependency cycles, resource deficits) without presupposing which repairs are appropriate.
 
-\subsection{Adapted Distance-Based Measures}
+To maximize utility for planning practitioners, the measures employ planning-specific concepts (goals, operators, reachability, preconditions) rather than generic logical terminology (formulas, interpretations, models). The structural taxonomy established in \ref{sec:taxonomy} suggests different computational approaches for each category: logical and combinatorial analysis for goal conflicts (Category~1), graph algorithms for dependency structures (Category~2), and numeric accounting for resource constraints (Category~3). Rather than forcing these disparate structural features into a unified framework, the proposals develop category-specific measures that leverage the appropriate computational machinery for each conflict type.
 
-This section presents the adaptation of distance-based measures~\cite{Grant2013,Grant2017} to planning problems, exploring how the concept of minimal modifications required to restore solvability can be formalized and computed in the planning domain.
+\subsection{Proposal 1: Goal Conflict Profile}
+\label{sec:goal_conflict_profile}
 
-\subsection{Adapted Hitting-Set Measures}
+The first proposal addresses Category~1 unsolvability: goal specifications containing propositions that cannot simultaneously be true in any valid state. This category is detectable through static analysis of the goal specification $G$ and domain constraints defining mutually exclusive propositions.
 
-This section examines the adaptation of hitting-set measures~\cite{Thimm2016} to planning, investigating how the notion of interpretations satisfying formulas translates to the planning context and what diagnostic value such measures provide for unsolvable planning instances.
+The \emph{goal conflict profile} characterizes mutex relationships within the goal specification using two values: (1) the number of goals participating in at least one mutex relationship, and (2) the total number of pairwise mutex relationships. The first value indicates scope (how many goals are affected), while the second reveals conflict structure.
 
-\subsection{Postulate Analysis}
+\paragraph{Scenario 1: Light Switch.} Consider the planning problem $\langle P, O, I, G \rangle$ with $G = \{\text{light\_on}, \text{light\_off}\}$ where these propositions represent mutually exclusive conditions. The goal conflict profile yields:
+\begin{itemize}
+    \item Conflicting goals: 2 (both goals participate in mutex)
+    \item Mutex pairs: 1 (single pairwise conflict)
+\end{itemize}
 
-This section analyzes which postulates from classical inconsistency measurement are preserved, modified, or violated in the planning adaptations, providing theoretical grounding for the validity and interpretation of the adapted measures.
+\paragraph{Scenario 2: Room Occupancy (Star Pattern).} A goal specification with three propositions
+\begin{equation*}
+    G = \{\text{alice\_in\_room}, \text{bob\_in\_room}, \text{room\_empty}\}
+\end{equation*}
+exhibits a star pattern where \textit{room\_empty} is mutex with both occupancy propositions, but \textit{alice\_in\_room} and \textit{bob\_in\_room} are not mutex with each other (both can be false when the room is empty). The profile yields:
+\begin{itemize}
+    \item Conflicting goals: 3 (all goals involved in conflicts)
+    \item Mutex pairs: 2 (\textit{room\_empty} paired with each occupancy goal)
+\end{itemize}
 
-\subsection{Formal Definitions and Examples}
+\paragraph{Scenario 3: Traffic Light (Clique Pattern).} A goal specification
+\begin{equation*}
+    G = \{\text{light\_red}, \text{light\_yellow}, \text{light\_green}\}
+\end{equation*}
+forms a complete conflict graph where all three propositions are pairwise mutex. The profile yields:
+\begin{itemize}
+    \item Conflicting goals: 3 (all goals involved)
+    \item Mutex pairs: 3 (all pairwise combinations)
+\end{itemize}
 
-Complete formal definitions of the adapted measures are provided, along with concrete examples demonstrating their application to representative unsolvable planning problems and illustrating their diagnostic capabilities.
+Scenarios 2 and 3 both involve three conflicting goals, yet the mutex pair counts distinguish their conflict structures. The star pattern (2 pairs) suggests that removing the central conflicting goal (\textit{room\_empty}) would eliminate all conflicts, whereas the clique pattern (3 pairs) indicates no single goal removal can restore consistency. This structural distinction provides diagnostic value for repair strategies.
+
+\subsection{Proposal 2: Unreachability Profile}
+\label{sec:unreachability_profile}
+
+The second proposal provides a unified approach to Category~2 unsolvability by characterizing unreachable propositions through reachability analysis. This measure applies uniformly to all dependency structure subtypes: missing producers (2a), circular dependencies (2b), and dead-end states (2c).
+
+The \emph{unreachability profile} employs forward reachability analysis to compute: (1) the number of goals not appearing in any reachable state, and (2) the total number of propositions not appearing in any reachable state. The first value identifies which goals are blocked, while the second reveals the scope of broken dependencies. The difference between these values indicates cascading unreachability depth.
+
+\paragraph{Scenario 1: Locked Door (Missing Producer).} Consider a planning problem with $G = \{\text{in\_room}\}$ where achieving this goal requires the precondition sequence:
+\begin{equation*}
+    \text{in\_room} \;\text{requires}\; \text{door\_unlocked} \;\text{requires}\; \text{has\_key}
+\end{equation*}
+If $\text{has\_key} \notin I$ and no operator produces \textit{has\_key}, forward reachability analysis yields:
+\begin{itemize}
+    \item Unreachable goals: 1 (\textit{in\_room})
+    \item Total unreachable propositions: 3 (\textit{has\_key}, \textit{door\_unlocked}, \textit{in\_room})
+\end{itemize}
+
+\paragraph{Scenario 2: Complex Access System (Multiple Missing Producers).} A more complex problem with $G = \{\text{in\_building}\}$ requires three independent precondition chains:
+\begin{align*}
+    \text{in\_building}    & \;\text{requires}\; \text{door1\_open}, \text{door2\_open}, \text{access\_granted} \\
+    \text{door1\_open}     & \;\text{requires}\; \text{key1}                                                    \\
+    \text{door2\_open}     & \;\text{requires}\; \text{key2}                                                    \\
+    \text{access\_granted} & \;\text{requires}\; \text{admin\_approval}
+\end{align*}
+If all three root preconditions (\textit{key1}, \textit{key2}, \textit{admin\_approval}) are missing producers, reachability analysis yields:
+\begin{itemize}
+    \item Unreachable goals: 1 (\textit{in\_building})
+    \item Total unreachable propositions: 7 (three missing producers plus their dependent propositions)
+\end{itemize}
+
+A small difference between these values indicates shallow dependency problems (directly unreachable goals), while a large difference reveals deep cascading failures (extensive dependency chains). This measure applies uniformly across all Category~2 subtypes, but cannot determine \emph{why} propositions are unreachable. Distinguishing between missing producers and circular dependencies requires additional structural analysis addressed by \ref{sec:circular_dependency_profile}.
+
+\subsection{Proposal 3: Circular Dependency Profile}
+\label{sec:circular_dependency_profile}
+
+The third proposal specifically addresses Category~2b unsolvability: circular dependencies in the precondition-effect dependency graph. This measure complements the unreachability profile by characterizing \emph{why} certain propositions are unreachable when the cause is cyclic precondition relationships.
+
+The \emph{circular dependency profile} analyzes the dependency graph where nodes represent propositions and directed edges represent precondition-effect relationships. The profile computes: (1) the count of distinct simple cycles, (2) the sum of all cycle sizes (with multiplicity), and (3) the count of unique propositions participating in at least one cycle. The first value indicates the number of separate circular problems, while the difference between the second and third reveals cycle overlap.
+
+\paragraph{Scenario 1: Security Badge (Simple Cycle).} A planning problem with $G = \{\text{inside\_building}\}$ exhibits a two-proposition cycle:
+\begin{equation*}
+    \text{inside\_building} \;\text{requires}\; \text{badge\_activated} \;\text{requires}\; \text{inside\_building}
+\end{equation*}
+The circular dependency profile yields:
+\begin{itemize}
+    \item Cycles: 1
+    \item Total propositions (with multiplicity): 2
+    \item Distinct propositions: 2
+\end{itemize}
+
+\paragraph{Scenario 2: Multiple Independent Cycles.} A problem exhibiting two separate cycles with no shared propositions:
+\begin{align*}
+    \text{Cycle 1:} & \quad A \leftrightarrow B \\
+    \text{Cycle 2:} & \quad X \to Y \to Z \to X
+\end{align*}
+The profile yields:
+\begin{itemize}
+    \item Cycles: 2
+    \item Total propositions (with multiplicity): 5 (2 from cycle 1, 3 from cycle 2)
+    \item Distinct propositions: 5
+\end{itemize}
+
+\paragraph{Scenario 3: Overlapping Cycles.} Two cycles sharing a common proposition $B$:
+\begin{align*}
+    \text{Cycle 1:} & \quad A \to B \to C \to A \\
+    \text{Cycle 2:} & \quad B \to D \to E \to B
+\end{align*}
+The profile yields:
+\begin{itemize}
+    \item Cycles: 2
+    \item Total propositions (with multiplicity): 6 (3 from each cycle, $B$ counted twice)
+    \item Distinct propositions: 5 ($A, B, C, D, E$ each counted once)
+\end{itemize}
+
+\paragraph{Scenario 4: Nested Cycles.} A large cycle containing a smaller subcycle:
+\begin{align*}
+    \text{Cycle 1:} & \quad A \to B \to C \to D \to A \quad \text{(size 4)} \\
+    \text{Cycle 2:} & \quad B \to C \to B \quad \text{(size 2)}
+\end{align*}
+The profile yields:
+\begin{itemize}
+    \item Cycles: 2
+    \item Total propositions (with multiplicity): 6 (4 from cycle 1, 2 from cycle 2)
+    \item Distinct propositions: 4 ($A, B, C, D$)
+\end{itemize}
+
+When these values are equal, cycles are independent and can be repaired separately. When the total exceeds the distinct count, cycles overlap with entangled dependencies requiring coordinated repairs. This reveals dependency complexity beyond simple cycle counting.
+
+\subsection{Proposal 4: Goal Sequencing Conflict Profile}
+\label{sec:goal_sequencing_profile}
+
+The fourth proposal addresses unsolvability of Category~2c: sequencing conflicts where achieving certain goals creates dead-end states that prevent other goals from being reached. This category differs fundamentally from Category~1 goal conflicts. Here, goals can coexist \emph{logically} but cannot both be \emph{achieved} due to irreversible action effects.
+
+The \emph{goal sequencing conflict profile} characterizes action-based exclusions through reachability analysis from hypothetical goal states. The profile computes: (1) the number of goals where achieving them makes other goals unreachable or vice versa, and (2) the total number of ordered pairs $(g_1, g_2)$ where achieving $g_1$ makes $g_2$ unreachable. This parallels \ref{sec:goal_conflict_profile} in structure. The first value indicates scope, while the second reveals conflict patterns (star structures versus symmetric exclusions).
+
+\paragraph{Scenario 1: One-Way Door (Simple Exclusion).} Consider a planning problem with goal specification
+\begin{equation*}
+    G = \{\text{has\_item}, \text{other\_task}\}
+\end{equation*}
+where:
+\begin{itemize}
+    \item Achieving \textit{has\_item} requires entering a room via a one-way door (irreversible action)
+    \item After achieving \textit{has\_item}, the agent is trapped and \textit{other\_task} becomes unreachable
+\end{itemize}
+The profile yields:
+\begin{itemize}
+    \item Goals with sequencing conflicts: 2 (both goals involved)
+    \item Sequencing conflict pairs: 1 (ordered pair: \textit{has\_item} blocks \textit{other\_task})
+\end{itemize}
+
+\paragraph{Scenario 2: Multiple Exclusions (Star Pattern).} A planning problem with $G = \{\text{goal\_A}, \text{goal\_B}, \text{goal\_C}\}$ where achieving \textit{goal\_A} creates a dead-end state where both \textit{goal\_B} and \textit{goal\_C} become unreachable. The profile yields:
+\begin{itemize}
+    \item Goals with sequencing conflicts: 3 (all goals involved)
+    \item Sequencing conflict pairs: 2 (\textit{goal\_A} blocks \textit{goal\_B}, \textit{goal\_A} blocks \textit{goal\_C})
+\end{itemize}
+
+\paragraph{Scenario 3: Bidirectional Conflict (Symmetric Exclusion).} A planning problem with $G = \{\text{goal\_X}, \text{goal\_Y}\}$ where:
+\begin{itemize}
+    \item Achieving \textit{goal\_X} makes \textit{goal\_Y} unreachable
+    \item Achieving \textit{goal\_Y} makes \textit{goal\_X} unreachable
+\end{itemize}
+The profile yields:
+\begin{itemize}
+    \item Goals with sequencing conflicts: 2 (both goals involved)
+    \item Sequencing conflict pairs: 2 (ordered pairs in both directions)
+\end{itemize}
+
+This measure identifies conflicts from action effects rather than logical mutex. Goals can theoretically coexist in the same state, but action sequences required to achieve one goal prevent achieving the other. Category~1 conflicts suggest specification errors (contradictory requirements), while Category~2c conflicts suggest missing reversibility in the action model.
+
+\subsection{Proposal 5: Resource Constraint Profile}
+\label{sec:resource_profile}
+
+The fifth proposal addresses Category~3 unsolvability: numeric insufficiency of consumable resources such as fuel, time, budget, or battery. This proposal provides per-resource diagnostic information, reporting both shortage magnitude and consumer contention without making assumptions about which aspect is more severe.
+
+The \emph{resource constraint profile} performs resource accounting to compute: (1) the count of resources where availability falls short of needs, and (2) for each constrained resource, the absolute deficit and the number of goals or actions requiring it. This provides both high-level summary and per-resource detail, reporting deficit and consumer count separately rather than combining them.
+
+\paragraph{Scenario 1: Simple Fuel Shortage.} A planning problem requires 2 units of fuel but only 1 unit is available, with a single action consuming both units. The per-resource profile for fuel:
+\begin{itemize}
+    \item Deficit: 1
+    \item Consumers: 1
+\end{itemize}
+
+\paragraph{Scenario 2: Paint Contention.} A planning problem has two goals each requiring 1 unit of paint, but only 1 unit is available (total need: 2, available: 1). The profile for paint:
+\begin{itemize}
+    \item Deficit: 1
+    \item Consumers: 2 (two competing goals)
+\end{itemize}
+
+\paragraph{Scenario 3: Multi-Resource Constraint.} A planning problem exhibits insufficiency in two resources:
+\begin{itemize}
+    \item Fuel: Deficit = 3, Consumers = 2
+    \item Paint: Deficit = 1, Consumers = 4
+\end{itemize}
+The number of constrained resources is 2, with distinct per-resource profiles.
+
+Separate deficit and consumer values distinguish qualitatively different problems. Low consumer counts may suggest specification errors (requesting too much of a resource), while high consumer counts indicate resource allocation problems (too many goals competing for limited resources). Determining relative severity requires domain knowledge about whether adding resources or reducing consumers is more feasible.
+
+\subsection{Formalization}
+
+\emph{[TODO: Formal mathematical definitions of the five proposed measures will be developed here.]}
