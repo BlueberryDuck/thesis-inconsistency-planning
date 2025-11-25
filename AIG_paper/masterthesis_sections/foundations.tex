@@ -106,7 +106,7 @@ These successful adaptations across argumentation, non-monotonic reasoning, and 
 
 \subsubsection{Computational Approaches and Non-Monotonic Considerations}
 
-Planning applications require computational efficiency and compatibility with non-monotonic reasoning systems. Experimental comparisons demonstrate that \ac{ASP}-based algorithms often outperform SAT-based approaches for computing inconsistency measures~\cite{Kuhlmann2025}, making \ac{ASP} a promising foundation for planning applications.
+Planning applications require computational efficiency and compatibility with non-monotonic reasoning systems. Experimental comparisons demonstrate that \ac{ASP}-based algorithms often outperform \ac{SAT}-based approaches for computing inconsistency measures~\cite{Kuhlmann2025}, making \ac{ASP} a promising foundation for planning applications.
 
 The theoretical groundwork for \ac{ASP}-based planning was established by~\cite{Dimopoulos1997}, with modern tools like plasp 3~\cite{Dimopoulos2019} providing efficient translations from \ac{PDDL} to \ac{ASP}. Importantly, inconsistency measures for \ac{ASP} have been developed~\cite{Ulbricht2016}, with the crucial observation that the monotonicity postulate does not hold in non-monotonic logics.
 
@@ -124,9 +124,78 @@ where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \sub
 
 A planning problem $\langle P, O, I, G \rangle$ is \emph{unsolvable} if there does not exist a sequence of operators $\pi = \langle o_1, o_2, \ldots, o_k \rangle$ such that each $o_i$ is applicable in the state resulting from applying $\langle o_1, \ldots, o_{i-1} \rangle$ to $I$, and the final state satisfies $G \subseteq s_k$. More precisely, defining the sequential application of operators as $s_0 = I$ and $s_i = \text{RESULT}(s_{i-1}, o_i)$ for $i = 1, \ldots, k$, a planning problem is unsolvable when no such sequence exists with $G \subseteq s_k$. Determining whether a plan exists is PSPACE-complete~\cite{Bylander1994}, which has motivated extensive research into efficient algorithms and search techniques.
 
-The \ac{STRIPS} representation, originally developed by~\cite{Fikes1971}, is foundational for many modern planning systems, providing a simple yet powerful framework for modeling planning domains where actions have deterministic effects and the world is fully observable.
+\subsubsection{The Planning Domain Definition Language}
 
-\ac{PDDL} serves as the standard language for describing planning problems and is used in international planning competitions~\cite{McDermott1998,Ghallab1998}. However, given the complexity of \ac{PDDL}'s various extensions and features, this thesis initially focuses on \ac{STRIPS}-based formulations due to their foundational simplicity and well-understood semantics, which allow for systematic adaptation of inconsistency measures without the complications of advanced \ac{PDDL} constructs.
+The \ac{PDDL} was developed to provide a standardized language for describing planning problems, initially created for the 1998 \ac{ICAPS} competition~\cite{Ghallab1998}. \ac{PDDL} has since become the de facto standard for representing classical planning problems, evolving through multiple versions to support increasingly expressive features while maintaining a foundational core based on the \ac{STRIPS} representation~\cite{Fikes1971}. The \ac{STRIPS} framework established the foundational principles for modeling planning domains where actions have deterministic effects and the world is fully observable, which \ac{PDDL} extends with additional expressiveness and standardization.
+
+\textbf{Domain and Problem Separation:} \ac{PDDL} separates planning specifications into two complementary files: a \emph{domain file} that defines the reusable structure of a planning domain, and a \emph{problem file} that specifies a particular instance within that domain. This separation enables domain definitions to be reused across multiple problem instances, similar to the distinction between schema and data in database systems.
+
+A domain file specifies the abstract structure using the following components:
+\begin{equation*}
+    \text{Domain} = \langle \text{Requirements}, \text{Predicates}, \text{Actions} \rangle
+\end{equation*}
+where $\text{Requirements}$ declares which \ac{PDDL} features are used (such as \texttt{:strips}, \texttt{:typing}, \texttt{:equality}), $\text{Predicates}$ defines the vocabulary of boolean properties, and $\text{Actions}$ specifies the available operators.
+
+A problem file instantiates the domain with concrete elements:
+\begin{equation*}
+    \text{Problem} = \langle \text{DomainRef}, \text{Objects}, \text{Init}, \text{Goal} \rangle
+\end{equation*}
+where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification.
+
+\textbf{Predicates:} Predicates define the vocabulary of a planning domain as parameterized boolean functions. Formally, a predicate declaration has the form:
+\begin{equation*}
+    \text{pred}(x_1, x_2, \ldots, x_n)
+\end{equation*}
+where $\text{pred}$ is the predicate name and $x_1, \ldots, x_n$ are typed or untyped parameters. When instantiated with concrete objects, a predicate becomes a ground atom (proposition) that can be true or false in a state.
+
+For example, in the blocksworld domain, the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
+
+\textbf{Actions and Operators:} \ac{PDDL} actions define parameterized operators using a precondition-effect structure. An action schema has the form:
+\begin{equation*}
+    \text{action}(\text{params}) = \langle \text{pre}(\text{params}), \text{eff}(\text{params}) \rangle
+\end{equation*}
+where $\text{params}$ are typed parameters, $\text{pre}(\text{params})$ is a logical formula specifying preconditions, and $\text{eff}(\text{params})$ specifies effects as a conjunction of positive and negative literals.
+
+In basic \ac{PDDL}, both preconditions and effects are restricted to conjunctions of positive and negated atoms. The set-based operator representation directly captures this structure:
+\begin{equation*}
+    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
+\end{equation*}
+where the components are defined as:
+\begin{align*}
+    \text{precond}(o) & = \{p \mid p \text{ appears in pre}\} \cup \{p \mid \neg p \text{ appears in pre}\} \\
+    \text{add}(o)     & = \{p \mid p \text{ appears in eff}\}                                               \\
+    \text{delete}(o)  & = \{p \mid \neg p \text{ appears in eff}\}
+\end{align*}
+
+Ground operators result from instantiating action parameters with specific objects from the problem definition, yielding the finite operator set $O$ in the planning problem tuple.
+
+\textbf{Initial State and Goals:} The initial state in \ac{PDDL} is specified as a conjunction of ground atoms:
+\begin{equation*}
+    \text{Init} = \bigwedge_{i=1}^{n} p_i
+\end{equation*}
+which corresponds to the set $I = \{p_1, p_2, \ldots, p_n\} \subseteq P$ under the closed-world assumption where unmentioned propositions are false.
+
+Goal specifications in \ac{PDDL} can be arbitrary logical formulas in the full language, but in basic \ac{PDDL} they are restricted to conjunctions of positive and negated atoms. A goal formula $G_{\text{formula}}$ corresponds to the goal set $G \subseteq P$ where $G$ contains all propositions required to be true in the goal state.
+
+\textbf{PDDL Versions and Extensions:} While \ac{PDDL} has evolved through multiple versions, \ac{PDDL} 2.1~\cite{Fox2003} added numeric fluents and durative actions, \ac{PDDL} 2.2~\cite{Edelkamp2004} introduced derived predicates and timed initial literals, \ac{PDDL} 3.0~\cite{Gerevini2005} added preferences and constraints, and \ac{PDDL}+~\cite{Fox2002} supports continuous processes. This thesis focuses primarily on basic forms of \ac{PDDL} due to their foundational simplicity and well-understood semantics. Simple \ac{PDDL} formulations with conjunctive preconditions and effects provide sufficient expressiveness for systematic adaptation of inconsistency measures without the complications of temporal reasoning, complex preferences, or soft constraints. Extensions to handle numeric fluents (Category 3 resource constraints) from \ac{PDDL} 2.1 will be considered where necessary for completeness of the inconsistency taxonomy.
+
+\textbf{Example: Blocksworld Domain:} To illustrate the correspondence between \ac{PDDL} syntax and the formal planning representation, consider a simplified blocksworld domain with predicates $\text{on}(x,y)$, $\text{ontable}(x)$, $\text{clear}(x)$, and $\text{handempty}$. The action for stacking block $x$ on block $y$ is defined as:
+\begin{align*}
+     & \text{action } \text{stack}(x, y)                                             \\
+     & \quad \text{pre}: \text{holding}(x) \land \text{clear}(y)                     \\
+     & \quad \text{eff}: \text{on}(x,y) \land \text{clear}(x) \land \text{handempty} \\
+     & \qquad\qquad \land \neg\text{holding}(x) \land \neg\text{clear}(y)
+\end{align*}
+
+When instantiated with specific blocks $a$ and $b$ from a problem file, this yields the ground operator:
+\begin{align*}
+    \text{stack}(a,b) = \langle & \{\text{holding}(a), \text{clear}(b)\},                \\
+                                & \{\text{on}(a,b), \text{clear}(a), \text{handempty}\}, \\
+                                & \{\text{holding}(a), \text{clear}(b)\} \rangle
+\end{align*}
+demonstrating how \ac{PDDL} action schemas correspond to the set-based operator representation used in the formal planning problem definition.
+
+This formalization of \ac{PDDL} provides the necessary foundation for discussing how planning problems are specified in practice, while the earlier formal planning definitions establish the semantic interpretation of these specifications as state spaces and reachability problems.
 
 Modern planning systems employ various search strategies to explore different ways of reaching goals, such as searching forward from the initial state, working backward from the goal, or examining the space of possible plans~\cite{Ghallab2004,Russell2016}. These strategies include techniques that build graphical representations of planning problems to identify conflicts and estimate solution difficulty~\cite{Blum1997}, and heuristic search methods~\cite{Bonet2001,Hoffmann2001} that use simplified versions of problems to guide their search toward solutions. These heuristic approaches have significantly improved planning performance for solvable instances, but when these systems encounter an unsolvable problem, they typically provide minimal diagnostic information beyond reporting failure~\cite{Eriksson2018}. This diagnostic gap represents a significant limitation for users attempting to understand the source of conflicts or determine appropriate modifications to achieve solvability.
 
@@ -154,11 +223,11 @@ Since states are subsets of $P$ representing true propositions, and \textit{ligh
 
 \subsection{Answer Set Programming for Planning}
 
-\ac{ASP} provides a declarative approach to planning that has gained significant attention due to its expressiveness and computational efficiency for complex reasoning tasks~\cite{Dimopoulos1997}. In \ac{ASP}, planning problems are encoded as logic programs where answer sets correspond to valid plans, enabling the use of efficient SAT-based solvers to find solutions.
+\ac{ASP} provides a declarative approach to planning that has gained significant attention due to its expressiveness and computational efficiency for complex reasoning tasks~\cite{Dimopoulos1997}. In \ac{ASP}, planning problems are encoded as logic programs where answer sets correspond to valid plans, enabling the use of efficient \ac{SAT}-based solvers to find solutions.
 
 The modern tool plasp 3~\cite{Dimopoulos2019} provides efficient translations from \ac{PDDL} to \ac{ASP}, handling both sequential and parallel planning encodings. The system processes planning problems by first translating them into a standardized intermediate format and then generating \ac{ASP} rules that encode the planning semantics. Sequential encodings $S(i)$ search for plans of exactly $i$ steps, while parallel encodings like $S^\forall(i)$ and $S^\exists(i)$ allow concurrent action execution with appropriate serialization constraints.
 
-For inconsistency measurement applications, \ac{ASP} offers several advantages over traditional planning approaches. First, the declarative nature of \ac{ASP} programs allows for systematic analysis of conflicts through unsatisfiable cores and related computational structures~\cite{Ulbricht2016}. Second, experimental evidence demonstrates that \ac{ASP}-based algorithms generally outperform SAT-based approaches for computing inconsistency measures, particularly for measures involving minimal inconsistent subsets~\cite{Kuhlmann2025}. Third, \ac{ASP} provides natural support for non-monotonic reasoning, which is essential for planning domains where the monotonicity postulate of classical inconsistency measures may not hold due to the frame problem and default assumptions about action effects~\cite{Ulbricht2016}.
+For inconsistency measurement applications, \ac{ASP} offers several advantages over traditional planning approaches. First, the declarative nature of \ac{ASP} programs allows for systematic analysis of conflicts through unsatisfiable cores and related computational structures~\cite{Ulbricht2016}. Second, experimental evidence demonstrates that \ac{ASP}-based algorithms generally outperform \ac{SAT}-based approaches for computing inconsistency measures, particularly for measures involving minimal inconsistent subsets~\cite{Kuhlmann2025}. Third, \ac{ASP} provides natural support for non-monotonic reasoning, which is essential for planning domains where the monotonicity postulate of classical inconsistency measures may not hold due to the frame problem and default assumptions about action effects~\cite{Ulbricht2016}.
 
 \subsection{Challenges in Adapting Inconsistency Measures to Planning}
 
