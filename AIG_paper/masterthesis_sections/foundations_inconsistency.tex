@@ -1,0 +1,109 @@
+\subsection{Mathematical Foundations of Inconsistency Measurement}
+
+Inconsistency measurement provides formal methods for quantifying the degree of inconsistency within logical knowledge bases. Rather than treating inconsistency as a binary property, these measures assign numerical values that reflect the severity or extent of conflicts, enabling comparative analysis and systematic approaches to conflict resolution~\cite{Thimm2019}.
+
+\subsubsection{Formal Definition of Knowledge Bases}
+
+The fundamental concept of a knowledge base in propositional logic is defined as follows.
+
+\begin{defn}
+    Let $\mathcal{L}$ be a propositional language over a finite alphabet $\Sigma$ of propositional atoms. A \emph{knowledge base} $K$ is a finite set of propositional formulas from $\mathcal{L}$, i.e., $K = \{\phi_1, \phi_2, \ldots, \phi_n\}$ where each $\phi_i \in \mathcal{L}$.
+\end{defn}
+
+A knowledge base $K$ is \emph{consistent} if there exists an interpretation $\mathcal{I}$ such that $\mathcal{I} \models \phi$ for every $\phi \in K$. Otherwise, $K$ is \emph{inconsistent}. The set of all interpretations of $\mathcal{L}$ is denoted as $\text{Mod}(\mathcal{L})$. The set of models of a formula set $K$ is defined as:
+\begin{equation*}
+    \text{Mod}(K) = \{\mathcal{I} \in \text{Mod}(\mathcal{L}) : \mathcal{I} \models \phi \text{ for all } \phi \in K\}
+\end{equation*}
+
+\subsubsection{Formal Definition of Inconsistency Measures}
+
+An inconsistency measure provides a systematic way to assign numerical values reflecting the degree of inconsistency.
+
+\begin{defn}
+    An \emph{inconsistency measure} is a function $I : \mathcal{K} \to \mathbb{R}_{\geq 0}$ that maps every knowledge base from a given class $\mathcal{K}$ to a non-negative real number, where $I(K) = 0$ if and only if $K$ is consistent.
+\end{defn}
+
+Inconsistency measures are typically required to satisfy certain rationality postulates that capture intuitive properties of inconsistency quantification~\cite{Hunter2008,Thimm2019}. However, these postulates may vary depending on the specific context or domain of application:
+
+\begin{enumerate}
+    \item \textbf{Consistency:} $I(K) = 0$ if and only if $K$ is consistent.
+    \item \textbf{Monotonicity:} If $K \subseteq K'$, then $I(K) \leq I(K')$.
+    \item \textbf{Dominance:} If $K \subseteq K'$ and $K'$ is inconsistent, then $I(K) < I(K')$.
+    \item \textbf{Free Formula Independence:} $I(K \cup \{\phi\}) = I(K)$ if $\phi$ is not involved in any inconsistency of $K \cup \{\phi\}$.
+\end{enumerate}
+
+\subsubsection{Approaches to Inconsistency Measurement}
+
+Several approaches to inconsistency quantification have been developed in the literature, each capturing different aspects of logical conflicts~\cite{Thimm2019}. Syntactic approaches focus on structural properties such as minimal inconsistent subsets and maximal consistent subsets, typically counting or analyzing these sets to quantify inconsistency. Other approaches include distance-based measures that compute the minimal modifications needed to restore consistency, and hitting-set measures that seek minimal sets of interpretations satisfying all formulas~\cite{Grant2013,Grant2017,Thimm2016}.
+
+\subsubsection{Paraconsistent Semantics and the Contension Measure}
+
+This thesis focuses on paraconsistent approaches to inconsistency measurement, which offer a fundamentally different perspective by examining conflicts at the propositional level rather than the formula level. The contension-based measure employs paraconsistent semantics, specifically Priest's logic of paradox~\cite{Priest1979}, which introduces a third truth value to handle contradictions.
+
+A three-valued interpretation $\upsilon : \text{At} \to \{T, F, B\}$ extends classical interpretations by adding the truth value $B$ (``both'') to represent propositions that are simultaneously true and false. The function $\upsilon$ extends to arbitrary formulas according to the truth tables in Table~\ref{tab:three-valued-logic}. A key property is that negation preserves the conflicting value: $\upsilon(\neg \phi) = B$ when $\upsilon(\phi) = B$, reflecting that if a proposition is both true and false, its negation is also both true and false.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{cc|cc|c|c}
+        \hline
+        $\phi$ & $\psi$ & $\phi \land \psi$ & $\phi \lor \psi$ & $\phi$ & $\neg \phi$ \\
+        \hline
+        T      & T      & T                 & T                & T      & F           \\
+        T      & B      & B                 & T                & B      & B           \\
+        T      & F      & F                 & T                & F      & T           \\
+        B      & T      & B                 & T                &        &             \\
+        B      & B      & B                 & B                &        &             \\
+        B      & F      & F                 & B                &        &             \\
+        F      & T      & F                 & T                &        &             \\
+        F      & B      & F                 & B                &        &             \\
+        F      & F      & F                 & F                &        &             \\
+        \hline
+    \end{tabular}
+    \caption{Truth tables for three-valued logic}
+    \label{tab:three-valued-logic}
+\end{table}
+
+An interpretation $\upsilon$ satisfies a formula $\phi$ (written $\upsilon \models_3 \phi$) if $\upsilon(\phi) = T$ or $\upsilon(\phi) = B$. This paraconsistent satisfaction relation allows formulas to be satisfied even when they evaluate to the conflicting value $B$. Under this semantics, every knowledge base possesses at least one satisfying interpretation: assigning $B$ to all propositions trivially satisfies any $K$, even when $K$ is classically inconsistent.
+
+To illustrate the computation of minimal $B$-assignments, consider the knowledge base
+\begin{equation*}
+    K = \{\text{sunny}, \neg\text{sunny}, \text{hot}\}\,.
+\end{equation*}
+The goal is to find an interpretation $\upsilon$ minimizing the number of propositions assigned $B$.
+
+Attempting a classical interpretation with $\upsilon(\text{sunny}) = T$ and $\upsilon(\text{hot}) = T$ yields $\upsilon(\neg\text{sunny}) = F$. This violates the requirement $\upsilon \models_3 \neg\text{sunny}$, so this interpretation does not satisfy $K$.
+
+However, the interpretation with $\upsilon(\text{sunny}) = B$ and $\upsilon(\text{hot}) = T$ successfully satisfies all formulas:
+\begin{itemize}
+    \item $\upsilon(\text{sunny}) = B$ satisfies \textit{sunny}
+    \item $\upsilon(\neg\text{sunny}) = B$ satisfies $\neg$\textit{sunny}
+    \item $\upsilon(\text{hot}) = T$ satisfies \textit{hot}
+\end{itemize}
+This assignment uses exactly one $B$-valued proposition and cannot be reduced further.
+
+The contension measure~\cite{Grant2011} formalizes this minimization process:
+\begin{equation*}
+    I_c(K) = \min\{|\upsilon^{-1}(B) \cap \text{At}| \mid \upsilon \models_3 K\}
+\end{equation*}
+
+This measure differs fundamentally from structural approaches by examining conflicts at the propositional level rather than the formula level. This distinction is particularly relevant when conflicts involve formulas of different granularities. For instance, while $\{a, \neg a\}$ and $\{a \land b \land c, \neg a \land \neg b \land \neg c\}$ both contain a single minimal inconsistent subset, the contension measure yields $I_c = 1$ and $I_c = 3$ respectively, reflecting that the latter involves conflicts across three propositions rather than one~\cite{Thimm2019}. This proposition-centric view provides finer-grained distinctions in inconsistency severity.
+
+\subsubsection{Domain Adaptations}
+
+While originally developed for propositional knowledge bases, inconsistency measurement techniques have been successfully adapted to diverse logical domains, establishing important precedents for domain-specific adaptations. These adaptations demonstrate that inconsistency measures can be meaningfully extended beyond classical propositional logic when domain-specific semantics are carefully considered.
+
+\textbf{Argumentation Frameworks:} Work on measuring inconsistency in argumentation frameworks has adapted traditional measures to handle attack relations between arguments rather than direct logical conflicts~\cite{Hunter2006}. This demonstrates that inconsistency measures can be extended to graph-based representations where conflicts arise from structural relationships.
+
+\textbf{Non-Monotonic Logic:} \cite{Ulbricht2016} adapted inconsistency measures to Answer Set Programming, addressing the fundamental challenge that non-monotonic reasoning violates classical monotonicity postulates. Their work shows that adding information to a non-monotonic knowledge base can actually reduce inconsistency, requiring reformulation of rationality postulates for non-monotonic contexts.
+
+\textbf{Temporal Logic:} \cite{Corea2022} developed inconsistency measures for temporal logic applied to declarative process specifications, where traditional measures fail to adequately capture temporal operators or distinguish conflicts affecting different numbers of future states. Their work shows how inconsistency measures can be adapted to handle temporal modalities beyond static propositional assertions.
+
+These successful adaptations across argumentation, non-monotonic reasoning, and temporal logic establish that inconsistency measures can be meaningfully extended to diverse logical formalisms. Each adaptation required careful consideration of domain-specific conflict semantics, providing methodological precedent for adapting measures to classical planning.
+
+\subsubsection{Computational Approaches and Non-Monotonic Considerations}
+
+Planning applications require computational efficiency and compatibility with non-monotonic reasoning systems. Experimental comparisons demonstrate that \ac{ASP}-based algorithms often outperform \ac{SAT}-based approaches for computing inconsistency measures~\cite{Kuhlmann2025}, making \ac{ASP} a promising foundation for planning applications.
+
+The theoretical groundwork for \ac{ASP}-based planning was established by~\cite{Dimopoulos1997}, with modern tools like plasp 3~\cite{Dimopoulos2019} providing efficient translations from \ac{PDDL} to \ac{ASP}. Importantly, inconsistency measures for \ac{ASP} have been developed~\cite{Ulbricht2016}, with the crucial observation that the monotonicity postulate does not hold in non-monotonic logics.
+
+This non-monotonic behavior is directly relevant for planning domains: adding information (such as additional actions or initial state facts) can actually reduce inconsistency by enabling new solution paths. This violates the classical monotonicity postulate and requires careful consideration when adapting inconsistency measures to planning contexts.

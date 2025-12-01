@@ -1,0 +1,108 @@
+\subsection{Classical Planning}
+
+Classical planning operates on factored representations, meaning the world state is decomposed into individual variables like ``robot at location A'' or ``door is open'' rather than treating each complete world situation as an indivisible atomic state~\cite{Russell2016}. A planning problem is formally defined as a 4-tuple $\langle P, O, I, G \rangle$ where $P$ is a finite set of atomic propositions, $O$ is a finite set of operators, $I \subseteq P$ is the initial state, and $G \subseteq P$ is the goal specification~\cite{Bylander1994}. Each state $s$ is a subset $s \subseteq P$ representing the propositions that are true in that state, following database semantics where the closed-world assumption treats unmentioned propositions as false and the unique names assumption ensures distinct objects are different~\cite{Russell2016}.
+
+Actions are described by ground operators, which are fully instantiated actions with all variables replaced by specific objects, denoted as $o \in O$ and defined by the triple
+\begin{equation*}
+    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle\,,
+\end{equation*}
+where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects~\cite{Bylander1994}. An operator $o$ is applicable in state $s$ if and only if $\text{precond}(o) \subseteq s$. The result of executing action $o$ in state $s$ is defined as $\text{RESULT}(s,o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$~\cite{Russell2016}. A plan is a sequence of operators $\langle o_1, o_2, \ldots, o_k \rangle$ such that applying this sequence from the initial state $I$ results in a state $s$ where $G \subseteq s$~\cite{Bylander1994}.
+
+A planning problem $\langle P, O, I, G \rangle$ is \emph{unsolvable} if there does not exist a sequence of operators $\pi = \langle o_1, o_2, \ldots, o_k \rangle$ such that each $o_i$ is applicable in the state resulting from applying $\langle o_1, \ldots, o_{i-1} \rangle$ to $I$, and the final state satisfies $G \subseteq s_k$. More precisely, defining the sequential application of operators as $s_0 = I$ and $s_i = \text{RESULT}(s_{i-1}, o_i)$ for $i = 1, \ldots, k$, a planning problem is unsolvable when no such sequence exists with $G \subseteq s_k$. Determining whether a plan exists is PSPACE-complete~\cite{Bylander1994}, which has motivated extensive research into efficient algorithms and search techniques.
+
+\subsubsection{The Planning Domain Definition Language}
+
+The \ac{PDDL} was developed to provide a standardized language for describing planning problems, initially created for the 1998 \ac{ICAPS} competition~\cite{Ghallab1998}. \ac{PDDL} has since become the de facto standard for representing classical planning problems, evolving through multiple versions to support increasingly expressive features while maintaining a foundational core based on the \ac{STRIPS} representation~\cite{Fikes1971}. The \ac{STRIPS} framework established the foundational principles for modeling planning domains where actions have deterministic effects and the world is fully observable, which \ac{PDDL} extends with additional expressiveness and standardization.
+
+\textbf{Domain and Problem Separation:} \ac{PDDL} separates planning specifications into two complementary files: a \emph{domain file} that defines the reusable structure of a planning domain, and a \emph{problem file} that specifies a particular instance within that domain. This separation enables domain definitions to be reused across multiple problem instances, similar to the distinction between schema and data in database systems.
+
+A domain file specifies the abstract structure using the following components:
+\begin{equation*}
+    \text{Domain} = \langle \text{Requirements}, \text{Predicates}, \text{Actions} \rangle
+\end{equation*}
+where $\text{Requirements}$ declares which \ac{PDDL} features are used (such as \texttt{:strips}, \texttt{:typing}, \texttt{:equality}), $\text{Predicates}$ defines the vocabulary of boolean properties, and $\text{Actions}$ specifies the available operators.
+
+A problem file instantiates the domain with concrete elements:
+\begin{equation*}
+    \text{Problem} = \langle \text{DomainRef}, \text{Objects}, \text{Init}, \text{Goal} \rangle
+\end{equation*}
+where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification.
+
+\textbf{Predicates:} Predicates define the vocabulary of a planning domain as parameterized boolean functions. Formally, a predicate declaration has the form:
+\begin{equation*}
+    \text{pred}(x_1, x_2, \ldots, x_n)
+\end{equation*}
+where $\text{pred}$ is the predicate name and $x_1, \ldots, x_n$ are typed or untyped parameters. When instantiated with concrete objects, a predicate becomes a ground atom (proposition) that can be true or false in a state.
+
+For example, in the blocksworld domain, the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
+
+\textbf{Actions and Operators:} \ac{PDDL} actions define parameterized operators using a precondition-effect structure. An action schema has the form:
+\begin{equation*}
+    \text{action}(\text{params}) = \langle \text{pre}(\text{params}), \text{eff}(\text{params}) \rangle
+\end{equation*}
+where $\text{params}$ are typed parameters, $\text{pre}(\text{params})$ is a logical formula specifying preconditions, and $\text{eff}(\text{params})$ specifies effects as a conjunction of positive and negative literals.
+
+In basic \ac{PDDL}, both preconditions and effects are restricted to conjunctions of positive and negated atoms. The set-based operator representation directly captures this structure:
+\begin{equation*}
+    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
+\end{equation*}
+where the components are defined as:
+\begin{align*}
+    \text{precond}(o) & = \{p \mid p \text{ appears in pre}\} \cup \{p \mid \neg p \text{ appears in pre}\} \\
+    \text{add}(o)     & = \{p \mid p \text{ appears in eff}\}                                               \\
+    \text{delete}(o)  & = \{p \mid \neg p \text{ appears in eff}\}
+\end{align*}
+
+Ground operators result from instantiating action parameters with specific objects from the problem definition, yielding the finite operator set $O$ in the planning problem tuple.
+
+\textbf{Initial State and Goals:} The initial state in \ac{PDDL} is specified as a conjunction of ground atoms:
+\begin{equation*}
+    \text{Init} = \bigwedge_{i=1}^{n} p_i
+\end{equation*}
+which corresponds to the set $I = \{p_1, p_2, \ldots, p_n\} \subseteq P$ under the closed-world assumption where unmentioned propositions are false.
+
+Goal specifications in \ac{PDDL} can be arbitrary logical formulas in the full language, but in basic \ac{PDDL} they are restricted to conjunctions of positive and negated atoms. A goal formula $G_{\text{formula}}$ corresponds to the goal set $G \subseteq P$ where $G$ contains all propositions required to be true in the goal state.
+
+\textbf{PDDL Versions and Extensions:} While \ac{PDDL} has evolved through multiple versions, \ac{PDDL} 2.1~\cite{Fox2003} added numeric fluents and durative actions, \ac{PDDL} 2.2~\cite{Edelkamp2004} introduced derived predicates and timed initial literals, \ac{PDDL} 3.0~\cite{Gerevini2005} added preferences and constraints, and \ac{PDDL}+~\cite{Fox2002} supports continuous processes. This thesis focuses primarily on basic forms of \ac{PDDL} due to their foundational simplicity and well-understood semantics. Simple \ac{PDDL} formulations with conjunctive preconditions and effects provide sufficient expressiveness for systematic adaptation of inconsistency measures without the complications of temporal reasoning, complex preferences, or soft constraints. Extensions to handle numeric fluents (Category 3 resource constraints) from \ac{PDDL} 2.1 will be considered where necessary for completeness of the inconsistency taxonomy.
+
+\textbf{Example: Blocksworld Domain:} To illustrate the correspondence between \ac{PDDL} syntax and the formal planning representation, consider a simplified blocksworld domain with predicates $\text{on}(x,y)$, $\text{ontable}(x)$, $\text{clear}(x)$, and $\text{handempty}$. The action for stacking block $x$ on block $y$ is defined as:
+\begin{align*}
+     & \text{action } \text{stack}(x, y)                                             \\
+     & \quad \text{pre}: \text{holding}(x) \land \text{clear}(y)                     \\
+     & \quad \text{eff}: \text{on}(x,y) \land \text{clear}(x) \land \text{handempty} \\
+     & \qquad\qquad \land \neg\text{holding}(x) \land \neg\text{clear}(y)
+\end{align*}
+
+When instantiated with specific blocks $a$ and $b$ from a problem file, this yields the ground operator:
+\begin{align*}
+    \text{stack}(a,b) = \langle & \{\text{holding}(a), \text{clear}(b)\},                \\
+                                & \{\text{on}(a,b), \text{clear}(a), \text{handempty}\}, \\
+                                & \{\text{holding}(a), \text{clear}(b)\} \rangle
+\end{align*}
+demonstrating how \ac{PDDL} action schemas correspond to the set-based operator representation used in the formal planning problem definition.
+
+This formalization of \ac{PDDL} provides the necessary foundation for discussing how planning problems are specified in practice, while the earlier formal planning definitions establish the semantic interpretation of these specifications as state spaces and reachability problems.
+
+Modern planning systems employ various search strategies to explore different ways of reaching goals, such as searching forward from the initial state, working backward from the goal, or examining the space of possible plans~\cite{Ghallab2004,Russell2016}. These strategies include techniques that build graphical representations of planning problems to identify conflicts and estimate solution difficulty~\cite{Blum1997}, and heuristic search methods~\cite{Bonet2001,Hoffmann2001} that use simplified versions of problems to guide their search toward solutions. These heuristic approaches have significantly improved planning performance for solvable instances, but when these systems encounter an unsolvable problem, they typically provide minimal diagnostic information beyond reporting failure~\cite{Eriksson2018}. This diagnostic gap represents a significant limitation for users attempting to understand the source of conflicts or determine appropriate modifications to achieve solvability.
+
+\subsubsection{Structural Taxonomy for Inconsistency Measurement}
+\label{sec:taxonomy}
+
+Unsolvable planning problems can be organized by structural features that suggest different approaches for inconsistency measurement. This taxonomy is organized by mathematical ideas needed to detect and quantify conflicts, rather than by mutually exclusive categories. The three structural categories are:
+
+\textbf{Category 1: Goal Specification Conflicts} The goal specification $G$ contains propositions that cannot simultaneously be true in any valid state. These conflicts exist in the goal specification itself, independent of the available actions or initial state. For instance, a goal requiring both $\{\text{light\_on}, \text{light\_off}\}$ when these represent mutually exclusive conditions cannot be satisfied by any state. This category is detectable through static analysis of $G$ and domain constraints, and suggests \emph{logical and combinatorial measures} such as counting mutex pairs, identifying maximal conflicting sets, or computing minimal covering sets.
+
+\textbf{Category 2: Dependency Graph Structure} Problems arise in the precondition and effect relationships between propositions and operators. This category encompasses three structural features analyzable via graph algorithms on the precondition-effect dependency graph: (2a) \emph{missing producers}, where no operator produces a required proposition, such as unlocking a door when no operator can produce the required key; (2b) \emph{circular dependencies}, where preconditions form cycles without initialization, such as requiring a security badge to be activated to enter a building while needing to be inside the building to activate the badge; and (2c) \emph{unreachable regions}, where goal propositions exist in ``bubbles'' that cannot be entered from the initial state, including dead-end states from which no sequence of operators can achieve the goal. This category suggests \emph{graph-based measures} such as counting missing producers, measuring precondition chain depth, detecting cycles, or quantifying unreachable region sizes.
+
+\textbf{Category 3: Resource Constraints} Consumable resources (such as time, fuel, budget, or battery) are insufficient to satisfy goal requirements. This includes both total resource deficit, where the cumulative consumption exceeds the available supply (such as requiring two fuel-consuming moves but having only one unit of fuel), and resource contention, where multiple goals compete for the same limited resource (such as two surfaces requiring painting but only one can of paint being available). This category requires \emph{numeric tracking and accounting measures}, such as computing absolute or relative resource deficits, counting over-subscribed resources, or tracking path-dependent consumption patterns.
+
+These structural categories are not mutually exclusive and a single planning problem may exhibit multiple categories simultaneously. For instance, resource contention problems (Category 3) often exhibit goal conflicts (Category 1) caused by resource consumption. The taxonomy is organized by what measurement approaches are applicable: logical analysis for goal conflicts, graph algorithms for dependency structures, and numeric accounting for resources.
+
+An important practical distinction emerges between \emph{static} and \emph{dynamic} analysis approaches. Static issues can be detected directly from the problem specification $\langle P, O, I, G \rangle$ without state space exploration: goal conflicts are identified by checking $G$ for mutex propositions, missing producers by verifying whether $\exists o \in O$ with $p \in \text{add}(o)$, and simple resource bounds by comparing initial quantities against total requirements. Dynamic issues, conversely, require reasoning about reachable states or execution paths: circular dependencies necessitate graph analysis of precondition chains, unreachable regions require forward or backward reachability computation, and path-dependent resource consumption demands state transition tracking. This static-dynamic distinction has implications for computational complexity and suggests that measures based on static analysis may be more efficiently computable than those requiring dynamic state space reasoning.
+
+To illustrate Category 1 (Goal Specification Conflicts) with a formal specification, consider the planning problem $\langle P, O, I, G \rangle$ with $P = \{\text{light\_on}, \text{light\_off}\}$, $I = \{\text{light\_off}\}$, and $G = \{\text{light\_on}, \text{light\_off}\}$. The operator set $O = \{\text{turn\_on}, \text{turn\_off}\}$ contains
+\begin{align*}
+    \text{turn\_on}  & = \langle \{\text{light\_off}\}, \{\text{light\_on}\}, \{\text{light\_off}\} \rangle \\
+    \text{turn\_off} & = \langle \{\text{light\_on}\}, \{\text{light\_off}\}, \{\text{light\_on}\} \rangle
+\end{align*}
+Since states are subsets of $P$ representing true propositions, and \textit{light\_on} and \textit{light\_off} represent mutually exclusive conditions, no state can contain both propositions simultaneously. Therefore, no sequence of operators can produce a state $s$ where $G \subseteq s$, making the problem unsolvable regardless of the available operators.
