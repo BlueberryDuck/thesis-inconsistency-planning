@@ -1,0 +1,177 @@
+\section{Theoretical Adaptation}
+\label{sec:theoretical_adaptation}
+
+This chapter presents three proposals for adapting inconsistency measures to classical planning problems. This work develops planning-native measures that operate directly on planning structures: goals, operators, and precondition-effect relationships. The approach employs multi-faceted diagnostic profiles rather than single severity scores, providing actionable information for problem repair without making assumptions about which repairs are valid.
+
+The proposals presented here are \emph{informal and preliminary}, intended to establish the conceptual framework before formal mathematical definitions are developed. Each proposal is motivated by the structural taxonomy introduced in \ref{sec:taxonomy} and illustrated through concrete scenarios demonstrating varying degrees of inconsistency within each structural category.
+
+\subsection{Design Philosophy and Approach}
+
+The adaptation strategy is guided by several key principles that distinguish this work from traditional inconsistency measurement approaches. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide \emph{diagnostic profiles} consisting of multiple complementary values. This design choice recognizes that different aspects of unsolvability (such as the number of affected goals versus the extent of broken dependencies) serve different debugging purposes.
+
+A fundamental principle guiding these proposals is to ``measure what IS, not what SHOULD BE.'' Traditional repair-based inconsistency measures implicitly encode assumptions about valid repairs by counting minimal changes needed to restore consistency. In planning contexts, however, determining which components ``should'' exist (missing operators, initial state facts, or goal modifications) requires domain expertise that automated measures cannot provide. The proposed measures therefore report objective structural properties (reachable propositions, action-based exclusions) without presupposing which repairs are appropriate.
+
+To maximize utility for planning practitioners, the measures employ planning-specific concepts (goals, operators, reachability, preconditions) rather than generic logical terminology (formulas, interpretations, models). The structural taxonomy established in \ref{sec:taxonomy} suggests reachability analysis for dependency structures (Category~2).
+
+\subsection{From Structural Categories to Measurement Profiles}
+
+The structural taxonomy organizes unsolvability causes by their mathematical properties: goal specification conflicts (Category~1), dependency graph failures (Category~2), and resource insufficiency (Category~3). The measurement framework below focuses on Category~2 problems, organizing three measures into two complementary \emph{analysis profiles}.
+
+The framework distinguishes between two types of reachability analysis. \textbf{State Space Analysis} (Profile~1) examines which states exist in the reachable state space, asking ``do the required states exist?'' This static analysis computes reachability once and analyzes the resulting state set. \textbf{Trajectory Analysis} (Profile~2) examines path-dependent properties, asking ``do valid paths exist between states?'' This dynamic analysis considers reachability from intermediate goal-achieving states.
+
+Profile~1 contains two measures detecting different state-level failures: unreachability (propositions never appearing in any state) and mutex (goals never co-occurring in any state). Profile~2 contains one measure detecting trajectory-level failures: sequencing conflicts (achieving one goal creates dead-ends blocking others). Together, these three measures provide complementary diagnostic perspectives on Category~2 dependency problems.
+
+\subsection{Measurement Framework}
+
+Each proposal defines a \emph{diagnostic profile} consisting of two complementary \emph{measures}. Following terminology in the inconsistency measurement literature~\cite{Thimm2019}, a measure assigns a single numerical value to a knowledge base (here, a planning problem). Each measure provides two values: one indicating \emph{scope} (how many goals are affected) and one revealing \emph{structure} (underlying complexity). This design provides richer diagnostic information than single values while maintaining interpretability.
+
+The three proposals are organized into two analysis profiles:
+
+\textbf{Profile 1: State Space Analysis (Static)} examines which states exist in the reachable state space. This profile contains two measures:
+
+\emph{Proposal 1: Unreachability Profile} reports propositions that never appear in any reachable state, providing a generic diagnostic for dependency structure problems. The profile reports unreachable goal propositions (indicating which goals are blocked) and total unreachable propositions (revealing dependency depth). This measure detects unreachability regardless of structural cause (missing producers, circular dependencies, or action-based exclusions) but does not distinguish between these causes.
+
+\emph{Proposal 2: Goal Mutex Profile} detects operator-induced mutual exclusions where goal propositions are each individually achievable but never simultaneously true in any reachable state. The profile reports which goal propositions participate in mutex relationships and counts unordered mutex pairs, revealing fundamentally incompatible goals even when actions allow transitions between them.
+
+\textbf{Profile 2: Trajectory Analysis (Dynamic)} examines path-dependent properties of the state space:
+
+\emph{Proposal 3: Goal Sequencing Conflict Profile} detects irreversible dead-end states where achieving certain goal propositions permanently blocks others. Unlike mutex (where goals can be achieved in different states), sequencing conflicts involve one-way transitions that prevent subsequent goal achievement. The profile reports which goal propositions participate in conflicts and counts ordered conflict pairs, revealing directionality.
+
+\paragraph{Scope and Structure Variants.}
+
+Each measure provides two complementary values following a standardized pattern: the \emph{scope} variant reports goal-level severity, while the \emph{structure} variant reveals underlying complexity. This standardization enables consistent interpretation across measures while allowing each structure variant to capture the natural ``next level of detail'' for its specific failure mode.
+
+The scope values are directly comparable across measures: a problem with 3 unreachable goals and 2 mutex goals immediately indicates which failure mode is more prevalent. The structure values are not directly comparable but provide diagnostic depth within each measure: the ratio between scope and structure reveals characteristic patterns (dependency chains, conflict hubs, directional asymmetries).
+
+Specifically, structure variants differ by analysis type:
+\begin{itemize}
+    \item \textbf{Unreachability}: Structure expands \emph{vertically} from goals to all propositions, revealing dependency depth
+    \item \textbf{Mutex}: Structure expands \emph{horizontally} to count pairwise relationships, revealing conflict complexity
+    \item \textbf{Sequencing}: Structure counts \emph{ordered} pairs, revealing directional conflict patterns
+\end{itemize}
+
+This variation is a feature, not an inconsistency. Each structure variant answers ``what is the broader context of this failure mode?'' in the most informative way for that specific analysis.
+
+\subsection{Proposal 1: Unreachability Profile}
+\label{sec:unreachability_profile}
+
+The first proposal provides a unified approach to Category~2 unsolvability by characterizing unreachable propositions through reachability analysis. This measure applies uniformly to all dependency structure subtypes: missing producers (2a), circular dependencies (2b), and dead-end states (2c).
+
+The \emph{unreachability profile} employs forward reachability analysis to compute: (1) the number of goal propositions not appearing in any reachable state, and (2) the total number of propositions not appearing in any reachable state. The first value identifies which goal propositions are blocked, while the second reveals the scope of broken dependencies. The difference between these values indicates cascading unreachability depth.
+
+\paragraph{Scenario 1: Locked Door (Missing Producer).} Consider a planning problem with $G = \{\text{in\_room}\}$ where achieving this goal requires the precondition sequence:
+\begin{equation*}
+    \text{in\_room} \;\text{requires}\; \text{door\_unlocked} \;\text{requires}\; \text{has\_key}
+\end{equation*}
+If $\text{has\_key} \notin I$ and no operator produces \textit{has\_key}, forward reachability analysis yields:
+\begin{itemize}
+    \item Unreachable goal propositions: 1 (\textit{in\_room})
+    \item Total unreachable propositions: 3 (\textit{has\_key}, \textit{door\_unlocked}, \textit{in\_room})
+\end{itemize}
+
+\paragraph{Scenario 2: Bank Vault (Multiple Missing Producers).} A more complex problem with $G = \{\text{in\_building}\}$ requires three independent precondition chains:
+\begin{align*}
+    \text{in\_building}    & \;\text{requires}\; \text{door1\_open}, \text{door2\_open}, \text{access\_granted} \\
+    \text{door1\_open}     & \;\text{requires}\; \text{key1}                                                    \\
+    \text{door2\_open}     & \;\text{requires}\; \text{key2}                                                    \\
+    \text{access\_granted} & \;\text{requires}\; \text{admin\_approval}
+\end{align*}
+If all three root preconditions (\textit{key1}, \textit{key2}, \textit{admin\_approval}) are missing producers, reachability analysis yields:
+\begin{itemize}
+    \item Unreachable goal propositions: 1 (\textit{in\_building})
+    \item Total unreachable propositions: 7 (three missing producers plus their dependent propositions)
+\end{itemize}
+
+A small difference between these values indicates shallow dependency problems (directly unreachable goals), while a large difference reveals deep cascading failures (extensive dependency chains). This measure applies uniformly across all Category~2 subtypes, providing a generic diagnostic for dependency-related unsolvability without distinguishing between specific structural causes such as missing producers versus circular dependencies.
+
+\subsection{Proposal 2: Goal Mutex Profile}
+\label{sec:goal_mutex_profile}
+
+The second proposal addresses unsolvability where goal propositions are each individually achievable but never simultaneously true in any reachable state. This differs from specification-level contradictions (goals containing explicit negation like $\{p, \neg p\}$, which do not exist in propositional STRIPS) and from sequencing conflicts (where achieving one goal permanently blocks another). Mutex relationships are \emph{operator-induced}: actions enforce mutual exclusion through their effects, creating states where goals alternate but never coexist.
+
+The \emph{goal mutex profile} characterizes these operator-induced exclusions through reachability analysis. Specifically, goal propositions $g_1$ and $g_2$ are \emph{mutex} when: (1) $g_1$ appears in some reachable state, (2) $g_2$ appears in some reachable state, but (3) no reachable state contains both $g_1$ and $g_2$ simultaneously. This captures situations where goals are individually achievable and actions may allow transitions between them (reversibility), but the action model structurally prevents their co-occurrence.
+
+The profile computes two values: (1) the number of goal propositions participating in at least one mutex relationship, and (2) the total number of unordered mutex pairs. The first value indicates scope, while the second reveals conflict structure (isolated pairs versus complete conflict cliques).
+
+\paragraph{Scenario 1: Light Switch (Simple Mutex).} Consider a planning problem with goal specification
+\begin{equation*}
+    G = \{\text{on}, \text{off}\}
+\end{equation*}
+where:
+\begin{itemize}
+    \item Initial state: $I = \{\text{off}\}$
+    \item Action \textit{turn\_on}: precondition \textit{off}, effects $+\text{on}$, $-\text{off}$
+    \item Action \textit{turn\_off}: precondition \textit{on}, effects $+\text{off}$, $-\text{on}$
+\end{itemize}
+Forward reachability yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions are achievable (each appears in some state), and actions are reversible (the agent can toggle between states). However, no reachable state contains both \textit{on} and \textit{off} simultaneously. The profile yields:
+\begin{itemize}
+    \item Goal propositions in mutex: 2 (both propositions involved)
+    \item Mutex pairs: 1 (unordered pair: $\{\text{on}, \text{off}\}$)
+\end{itemize}
+
+\paragraph{Scenario 2: Traffic Light (Complete Clique).} A planning problem with $G = \{\text{red}, \text{yellow}, \text{green}\}$ where:
+\begin{itemize}
+    \item Initial state: $I = \{\text{red}\}$
+    \item Actions form a cycle: \textit{red}$\rightarrow$\textit{green}, \textit{green}$\rightarrow$\textit{yellow}, \textit{yellow}$\rightarrow$\textit{red}
+    \item Each transition deletes the previous state and adds the next
+\end{itemize}
+Forward reachability yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goal propositions are individually achievable and the system is fully reversible (cyclic), but no state contains more than one color simultaneously. The profile yields:
+\begin{itemize}
+    \item Goal propositions in mutex: 3 (all propositions involved)
+    \item Mutex pairs: 3 (complete clique: $\{\text{red}, \text{yellow}\}$, $\{\text{red}, \text{green}\}$, $\{\text{yellow}, \text{green}\}$)
+\end{itemize}
+
+This measure identifies operator-induced mutual exclusions. Goal propositions cannot coexist in reachable states due to action effects, even though each is individually achievable. The unordered pair count distinguishes isolated conflicts from densely connected mutex cliques, suggesting the complexity of goal incompatibilities.
+
+\subsection{Proposal 3: Goal Sequencing Conflict Profile}
+\label{sec:sequencing_conflict_profile}
+
+The third proposal addresses unsolvability of Category~2c: sequencing conflicts where achieving certain goal propositions creates dead-end states that prevent other goal propositions from being reached. Unlike mutex relationships (Proposal~2) where goals can be achieved in different states but never simultaneously, sequencing conflicts involve \emph{irreversible} state transitions where achieving one goal permanently blocks another.
+
+The \emph{goal sequencing conflict profile} characterizes action-based exclusions through reachability analysis. Specifically, a \emph{sequencing conflict} $(g_1, g_2)$ exists when: (1) goal proposition $g_1$ can be achieved from the initial state, but (2) from any reachable state where $g_1$ is true, goal proposition $g_2$ is no longer reachable. This captures situations where achieving $g_1$ through available actions inevitably transitions to states from which $g_2$ cannot be satisfied, typically because actions required to achieve $g_1$ delete preconditions needed for $g_2$ without any operator to restore them.
+
+The profile computes two values: (1) the number of goal propositions participating in at least one sequencing conflict (as either blocker or blocked), and (2) the total number of ordered conflict pairs $(g_1, g_2)$. The first value indicates scope, while the second reveals conflict patterns (star structures versus symmetric exclusions).
+
+\paragraph{Scenario 1: One-Way Door (Simple Exclusion).} Consider a planning problem with goal specification
+\begin{equation*}
+    G = \{\text{has\_item}, \text{other\_task}\}
+\end{equation*}
+where:
+\begin{itemize}
+    \item Achieving \textit{has\_item} requires entering a room via a one-way door (irreversible action)
+    \item After achieving \textit{has\_item}, the agent is trapped and \textit{other\_task} becomes unreachable
+\end{itemize}
+The profile yields:
+\begin{itemize}
+    \item Goal propositions with sequencing conflicts: 2 (both propositions involved)
+    \item Sequencing conflict pairs: 1 (ordered pair: \textit{has\_item} blocks \textit{other\_task})
+\end{itemize}
+
+\paragraph{Scenario 2: Multiple Exclusions (Star Pattern).} A planning problem with $G = \{\text{goal\_A}, \text{goal\_B}, \text{goal\_C}\}$ where achieving \textit{goal\_A} creates a dead-end state where both \textit{goal\_B} and \textit{goal\_C} become unreachable. The profile yields:
+\begin{itemize}
+    \item Goal propositions with sequencing conflicts: 3 (all propositions involved)
+    \item Sequencing conflict pairs: 2 (\textit{goal\_A} blocks \textit{goal\_B}, \textit{goal\_A} blocks \textit{goal\_C})
+\end{itemize}
+
+\paragraph{Scenario 3: Bidirectional Conflict (Symmetric Exclusion).} A planning problem with $G = \{\text{goal\_X}, \text{goal\_Y}\}$ where:
+\begin{itemize}
+    \item Achieving \textit{goal\_X} makes \textit{goal\_Y} unreachable
+    \item Achieving \textit{goal\_Y} makes \textit{goal\_X} unreachable
+\end{itemize}
+The profile yields:
+\begin{itemize}
+    \item Goal propositions with sequencing conflicts: 2 (both propositions involved)
+    \item Sequencing conflict pairs: 2 (ordered pairs in both directions)
+\end{itemize}
+
+This measure identifies conflicts from action effects. Goal propositions can theoretically coexist in the same state, but action sequences required to achieve one proposition prevent achieving the other, suggesting missing reversibility in the action model.
+
+\subsection{Normalization and Relative Measures}
+
+The three proposals presented above report \emph{absolute} inconsistency values: counts of unreachable propositions, mutex pairs, and sequencing conflict pairs. An important consideration for practical deployment is whether these measures should be \emph{normalized} or made \emph{relative} to problem characteristics such as the total number of goal propositions or the size of the proposition space.
+
+The literature on relative inconsistency measures~\cite{Besnard2020} explores this question in the context of propositional knowledge bases, demonstrating both advantages and limitations of normalization approaches. Relative measures can facilitate comparison across problems of different sizes, potentially providing a notion of ``percentage inconsistency'' analogous to test coverage metrics in software engineering.
+
+However, several considerations suggest that absolute measures may be more appropriate for planning diagnostics. First, the severity of unsolvability is not necessarily proportional to problem size: a planning problem with 100 goal propositions where only 2 conflict may be easier to repair than a problem with 3 goal propositions where all 3 form a complete conflict graph. Second, normalization requires choosing appropriate denominators (total goal propositions? total propositions in the problem? maximum possible conflicts?), and different choices encode different assumptions about problem structure. Third, the proposed measures already provide multiple values that capture relative information: the ratio between unreachable goal propositions and total unreachable propositions indicates dependency depth, while the ratio between mutex goals and mutex pairs (or conflicting goals and sequencing pairs) reveals conflict structure.
+
+For the scope of this thesis, the focus remains on absolute measures that report objective structural properties. Future work may explore normalization schemes tailored to specific use cases, such as comparing inconsistency trends across problem generator parameters or establishing thresholds for automated problem classification. The formalization in the following section defines the measures in their absolute form.

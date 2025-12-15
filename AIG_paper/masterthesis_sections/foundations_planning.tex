@@ -1,4 +1,5 @@
 \subsection{Classical Planning}
+\label{sec:foundations_planning}
 
 Classical planning operates on factored representations, meaning the world state is decomposed into individual variables like ``robot at location A'' or ``door is open'' rather than treating each complete world situation as an indivisible atomic state~\cite{Russell2016}. A planning problem is formally defined as a 4-tuple $\langle P, O, I, G \rangle$ where $P$ is a finite set of atomic propositions, $O$ is a finite set of operators, $I \subseteq P$ is the initial state, and $G \subseteq P$ is the goal specification~\cite{Bylander1994}. Each state $s$ is a subset $s \subseteq P$ representing the propositions that are true in that state, following database semantics where the closed-world assumption treats unmentioned propositions as false and the unique names assumption ensures distinct objects are different~\cite{Russell2016}.
 
