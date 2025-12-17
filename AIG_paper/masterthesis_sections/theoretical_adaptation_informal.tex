@@ -5,6 +5,32 @@ This chapter presents three proposals for adapting inconsistency measures to cla
 
 The proposals presented here are \emph{informal and preliminary}, intended to establish the conceptual framework before formal mathematical definitions are developed. Each proposal is motivated by the structural taxonomy introduced in \ref{sec:taxonomy} and illustrated through concrete scenarios demonstrating varying degrees of inconsistency within each structural category.
 
+\subsection{Motivation: Limitations of Direct Measure Application}
+\label{sec:naive_encoding}
+
+A natural approach to measuring inconsistency in planning problems would encode the goal specification as a propositional knowledge base and apply classical inconsistency measures. Specifically, encoding the goal $G$ as $\bigwedge_{g \in G} g$ with appropriate mutex constraints should allow direct application of measures such as the contension measure $I_c$.
+
+However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that $I_c = 1$ for representative problems from each structural category.
+
+\begin{table}[ht]
+    \centering
+    \caption{Contension measure $I_c$ for naive propositional encodings}
+    \label{tab:naive_ic}
+    \begin{tabular}{llc}
+        \hline
+        Category                & Example Problem & $I_c$ \\
+        \hline
+        2a: Missing Producers   & Locked Door     & 1     \\
+        2c: Mutex               & Light Switch    & 1     \\
+        2c: Sequencing Conflict & One-Way Door    & 1     \\
+        \hline
+    \end{tabular}
+\end{table}
+
+This uniform result fails to distinguish fundamentally different types of unsolvability. The cause lies in three-valued semantics: the mutual exclusivity constraint $\neg(p \land q)$ is satisfied by assigning the conflicting value $B$ to only \emph{one} proposition, since $\neg(B \land T) = \neg B = B$. Thus, symmetric conflicts (where both propositions are equally problematic) yield the same $I_c$ value as single-point failures.
+
+This finding motivates the development of \emph{planning-native} inconsistency measures that operate directly on planning structures---goals, operators, reachable states---rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology (formal definitions, rationality postulates, complexity analysis) while respecting planning-specific semantics.
+
 \subsection{Design Philosophy and Approach}
 
 The adaptation strategy is guided by several key principles that distinguish this work from traditional inconsistency measurement approaches. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide \emph{diagnostic profiles} consisting of multiple complementary values. This design choice recognizes that different aspects of unsolvability (such as the number of affected goals versus the extent of broken dependencies) serve different debugging purposes.

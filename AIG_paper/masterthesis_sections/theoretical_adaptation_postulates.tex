@@ -1,0 +1,124 @@
+\subsection{Rationality Postulates}
+\label{sec:postulates}
+
+A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. Following~\cite{Ulbricht2016}, we recognize that domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases (goals, operators, states versus formulas); second, planning exhibits inherently non-monotonic behavior (adding operators can reduce inconsistency by enabling new solution paths).
+
+\subsubsection{Planning-Adapted Postulates}
+
+\begin{defn}[Planning Consistency]
+    An inconsistency measure $I$ for planning problems satisfies \emph{Planning Consistency} if:
+    \begin{equation*}
+        I(\langle P, O, I, G \rangle) = 0 \text{ iff } \langle P, O, I, G \rangle \text{ is solvable}
+    \end{equation*}
+\end{defn}
+
+This adapts the classical Consistency postulate ($I(K) = 0$ iff $K$ is consistent) to the planning domain, where solvability replaces logical consistency.
+
+\begin{defn}[Operator Monotonicity]
+    An inconsistency measure $I$ satisfies \emph{Operator Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and operators $o$:
+    \begin{equation*}
+        I(\langle P, O \cup \{o\}, I, G \rangle) \leq I(\langle P, O, I, G \rangle)
+    \end{equation*}
+\end{defn}
+
+Note that Operator Monotonicity reverses classical monotonicity because adding operators can only enable new paths, potentially reducing inconsistency. This parallels~\cite{Ulbricht2016}'s observation that non-monotonic logics require inverted monotonicity postulates.
+
+\begin{defn}[Goal Monotonicity]
+    An inconsistency measure $I$ satisfies \emph{Goal Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and goals $g$:
+    \begin{equation*}
+        I(\langle P, O, I, G \cup \{g\} \rangle) \geq I(\langle P, O, I, G \rangle)
+    \end{equation*}
+\end{defn}
+
+Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it.
+
+\subsubsection{Postulate Analysis: Unreachability Profile}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
+\end{prop}
+\begin{proof}
+    Counter-example: The Light Switch problem has $I^{\text{scope}}_{\text{UR}} = 0$ (both goals \textit{on} and \textit{off} appear in reachable states) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $I = 0$ only for solvable problems.
+\end{proof}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{UR}}$ satisfies Operator Monotonicity.
+\end{prop}
+\begin{proof}
+    Adding an operator $o$ can only expand $S_{\text{reach}}$ or leave it unchanged. If goal $g$ was unreachable (not appearing in any state in $S_{\text{reach}}$), adding $o$ may make it reachable by enabling new state transitions. This can only reduce or maintain $I^{\text{scope}}_{\text{UR}}$, never increase it.
+\end{proof}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{UR}}$ satisfies Goal Monotonicity.
+\end{prop}
+\begin{proof}
+    Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
+\end{proof}
+
+\subsubsection{Postulate Analysis: Goal Mutex Profile}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
+\end{prop}
+\begin{proof}
+    Counter-example: The Locked Door problem has $I^{\text{scope}}_{\text{MX}} = 0$ (no mutex relationships exist since the goal \textit{in\_room} is not even achievable) but is unsolvable.
+\end{proof}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{MX}}$ does not satisfy Operator Monotonicity in general.
+\end{prop}
+\begin{proof}
+    Adding an operator can introduce new reachable states, potentially creating new mutex relationships. Consider a problem where goal $g_2$ is initially unreachable (hence no mutex with $g_1$). Adding an operator that makes $g_2$ reachable but in states that never contain $g_1$ creates a new mutex pair, increasing $I^{\text{scope}}_{\text{MX}}$.
+\end{proof}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{MX}}$ satisfies Goal Monotonicity.
+\end{prop}
+\begin{proof}
+    Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $I^{\text{scope}}_{\text{MX}}$ increases; otherwise it remains unchanged.
+\end{proof}
+
+\subsubsection{Postulate Analysis: Goal Sequencing Conflict Profile}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
+\end{prop}
+\begin{proof}
+    Counter-example: The Light Switch problem has $I^{\text{scope}}_{\text{GS}} = 0$ (no sequencing conflicts since actions are reversible) but is unsolvable (goals are mutex).
+\end{proof}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{GS}}$ satisfies Operator Monotonicity.
+\end{prop}
+\begin{proof}
+    Adding operator $o$ can only provide new paths from $g_1$-satisfying states. If $(g_1, g_2)$ was a sequencing conflict (no path from any $g_1$-state reaches $g_2$), adding $o$ may create such a path, eliminating the conflict. Adding operators cannot create new sequencing conflicts since it can only expand reachability from each state.
+\end{proof}
+
+\begin{prop}
+    $I^{\text{scope}}_{\text{GS}}$ satisfies Goal Monotonicity.
+\end{prop}
+\begin{proof}
+    Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge; existing conflicts are unaffected.
+\end{proof}
+
+\subsubsection{Summary}
+
+Table~\ref{tab:postulates} summarizes postulate compliance for the proposed measures.
+
+\begin{table}[ht]
+    \centering
+    \caption{Postulate compliance of proposed planning inconsistency measures}
+    \label{tab:postulates}
+    \begin{tabular}{l|cc|cc|cc}
+        \hline
+                              & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c}{$I_{\text{GS}}$}                                        \\
+        Postulate             & scope                                & struct                               & scope                               & struct     & scope      & struct     \\
+        \hline
+        Planning Consistency  & \texttimes                           & \texttimes                           & \texttimes                          & \texttimes & \texttimes & \texttimes \\
+        Operator Monotonicity & \checkmark                           & \checkmark                           & \texttimes                          & \texttimes & \checkmark & \checkmark \\
+        Goal Monotonicity     & \checkmark                           & \checkmark                           & \checkmark                          & \checkmark & \checkmark & \checkmark \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work. Each measure captures a distinct aspect of unsolvability: $I_{\text{UR}}$ detects dependency failures, $I_{\text{MX}}$ detects state-level exclusions, and $I_{\text{GS}}$ detects trajectory-level dead-ends. The combination of all three profiles provides comprehensive coverage of Category~2 unsolvability causes. This design parallels findings in~\cite{Ulbricht2016}, where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.

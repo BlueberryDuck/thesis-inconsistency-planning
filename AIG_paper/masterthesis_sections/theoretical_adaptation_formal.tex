@@ -17,6 +17,20 @@ Before defining the measures themselves, we establish several foundational conce
 
 The set $S_{\text{reach}}$ can be computed via forward reachability analysis: starting from $I$, iteratively apply all applicable operators until no new states are generated (a fixpoint is reached). Since $P$ is finite and each state is a subset of $P$, this process terminates in at most $2^{|P|}$ iterations, though practical implementations typically converge much faster.
 
+\begin{defn}[Forward Reachability from State]
+    Let $\langle P, O, I, G \rangle$ be a planning problem. For any state $s \subseteq P$,
+    the set of \emph{forward-reachable states from $s$}, denoted $\text{Reach}(s)$, is
+    the smallest set satisfying:
+    \begin{enumerate}
+        \item $s \in \text{Reach}(s)$
+        \item If $s' \in \text{Reach}(s)$ and $o \in O$ with $\text{precond}(o) \subseteq s'$,
+              then $\text{RESULT}(s',o) \in \text{Reach}(s)$
+    \end{enumerate}
+\end{defn}
+
+Note that $S_{\text{reach}} = \text{Reach}(I)$, and for any $s \in S_{\text{reach}}$,
+we have $\text{Reach}(s) \subseteq S_{\text{reach}}$.
+
 \subsubsection{Proposal 1: Unreachability Profile (Formal)}
 
 The Unreachability Profile quantifies Category~2 inconsistency by analyzing which propositions fail to appear in any reachable state. This profile consists of two complementary measures.
@@ -41,11 +55,11 @@ This measure reveals the \emph{structure} of dependency problems by counting all
 
 \paragraph{Example: Locked Door.} Consider the planning problem $\langle P, O, I, G \rangle$ with:
 \begin{align*}
-    P & = \{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}        \\
-    G & = \{\text{in\_room}\}                                                \\
-    I & = \{\}                                                               \\
-    O & = \{\text{unlock}, \text{enter}\}                                    \\
-      & \text{where:}                                                        \\
+    P & = \{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}                              \\
+    G & = \{\text{in\_room}\}                                                                      \\
+    I & = \{\}                                                                                     \\
+    O & = \{\text{unlock}, \text{enter}\}                                                          \\
+      & \text{where:}                                                                              \\
       & \quad \text{unlock} = \langle \{\text{has\_key}\}, \{\text{door\_unlocked}\}, \{\} \rangle \\
       & \quad \text{enter} = \langle \{\text{door\_unlocked}\}, \{\text{in\_room}\}, \{\} \rangle
 \end{align*}
@@ -57,7 +71,7 @@ Forward reachability analysis yields:
 
 No operator is applicable from the initial state since $\text{has\_key}$ is not initially true and no operator produces it. The Unreachability Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_room}\}| = 1     \\
+    I^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_room}\}| = 1                                         \\
     I^{\text{struct}}_{\text{UR}} & = |\{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}| = 3
 \end{align*}
 
@@ -65,19 +79,19 @@ The difference of 2 indicates two intermediate propositions in the dependency ch
 
 \paragraph{Example: Bank Vault.} Consider a problem with:
 \begin{align*}
-    P & = \{\text{key1}, \text{key2}, \text{admin\_approval},                     \\
-      & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted},     \\
-      & \quad \text{in\_building}\}                                               \\
-    G & = \{\text{in\_building}\}                                                 \\
-    I & = \{\}                                                                    \\
-    O & = \{\text{open\_door1}, \text{open\_door2}, \text{grant\_access}, \text{enter}\}       \\
+    P & = \{\text{key1}, \text{key2}, \text{admin\_approval},                                 \\
+      & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted},                 \\
+      & \quad \text{in\_building}\}                                                           \\
+    G & = \{\text{in\_building}\}                                                             \\
+    I & = \{\}                                                                                \\
+    O & = \{\text{open\_door1}, \text{open\_door2}, \text{grant\_access}, \text{enter}\}      \\
       & \text{where each operator requires its respective key/approval to produce its effect}
 \end{align*}
 
 Reachability analysis yields $S_{\text{reach}} = \{\{\}\}$ since none of the root preconditions ($\text{key1}$, $\text{key2}$, $\text{admin\_approval}$) are initially true or produced by any operator. The Unreachability Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_building}\}| = 1 \\
-    I^{\text{struct}}_{\text{UR}} & = |\{\text{key1}, \text{key2}, \text{admin\_approval}, \\
+    I^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_building}\}| = 1                                       \\
+    I^{\text{struct}}_{\text{UR}} & = |\{\text{key1}, \text{key2}, \text{admin\_approval},                \\
                                   & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted}, \\
                                   & \quad \text{in\_building}\}| = 7
 \end{align*}
@@ -119,11 +133,11 @@ This measure reveals the \emph{structure} of mutex relationships by counting uno
 
 \paragraph{Example: Light Switch.} Consider the planning problem $\langle P, O, I, G \rangle$ with:
 \begin{align*}
-    P & = \{\text{on}, \text{off}\}        \\
-    G & = \{\text{on}, \text{off}\}        \\
-    I & = \{\text{off}\}                   \\
-    O & = \{\text{turn\_on}, \text{turn\_off}\}    \\
-      & \text{where:}                      \\
+    P & = \{\text{on}, \text{off}\}                                                           \\
+    G & = \{\text{on}, \text{off}\}                                                           \\
+    I & = \{\text{off}\}                                                                      \\
+    O & = \{\text{turn\_on}, \text{turn\_off}\}                                               \\
+      & \text{where:}                                                                         \\
       & \quad \text{turn\_on} = \langle \{\text{off}\}, \{\text{on}\}, \{\text{off}\} \rangle \\
       & \quad \text{turn\_off} = \langle \{\text{on}\}, \{\text{off}\}, \{\text{on}\} \rangle
 \end{align*}
@@ -143,16 +157,16 @@ The profile detects operator-induced mutual exclusion despite reversibility: act
 
 \paragraph{Example: Traffic Light.} Consider a problem with:
 \begin{align*}
-    P & = \{\text{red}, \text{yellow}, \text{green}\}                     \\
-    G & = \{\text{red}, \text{yellow}, \text{green}\}                     \\
-    I & = \{\text{red}\}                                                  \\
-    O & = \{\text{red\_to\_green}, \text{green\_to\_yellow}, \text{yellow\_to\_red}\}       \\
+    P & = \{\text{red}, \text{yellow}, \text{green}\}                                 \\
+    G & = \{\text{red}, \text{yellow}, \text{green}\}                                 \\
+    I & = \{\text{red}\}                                                              \\
+    O & = \{\text{red\_to\_green}, \text{green\_to\_yellow}, \text{yellow\_to\_red}\} \\
       & \text{where each transition deletes the previous state and adds the next}
 \end{align*}
 
 Reachability analysis yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goal propositions are individually achievable (the system is cyclic), but no state contains more than one color. The Goal Mutex Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{MX}}  & = |\{\text{red}, \text{yellow}, \text{green}\}| = 3 \\
+    I^{\text{scope}}_{\text{MX}}  & = |\{\text{red}, \text{yellow}, \text{green}\}| = 3                                                      \\
     I^{\text{struct}}_{\text{MX}} & = |\{\{\text{red}, \text{yellow}\}, \{\text{red}, \text{green}\}, \{\text{yellow}, \text{green}\}\}| = 3
 \end{align*}
 
@@ -163,14 +177,16 @@ This example demonstrates a complete mutex clique: all goal pairs are mutually e
 The Goal Sequencing Conflict Profile quantifies Category~2c inconsistency by analyzing irreversible action-based exclusions where achieving certain goals permanently prevents other goals from being achieved. Unlike mutex relationships (Proposal~2) where goals alternate between states via reversible actions, sequencing conflicts involve one-way transitions creating permanent dead-ends. This profile consists of two complementary measures.
 
 \begin{defn}[Sequencing Conflict]
-    Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. For goal propositions $g_1, g_2 \in G$, a \emph{sequencing conflict} $(g_1, g_2)$ exists if:
+    Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. For goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$, a \emph{sequencing conflict} $(g_1, g_2)$ exists if:
     \begin{enumerate}
-        \item $\exists s_1 \in S_{\text{reach}} : g_1 \in s_1$ (goal $g_1$ is achievable), and
-        \item $\forall s \in S_{\text{reach}}$ with $g_1 \in s$, there is no reachable state $s' \in S_{\text{reach}}$ with $g_2 \in s'$ reachable from $s$
+        \item $\exists s \in S_{\text{reach}} : g_1 \in s$ (goal $g_1$ is achievable from $I$)
+        \item $\forall s \in S_{\text{reach}}$ with $g_1 \in s$:
+              $\nexists s' \in \text{Reach}(s) : g_2 \in s'$ (from every $g_1$-state,
+              $g_2$ is unreachable)
     \end{enumerate}
 \end{defn}
 
-Informally, $(g_1, g_2)$ is a sequencing conflict when $g_1$ can be achieved, but doing so prevents $g_2$ from being achieved subsequently.
+Informally, $(g_1, g_2)$ is a sequencing conflict when $g_1$ can be achieved, but from every state where $g_1$ holds, no sequence of actions can achieve $g_2$.
 
 \begin{defn}[Conflicting Goal Propositions Count]
     Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $I^{\text{scope}}_{\text{GS}}$ counting goal propositions involved in sequencing conflicts is defined as:
@@ -192,13 +208,13 @@ This measure reveals the \emph{structure} of sequencing conflicts by counting or
 
 \paragraph{Example: One-Way Door.} Consider the planning problem $\langle P, O, I, G \rangle$ with:
 \begin{align*}
-    P & = \{\text{outside}, \text{inside}, \text{has\_item}, \text{other\_task\_done}\}      \\
-    G & = \{\text{has\_item}, \text{other\_task\_done}\}                                    \\
-    I & = \{\text{outside}\}                                                                \\
-    O & = \{\text{enter}, \text{get\_item}, \text{do\_other\_task}\}                        \\
-      & \text{where:}                                                                       \\
-      & \quad \text{enter} = \langle \{\text{outside}\}, \{\text{inside}\}, \{\text{outside}\} \rangle \\
-      & \quad \text{get\_item} = \langle \{\text{inside}\}, \{\text{has\_item}\}, \{\} \rangle \\
+    P & = \{\text{outside}, \text{inside}, \text{has\_item}, \text{other\_task\_done}\}                       \\
+    G & = \{\text{has\_item}, \text{other\_task\_done}\}                                                      \\
+    I & = \{\text{outside}\}                                                                                  \\
+    O & = \{\text{enter}, \text{get\_item}, \text{do\_other\_task}\}                                          \\
+      & \text{where:}                                                                                         \\
+      & \quad \text{enter} = \langle \{\text{outside}\}, \{\text{inside}\}, \{\text{outside}\} \rangle        \\
+      & \quad \text{get\_item} = \langle \{\text{inside}\}, \{\text{has\_item}\}, \{\} \rangle                \\
       & \quad \text{do\_other\_task} = \langle \{\text{outside}\}, \{\text{other\_task\_done}\}, \{\} \rangle
 \end{align*}
 
@@ -212,18 +228,18 @@ The profile detects one unidirectional conflict: achieving $\text{has\_item}$ bl
 
 \paragraph{Example: Bidirectional Conflict.} Consider a problem with:
 \begin{align*}
-    P & = \{\text{state\_X}, \text{state\_Y}, \text{goal\_X}, \text{goal\_Y}\}  \\
-    G & = \{\text{goal\_X}, \text{goal\_Y}\}                                    \\
-    I & = \{\text{state\_X}, \text{state\_Y}\}                                  \\
-    O & = \{\text{achieve\_X}, \text{achieve\_Y}\}                              \\
-      & \text{where:}                                                           \\
+    P & = \{\text{state\_X}, \text{state\_Y}, \text{goal\_X}, \text{goal\_Y}\}                                 \\
+    G & = \{\text{goal\_X}, \text{goal\_Y}\}                                                                   \\
+    I & = \{\text{state\_X}, \text{state\_Y}\}                                                                 \\
+    O & = \{\text{achieve\_X}, \text{achieve\_Y}\}                                                             \\
+      & \text{where:}                                                                                          \\
       & \quad \text{achieve\_X} = \langle \{\text{state\_X}\}, \{\text{goal\_X}\}, \{\text{state\_Y}\} \rangle \\
       & \quad \text{achieve\_Y} = \langle \{\text{state\_Y}\}, \{\text{goal\_Y}\}, \{\text{state\_X}\} \rangle
 \end{align*}
 
 Achieving either goal deletes the precondition needed for the other goal's achievement. The Goal Sequencing Conflict Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{GS}}  & = |\{\text{goal\_X}, \text{goal\_Y}\}| = 2 \\
+    I^{\text{scope}}_{\text{GS}}  & = |\{\text{goal\_X}, \text{goal\_Y}\}| = 2                                   \\
     I^{\text{struct}}_{\text{GS}} & = |{(\text{goal\_X}, \text{goal\_Y}), (\text{goal\_Y}, \text{goal\_X})}| = 2
 \end{align*}
 
