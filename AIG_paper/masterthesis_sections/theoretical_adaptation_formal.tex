@@ -190,6 +190,8 @@ The Goal Sequencing Conflict Profile quantifies Category~2c inconsistency by ana
 
 Informally, $(g_1, g_2)$ is a sequencing conflict when $g_1$ can be achieved, but from every state where $g_1$ holds, no sequence of actions can achieve $g_2$.
 
+\textbf{Remark on Irreversibility.} The definition captures \emph{permanent} blocking: once any $g_1$-satisfying state is reached (whether through action execution or because $g_1 \in I$), $g_2$ becomes unreachable. This includes the edge case where $g_1$ holds in the initial state: if $g_1 \in I$ and $g_2$ is unreachable from $I$, then $(g_1, g_2)$ is a sequencing conflict. The key semantic property is irreversibility: achieving $g_1$ creates a ``point of no return'' from which $g_2$ can never be satisfied. This contrasts with mutex relationships (Definition~\ref{defn:mutex}), where goals may alternate between states via reversible actions but simply cannot co-occur.
+
 \begin{defn}[Conflicting Goal Propositions Count]
     Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $I^{\text{scope}}_{\text{GS}}$ counting goal propositions involved in sequencing conflicts is defined as:
     \begin{equation*}
