@@ -103,44 +103,54 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
 
 \subsubsection{Measure Relationships}
 
-Beyond postulate compliance, formal propositions clarify how the three measures relate to each other, demonstrating they capture complementary aspects of planning inconsistency.
+Beyond postulate compliance, the following proposition establishes how the three measures relate to each other, forming a diagnostic hierarchy rather than independent failure detectors.
 
-\begin{prop}[Unreachability Precludes Mutex and Sequencing]
-    \label{prop:unreachable_precludes}
-    Let $\langle P, O, I, G \rangle$ be a planning problem and $g \in G$.
-    If $g$ is unreachable (i.e., $\nexists s \in S_{\text{reach}} : g \in s$), then:
+\begin{prop}[Measure Hierarchy]
+    \label{prop:measure_hierarchy}
+    The proposed measures form a diagnostic hierarchy:
     \begin{enumerate}
-        \item $g$ does not participate in any mutex relationship
-        \item $g$ does not participate in any sequencing conflict
+        \item If goal $g$ is unreachable, then $g$ does not participate in any
+              mutex relationship or sequencing conflict
+        \item If $(g_1, g_2)$ is a sequencing conflict (with $g_2$ achievable),
+              then $g_1$ and $g_2$ are mutex
+        \item Goals can be mutex without having any sequencing conflict
     \end{enumerate}
 \end{prop}
 \begin{proof}
-    Both mutex (Definition~\ref{defn:mutex}) and sequencing conflict (Definition~\ref{defn:sequencing}) require
-    as their first condition that the goal proposition be achievable:
-    $\exists s \in S_{\text{reach}} : g \in s$. If $g$ is unreachable,
-    this condition fails, precluding both relationship types.
+    \textbf{(1)} Both mutex (Definition~\ref{defn:mutex}) and sequencing conflict
+    (Definition~\ref{defn:sequencing}) require participating goals to be achievable.
+    If $g$ is unreachable, it fails this condition.
+
+    \textbf{(2)} Suppose $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable.
+    By Definition~\ref{defn:sequencing}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
+    with $g_1 \in s$, we have $\nexists s' \in \text{Reach}(s) : g_2 \in s'$.
+    Since $s \in \text{Reach}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
+    $g_1$-states. Thus no reachable state contains both $g_1$ and $g_2$. Combined with
+    both goals being achievable, this satisfies Definition~\ref{defn:mutex}.
+
+    \textbf{(3)} Light Switch: Goals $\{\textit{on}, \textit{off}\}$ are mutex
+    (both achievable, never co-occur) but have no sequencing conflict (from any
+    \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
 \end{proof}
 
-This proposition establishes a precedence relationship: unreachability analysis should be performed first, as unreachable goals are excluded from mutex and sequencing analysis by definition.
+This hierarchy reflects \emph{increasing diagnostic specificity} rather than
+independent failure modes:
+\begin{itemize}
+    \item \textbf{Mutex without sequencing} (e.g., Light Switch): Goals exclude
+          each other but actions are reversible. The conflict is symmetric;
+          neither goal ``causes'' the problem more than the other.
+    \item \textbf{Mutex with sequencing} (e.g., Package Delivery): Goals exclude
+          each other AND achieving specific goals creates permanent dead-ends.
+          The sequencing measure identifies which goal achievement causes the
+          blockage, providing actionable diagnostic information for adding
+          reversal operators.
+\end{itemize}
 
-\begin{prop}[Mutex and Sequencing are Distinct Phenomena]
-    \label{prop:mutex_sequencing_distinct}
-    The following hold:
-    \begin{enumerate}
-        \item Goals can be mutex without having a sequencing conflict
-        \item Goals can have a sequencing conflict without being mutex
-    \end{enumerate}
-\end{prop}
-\begin{proof}
-    \textbf{(1)} Light Switch: Goals $\{\textit{on}, \textit{off}\}$ are mutex
-    (both achievable, never co-occur) but have no sequencing conflict
-    (actions are reversible; from any \textit{on}-state, \textit{off} is reachable and vice versa).
-
-    \textbf{(2)} One-Way Door: $(\textit{has\_item}, \textit{other\_task\_done})$ is a
-    sequencing conflict, but the goals are not mutex: mutex requires
-    goals to never co-occur in any reachable state, while sequencing conflicts
-    concern trajectory constraints (achieving one blocks the other).
-\end{proof}
+The analysis distinction remains meaningful: state space analysis (P1, P2)
+determines \emph{what states exist}, while trajectory analysis (P3)
+determines \emph{what paths exist between states}. For irreversible problems,
+all three measures report non-zero values, with P3 providing directional
+information about which goal achievements cause the blockage.
 
 \begin{prop}[Scope-Structure Bounds]
     \label{prop:scope_structure_bounds}
@@ -193,23 +203,23 @@ Table~\ref{tab:postulates} summarizes postulate compliance for the proposed meas
     \end{tabular}
 \end{table}
 
-Table~\ref{tab:measure_values} demonstrates measure complementarity across the test scenarios: each scenario type produces non-zero values for exactly one measure, confirming that the measures capture distinct failure modes.
+Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: unreachability-dominant problems show only $I_{\text{UR}}$, reversible mutex problems show only $I_{\text{MX}}$, while irreversible problems show \emph{both} $I_{\text{MX}}$ and $I_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
 
 \begin{table}[ht]
     \centering
     \caption{Measure values across test scenarios (scope, structure)}
     \label{tab:measure_values}
-    \begin{tabular}{l|cc|cc|cc}
+    \begin{tabular}{l|cc|cc|cc|l}
         \hline
-        Scenario      & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c}{$I_{\text{GS}}$}                           \\
-                      & scope                                & struct                               & scope                               & struct & scope & struct \\
+        Scenario         & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c|}{$I_{\text{GS}}$} & Type                                             \\
+                         & scope                                & struct                               & scope                                & struct & scope & struct &                        \\
         \hline
-        Locked Door   & 1                                    & 3                                    & 0                                   & 0      & 0     & 0      \\
-        Bank Vault    & 1                                    & 7                                    & 0                                   & 0      & 0     & 0      \\
-        Light Switch  & 0                                    & 0                                    & 2                                   & 1      & 0     & 0      \\
-        Traffic Light & 0                                    & 0                                    & 3                                   & 3      & 0     & 0      \\
-        One-Way Door  & 0                                    & 0                                    & 0                                   & 0      & 2     & 1      \\
-        Bidirectional & 0                                    & 0                                    & 0                                   & 0      & 2     & 2      \\
+        Locked Door      & 1                                    & 3                                    & 0                                    & 0      & 0     & 0      & Unreachability         \\
+        Bank Vault       & 1                                    & 7                                    & 0                                    & 0      & 0     & 0      & Unreachability         \\
+        Light Switch     & 0                                    & 0                                    & 2                                    & 1      & 0     & 0      & Reversible mutex       \\
+        Traffic Light    & 0                                    & 0                                    & 3                                    & 3      & 0     & 0      & Reversible mutex       \\
+        Package Delivery & 0                                    & 0                                    & 2                                    & 1      & 2     & 1      & Irreversible (unidir.) \\
+        Bidirectional    & 0                                    & 0                                    & 2                                    & 1      & 2     & 2      & Irreversible (bidir.)  \\
         \hline
     \end{tabular}
 \end{table}
@@ -224,10 +234,10 @@ The complete diagnostic profile for a planning problem is the 6-tuple:
 Each scenario in Table~\ref{tab:measure_values} exhibits a characteristic profile signature:
 \begin{itemize}
     \item \textbf{Unreachability-dominant}: $(1, 3, 0, 0, 0, 0)$ for Locked Door indicates dependency chain failure with depth 2 (three unreachable propositions blocking one goal)
-    \item \textbf{Mutex-dominant}: $(0, 0, 2, 1, 0, 0)$ for Light Switch indicates a single mutex pair involving both goals; $(0, 0, 3, 3, 0, 0)$ for Traffic Light indicates a complete mutex clique (all $\binom{3}{2} = 3$ pairs are mutex)
-    \item \textbf{Sequencing-dominant}: $(0, 0, 0, 0, 2, 1)$ for One-Way Door indicates unidirectional blocking; $(0, 0, 0, 0, 2, 2)$ for Bidirectional indicates symmetric blocking (both directions)
+    \item \textbf{Reversible mutex}: $(0, 0, 2, 1, 0, 0)$ for Light Switch indicates a single mutex pair involving both goals; $(0, 0, 3, 3, 0, 0)$ for Traffic Light indicates a complete mutex clique (all $\binom{3}{2} = 3$ pairs are mutex)
+    \item \textbf{Irreversible mutex}: $(0, 0, 2, 1, 2, 1)$ for Package Delivery shows both mutex and unidirectional sequencing; $(0, 0, 2, 1, 2, 2)$ for Bidirectional shows mutex with bidirectional sequencing
 \end{itemize}
 
-The profile enables immediate identification of the dominant failure mode. Within each mode, the scope-to-structure ratio provides additional diagnostic depth: for mutex, $I^{\text{struct}}_{\text{MX}} / \binom{I^{\text{scope}}_{\text{MX}}}{2}$ approaching 1 indicates dense conflict structure, while for sequencing, $I^{\text{struct}}_{\text{GS}} / (I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1))$ approaching 1 indicates symmetric (bidirectional) conflicts.
+The sequencing structure value distinguishes unidirectional conflicts ($I^{\text{struct}}_{\text{GS}} = 1$ for Package Delivery) from bidirectional conflicts ($I^{\text{struct}}_{\text{GS}} = 2$ for Bidirectional), while the mutex structure value is identical ($I^{\text{struct}}_{\text{MX}} = 1$) for both. This illustrates how trajectory analysis (P3) provides finer-grained diagnostic information beyond state space analysis (P1, P2).
 
-The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work. As established in Propositions~\ref{prop:unreachable_precludes}--\ref{prop:scope_structure_bounds}, the measures form a complementary hierarchy: unreachability analysis takes precedence (Proposition~\ref{prop:unreachable_precludes}), mutex and sequencing capture distinct phenomena (Proposition~\ref{prop:mutex_sequencing_distinct}), and scope-structure bounds enable diagnostic interpretation (Proposition~\ref{prop:scope_structure_bounds}). This design parallels findings in~\cite{Ulbricht2016}, where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.
+The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work. As established in Proposition~\ref{prop:measure_hierarchy}, the measures form a diagnostic hierarchy with increasing specificity: unreachability precludes other conflict types, sequencing implies mutex, and mutex without sequencing indicates reversible conflicts. Scope-structure bounds (Proposition~\ref{prop:scope_structure_bounds}) enable diagnostic interpretation of conflict density and symmetry. This design parallels findings in~\cite{Ulbricht2016}, where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.

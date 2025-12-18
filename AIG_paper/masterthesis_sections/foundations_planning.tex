@@ -49,10 +49,10 @@ In basic \ac{PDDL}, both preconditions and effects are restricted to conjunction
 \begin{equation*}
     \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
 \end{equation*}
-where the components are defined as:
+where the components are defined as:\footnote{Basic STRIPS requires only positive preconditions; negative preconditions ($\neg p$ in pre) are a later extension. This thesis assumes positive preconditions only, so $\text{precond}(o) = \{p \mid p \text{ appears positively in pre}\}$.}
 \begin{align*}
-    \text{precond}(o) & = \{p \mid p \text{ appears in pre}\} \cup \{p \mid \neg p \text{ appears in pre}\} \\
-    \text{add}(o)     & = \{p \mid p \text{ appears in eff}\}                                               \\
+    \text{precond}(o) & = \{p \mid p \text{ appears in pre}\}      \\
+    \text{add}(o)     & = \{p \mid p \text{ appears in eff}\}      \\
     \text{delete}(o)  & = \{p \mid \neg p \text{ appears in eff}\}
 \end{align*}
 

@@ -8,7 +8,7 @@ The proposals presented here are \emph{informal and preliminary}, intended to es
 \subsection{Motivation: Limitations of Direct Measure Application}
 \label{sec:naive_encoding}
 
-A natural approach to measuring inconsistency in planning problems would encode the goal specification as a propositional knowledge base and apply classical inconsistency measures. Specifically, encoding the goal $G$ as $\bigwedge_{g \in G} g$ with appropriate mutex constraints should allow direct application of measures such as the contension measure $I_c$.
+A natural approach to measuring inconsistency in planning problems would encode the planning problem as a propositional knowledge base and apply classical inconsistency measures. Such an encoding would include: (1)~the goal conjunction $\bigwedge_{g \in G} g$, (2)~operator-derived mutex constraints, (3)~precondition dependencies as implications, and (4)~closed-world assertions $\neg p$ for propositions not in $I$. For the Locked Door problem, this yields implications $\textit{in\_room} \rightarrow \textit{door\_unlocked} \rightarrow \textit{has\_key}$ combined with $\neg\textit{has\_key}$, producing a conflict resolvable by assigning $B$ (``both true and false'') to $\textit{has\_key}$, hence $I_c = 1$.
 
 However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that $I_c = 1$ for representative problems from each structural category.
 
@@ -18,11 +18,11 @@ However, this naive encoding yields uninformative results. Table~\ref{tab:naive_
     \label{tab:naive_ic}
     \begin{tabular}{llc}
         \hline
-        Category                & Example Problem & $I_c$ \\
+        Category                & Example Problem  & $I_c$ \\
         \hline
-        2a: Missing Producers   & Locked Door     & 1     \\
-        2c: Mutex               & Light Switch    & 1     \\
-        2c: Sequencing Conflict & One-Way Door    & 1     \\
+        2a: Missing Producers   & Locked Door      & 1     \\
+        2c: Mutex               & Light Switch     & 1     \\
+        2c: Sequencing Conflict & Package Delivery & 1     \\
         \hline
     \end{tabular}
 \end{table}
@@ -39,29 +39,25 @@ A fundamental principle guiding these proposals is to ``measure what IS, not wha
 
 To maximize utility for planning practitioners, the measures employ planning-specific concepts (goals, operators, reachability, preconditions) rather than generic logical terminology (formulas, interpretations, models). The structural taxonomy established in \ref{sec:taxonomy} suggests reachability analysis for dependency structures (Category~2).
 
-\subsection{From Structural Categories to Measurement Profiles}
+\subsection{From Structural Categories to Measures}
 
-The structural taxonomy organizes unsolvability causes by their mathematical properties: goal specification conflicts (Category~1), dependency graph failures (Category~2), and resource insufficiency (Category~3). The measurement framework below focuses on Category~2 problems, organizing three measures into two complementary \emph{analysis profiles}.
+The structural taxonomy organizes unsolvability causes by their mathematical properties: goal specification conflicts (Category~1), dependency graph failures (Category~2), and resource insufficiency (Category~3). The measurement framework below focuses on Category~2 problems with three measures forming a diagnostic hierarchy.
 
-The framework distinguishes between two types of reachability analysis. \textbf{State Space Analysis} (Profile~1) examines which states exist in the reachable state space, asking ``do the required states exist?'' This static analysis computes reachability once and analyzes the resulting state set. \textbf{Trajectory Analysis} (Profile~2) examines path-dependent properties, asking ``do valid paths exist between states?'' This dynamic analysis considers reachability from intermediate goal-achieving states.
+The measures differ in their analysis scope. The first two measures (\emph{Unreachability} and \emph{Mutex}) perform \textbf{state space analysis}: they compute reachability once and analyze properties of the resulting state set, asking ``do the required states exist?'' The third measure (\emph{Sequencing}) performs \textbf{trajectory analysis}: it examines path-dependent properties from goal-achieving states, asking ``can we reach other goals from here?''
 
-Profile~1 contains two measures detecting different state-level failures: unreachability (propositions never appearing in any state) and mutex (goals never co-occurring in any state). Profile~2 contains one measure detecting trajectory-level failures: sequencing conflicts (achieving one goal creates dead-ends blocking others). Together, these three measures provide complementary diagnostic perspectives on Category~2 dependency problems.
+Together, these three measures provide complementary diagnostic perspectives on Category~2 dependency problems, with a key relationship: sequencing conflicts imply mutex (achieving one goal blocks another implies they never coexist), so the measures form a hierarchy rather than detecting independent phenomena.
 
 \subsection{Measurement Framework}
 
 Each proposal defines a \emph{diagnostic profile} consisting of two complementary \emph{measures}. Following terminology in the inconsistency measurement literature~\cite{Thimm2019}, a measure assigns a single numerical value to a knowledge base (here, a planning problem). Each measure provides two values: one indicating \emph{scope} (how many goals are affected) and one revealing \emph{structure} (underlying complexity). This design provides richer diagnostic information than single values while maintaining interpretability.
 
-The three proposals are organized into two analysis profiles:
-
-\textbf{Profile 1: State Space Analysis (Static)} examines which states exist in the reachable state space. This profile contains two measures:
+The three proposals are:
 
 \emph{Proposal 1: Unreachability Profile} reports propositions that never appear in any reachable state, providing a generic diagnostic for dependency structure problems. The profile reports unreachable goal propositions (indicating which goals are blocked) and total unreachable propositions (revealing dependency depth). This measure detects unreachability regardless of structural cause (missing producers, circular dependencies, or action-based exclusions) but does not distinguish between these causes.
 
 \emph{Proposal 2: Goal Mutex Profile} detects operator-induced mutual exclusions where goal propositions are each individually achievable but never simultaneously true in any reachable state. The profile reports which goal propositions participate in mutex relationships and counts unordered mutex pairs, revealing fundamentally incompatible goals even when actions allow transitions between them.
 
-\textbf{Profile 2: Trajectory Analysis (Dynamic)} examines path-dependent properties of the state space:
-
-\emph{Proposal 3: Goal Sequencing Conflict Profile} detects irreversible dead-end states where achieving certain goal propositions permanently blocks others. Unlike mutex (where goals can be achieved in different states), sequencing conflicts involve one-way transitions that prevent subsequent goal achievement. The profile reports which goal propositions participate in conflicts and counts ordered conflict pairs, revealing directionality.
+\emph{Proposal 3: Goal Sequencing Conflict Profile} detects irreversible dead-end states where achieving certain goal propositions permanently blocks others. Unlike mutex (where goals exclude each other but actions are reversible), sequencing conflicts involve one-way transitions that prevent subsequent goal achievement. The profile reports which goal propositions participate in conflicts and counts ordered conflict pairs, revealing directionality. Since blocking implies exclusion, sequencing conflicts are a strict subset of mutex relationships.
 
 \paragraph{Scope and Structure Variants.}
 
@@ -154,23 +150,25 @@ This measure identifies operator-induced mutual exclusions. Goal propositions ca
 
 The third proposal addresses unsolvability of Category~2c: sequencing conflicts where achieving certain goal propositions creates dead-end states that prevent other goal propositions from being reached. Unlike mutex relationships (Proposal~2) where goals can be achieved in different states but never simultaneously, sequencing conflicts involve \emph{irreversible} state transitions where achieving one goal permanently blocks another.
 
-The \emph{goal sequencing conflict profile} characterizes action-based exclusions through reachability analysis. Specifically, a \emph{sequencing conflict} $(g_1, g_2)$ exists when: (1) goal proposition $g_1$ can be achieved from the initial state, but (2) from any reachable state where $g_1$ is true, goal proposition $g_2$ is no longer reachable. This captures situations where achieving $g_1$ through available actions inevitably transitions to states from which $g_2$ cannot be satisfied, typically because actions required to achieve $g_1$ delete preconditions needed for $g_2$ without any operator to restore them.
+The \emph{goal sequencing conflict profile} characterizes action-based exclusions through reachability analysis. Specifically, a \emph{sequencing conflict} $(g_1, g_2)$ exists when: (1) both goal propositions $g_1$ and $g_2$ can each be achieved from the initial state, but (2) from any reachable state where $g_1$ is true, goal proposition $g_2$ is no longer reachable. This captures situations where achieving $g_1$ through available actions inevitably transitions to states from which $g_2$ cannot be satisfied, typically because actions required to achieve $g_1$ delete preconditions needed for $g_2$ without any operator to restore them. The requirement that both goals be achievable distinguishes meaningful sequencing conflicts from cases where $g_2$ was never achievable.
 
 The profile computes two values: (1) the number of goal propositions participating in at least one sequencing conflict (as either blocker or blocked), and (2) the total number of ordered conflict pairs $(g_1, g_2)$. The first value indicates scope, while the second reveals conflict patterns (star structures versus symmetric exclusions).
 
-\paragraph{Scenario 1: One-Way Door (Simple Exclusion).} Consider a planning problem with goal specification
+\paragraph{Scenario 1: Package Delivery (Unidirectional Conflict).} Consider a planning problem with goal specification
 \begin{equation*}
-    G = \{\text{has\_item}, \text{other\_task}\}
+    G = \{\text{delivered}, \text{remote\_done}\}
 \end{equation*}
 where:
 \begin{itemize}
-    \item Achieving \textit{has\_item} requires entering a room via a one-way door (irreversible action)
-    \item After achieving \textit{has\_item}, the agent is trapped and \textit{other\_task} becomes unreachable
+    \item The agent must deliver a fragile package locally (\textit{delivered}) and complete a remote task (\textit{remote\_done})
+    \item Transport to the remote site destroys the package and invalidates any prior delivery
+    \item From any state where \textit{remote\_done} is achieved, \textit{delivered} becomes permanently unreachable
+    \item However, from \textit{delivered}-states, \textit{remote\_done} remains reachable (via transport, though this deletes \textit{delivered})
 \end{itemize}
-The profile yields:
+Since both goals are individually achievable but never coexist, this problem also exhibits mutex. The sequencing profile additionally reveals the \emph{direction} of the conflict:
 \begin{itemize}
-    \item Goal propositions with sequencing conflicts: 2 (both propositions involved)
-    \item Sequencing conflict pairs: 1 (ordered pair: \textit{has\_item} blocks \textit{other\_task})
+    \item Goal propositions with sequencing conflicts: 2 (both involved)
+    \item Sequencing conflict pairs: 1 (ordered pair: \textit{remote\_done} blocks \textit{delivered})
 \end{itemize}
 
 \paragraph{Scenario 2: Multiple Exclusions (Star Pattern).} A planning problem with $G = \{\text{goal\_A}, \text{goal\_B}, \text{goal\_C}\}$ where achieving \textit{goal\_A} creates a dead-end state where both \textit{goal\_B} and \textit{goal\_C} become unreachable. The profile yields:
@@ -190,7 +188,7 @@ The profile yields:
     \item Sequencing conflict pairs: 2 (ordered pairs in both directions)
 \end{itemize}
 
-This measure identifies conflicts from action effects. Goal propositions can theoretically coexist in the same state, but action sequences required to achieve one proposition prevent achieving the other, suggesting missing reversibility in the action model.
+This measure provides directional information beyond mutex. When goals have a sequencing conflict, they are necessarily also mutex (both achievable but never coexisting). The sequencing profile adds the crucial information of \emph{which} goal achievement causes the dead-end, suggesting where reversal operators might restore solvability. Reversible mutex problems (like Light Switch) exhibit mutex without sequencing; irreversible problems (like Package Delivery) exhibit both.
 
 \subsection{Normalization and Relative Measures}
 
