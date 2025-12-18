@@ -101,6 +101,10 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge; existing conflicts are unaffected.
 \end{proof}
 
+\paragraph{Structure Variant Compliance.}
+
+The structure variants $I^{\text{struct}}_{\text{UR}}$, $I^{\text{struct}}_{\text{MX}}$, and $I^{\text{struct}}_{\text{GS}}$ satisfy the same postulates as their scope counterparts. For Operator Monotonicity: adding operators expands reachability, which can only reduce the count of unreachable propositions ($I^{\text{struct}}_{\text{UR}}$), eliminate mutex pairs by enabling co-occurrence ($I^{\text{struct}}_{\text{MX}}$), or remove sequencing conflicts by providing escape paths ($I^{\text{struct}}_{\text{GS}}$). The Mutex structure variant inherits its scope variant's violation: an operator making a previously unreachable goal reachable in mutex states increases $I^{\text{struct}}_{\text{MX}}$. For Goal Monotonicity: adding goals increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted.
+
 \subsubsection{Measure Relationships}
 
 Beyond postulate compliance, the following proposition establishes how the three measures relate to each other, forming a diagnostic hierarchy rather than independent failure detectors.

@@ -10,24 +10,24 @@ The proposals presented here are \emph{informal and preliminary}, intended to es
 
 A natural approach to measuring inconsistency in planning problems would encode the planning problem as a propositional knowledge base and apply classical inconsistency measures. Such an encoding would include: (1)~the goal conjunction $\bigwedge_{g \in G} g$, (2)~operator-derived mutex constraints, (3)~precondition dependencies as implications, and (4)~closed-world assertions $\neg p$ for propositions not in $I$. For the Locked Door problem, this yields implications $\textit{in\_room} \rightarrow \textit{door\_unlocked} \rightarrow \textit{has\_key}$ combined with $\neg\textit{has\_key}$, producing a conflict resolvable by assigning $B$ (``both true and false'') to $\textit{has\_key}$, hence $I_c = 1$.
 
-However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that $I_c = 1$ for representative problems from each structural category.
+However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that both the contension measure $I_c$ and the minimal inconsistent subset count $I_{\text{MI}}$ yield identical values for representative problems from each structural category.
 
 \begin{table}[ht]
     \centering
-    \caption{Contension measure $I_c$ for naive propositional encodings}
+    \caption{Classical inconsistency measures for naive propositional encodings}
     \label{tab:naive_ic}
-    \begin{tabular}{llc}
+    \begin{tabular}{llcc}
         \hline
-        Category                & Example Problem  & $I_c$ \\
+        Category                & Example Problem  & $I_c$ & $I_{\text{MI}}$ \\
         \hline
-        2a: Missing Producers   & Locked Door      & 1     \\
-        2c: Mutex               & Light Switch     & 1     \\
-        2c: Sequencing Conflict & Package Delivery & 1     \\
+        2a: Missing Producers   & Locked Door      & 1     & 1               \\
+        2c: Mutex               & Light Switch     & 1     & 1               \\
+        2c: Sequencing Conflict & Package Delivery & 1     & 1               \\
         \hline
     \end{tabular}
 \end{table}
 
-This uniform result fails to distinguish fundamentally different types of unsolvability. The cause lies in three-valued semantics: the mutual exclusivity constraint $\neg(p \land q)$ is satisfied by assigning the conflicting value $B$ to only \emph{one} proposition, since $\neg(B \land T) = \neg B = B$. Thus, symmetric conflicts (where both propositions are equally problematic) yield the same $I_c$ value as single-point failures.
+This uniform result fails to distinguish fundamentally different types of unsolvability. The limitation is not specific to individual measures: both syntax-based ($I_{\text{MI}}$) and semantics-based ($I_c$) approaches yield identical values because the propositional encoding reduces structurally different planning failures to equivalent logical conflicts. For $I_c$, mutual exclusivity constraints $\neg(p \land q)$ are satisfied by assigning $B$ to only one proposition. For $I_{\text{MI}}$, each encoding produces exactly one minimal inconsistent subset regardless of the underlying planning structure.
 
 This finding motivates the development of \emph{planning-native} inconsistency measures that operate directly on planning structures (goals, operators, reachable states) rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology (formal definitions, rationality postulates, complexity analysis) while respecting planning-specific semantics.
 
@@ -81,30 +81,11 @@ The first proposal provides a unified approach to Category~2 unsolvability by ch
 
 The \emph{unreachability profile} employs forward reachability analysis to compute: (1) the number of goal propositions not appearing in any reachable state, and (2) the total number of propositions not appearing in any reachable state. The first value identifies which goal propositions are blocked, while the second reveals the scope of broken dependencies. The difference between these values indicates cascading unreachability depth.
 
-\paragraph{Scenario 1: Locked Door (Missing Producer).} Consider a planning problem with $G = \{\text{in\_room}\}$ where achieving this goal requires the precondition sequence:
-\begin{equation*}
-    \text{in\_room} \;\text{requires}\; \text{door\_unlocked} \;\text{requires}\; \text{has\_key}
-\end{equation*}
-If $\text{has\_key} \notin I$ and no operator produces \textit{has\_key}, forward reachability analysis yields:
-\begin{itemize}
-    \item Unreachable goal propositions: 1 (\textit{in\_room})
-    \item Total unreachable propositions: 3 (\textit{has\_key}, \textit{door\_unlocked}, \textit{in\_room})
-\end{itemize}
+\paragraph{Scenario 1: Locked Door.} An agent must enter a room, but entry requires unlocking a door, which requires a key that no operator produces. The profile yields 1 unreachable goal but 3 total unreachable propositions, revealing a dependency chain of depth 2.
 
-\paragraph{Scenario 2: Bank Vault (Multiple Missing Producers).} A more complex problem with $G = \{\text{in\_building}\}$ requires three independent precondition chains:
-\begin{align*}
-    \text{in\_building}    & \;\text{requires}\; \text{door1\_open}, \text{door2\_open}, \text{access\_granted} \\
-    \text{door1\_open}     & \;\text{requires}\; \text{key1}                                                    \\
-    \text{door2\_open}     & \;\text{requires}\; \text{key2}                                                    \\
-    \text{access\_granted} & \;\text{requires}\; \text{admin\_approval}
-\end{align*}
-If all three root preconditions (\textit{key1}, \textit{key2}, \textit{admin\_approval}) are missing producers, reachability analysis yields:
-\begin{itemize}
-    \item Unreachable goal propositions: 1 (\textit{in\_building})
-    \item Total unreachable propositions: 7 (three missing producers plus their dependent propositions)
-\end{itemize}
+\paragraph{Scenario 2: Bank Vault.} A more complex variant requires three independent precondition chains (two keys and admin approval) to achieve a single goal. The profile yields 1 unreachable goal but 7 total unreachable propositions, revealing three parallel missing-producer failures.
 
-A small difference between these values indicates shallow dependency problems (directly unreachable goals), while a large difference reveals deep cascading failures (extensive dependency chains). This measure applies uniformly across all Category~2 subtypes, providing a generic diagnostic for dependency-related unsolvability without distinguishing between specific structural causes such as missing producers versus circular dependencies.
+A small difference between scope and structure indicates shallow failures; a large difference reveals deep cascading dependencies. Formal operator definitions for these scenarios appear in Section~\ref{sec:formalization}. This measure applies uniformly across all Category~2 subtypes, providing a generic diagnostic for dependency-related unsolvability.
 
 \subsection{Proposal 2: Goal Mutex Profile}
 \label{sec:goal_mutex_profile}
@@ -115,35 +96,11 @@ The \emph{goal mutex profile} characterizes these operator-induced exclusions th
 
 The profile computes two values: (1) the number of goal propositions participating in at least one mutex relationship, and (2) the total number of unordered mutex pairs. The first value indicates scope, while the second reveals conflict structure (isolated pairs versus complete conflict cliques).
 
-\paragraph{Scenario 1: Light Switch (Simple Mutex).} Consider a planning problem with goal specification
-\begin{equation*}
-    G = \{\text{on}, \text{off}\}
-\end{equation*}
-where:
-\begin{itemize}
-    \item Initial state: $I = \{\text{off}\}$
-    \item Action \textit{turn\_on}: precondition \textit{off}, effects $+\text{on}$, $-\text{off}$
-    \item Action \textit{turn\_off}: precondition \textit{on}, effects $+\text{off}$, $-\text{on}$
-\end{itemize}
-Forward reachability yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions are achievable (each appears in some state), and actions are reversible (the agent can toggle between states). However, no reachable state contains both \textit{on} and \textit{off} simultaneously. The profile yields:
-\begin{itemize}
-    \item Goal propositions in mutex: 2 (both propositions involved)
-    \item Mutex pairs: 1 (unordered pair: $\{\text{on}, \text{off}\}$)
-\end{itemize}
+\paragraph{Scenario 1: Light Switch.} A goal requires both \textit{on} and \textit{off} to be true, but toggle actions enforce mutual exclusion. Both propositions are individually achievable and actions are reversible, but no state contains both. The profile yields 2 mutex goals and 1 mutex pair.
 
-\paragraph{Scenario 2: Traffic Light (Complete Clique).} A planning problem with $G = \{\text{red}, \text{yellow}, \text{green}\}$ where:
-\begin{itemize}
-    \item Initial state: $I = \{\text{red}\}$
-    \item Actions form a cycle: \textit{red}$\rightarrow$\textit{green}, \textit{green}$\rightarrow$\textit{yellow}, \textit{yellow}$\rightarrow$\textit{red}
-    \item Each transition deletes the previous state and adds the next
-\end{itemize}
-Forward reachability yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goal propositions are individually achievable and the system is fully reversible (cyclic), but no state contains more than one color simultaneously. The profile yields:
-\begin{itemize}
-    \item Goal propositions in mutex: 3 (all propositions involved)
-    \item Mutex pairs: 3 (complete clique: $\{\text{red}, \text{yellow}\}$, $\{\text{red}, \text{green}\}$, $\{\text{yellow}, \text{green}\}$)
-\end{itemize}
+\paragraph{Scenario 2: Traffic Light.} A goal requires all three colors (\textit{red}, \textit{yellow}, \textit{green}) simultaneously, but cyclic transitions enforce that exactly one color is active at any time. The profile yields 3 mutex goals and 3 mutex pairs (a complete clique).
 
-This measure identifies operator-induced mutual exclusions. Goal propositions cannot coexist in reachable states due to action effects, even though each is individually achievable. The unordered pair count distinguishes isolated conflicts from densely connected mutex cliques, suggesting the complexity of goal incompatibilities.
+This measure identifies operator-induced mutual exclusions where goals cannot coexist despite each being individually achievable. The ratio of mutex pairs to mutex goals distinguishes isolated conflicts from dense cliques. Formal operator definitions appear in Section~\ref{sec:formalization}.
 
 \subsection{Proposal 3: Goal Sequencing Conflict Profile}
 \label{sec:sequencing_conflict_profile}
@@ -154,41 +111,11 @@ The \emph{goal sequencing conflict profile} characterizes action-based exclusion
 
 The profile computes two values: (1) the number of goal propositions participating in at least one sequencing conflict (as either blocker or blocked), and (2) the total number of ordered conflict pairs $(g_1, g_2)$. The first value indicates scope, while the second reveals conflict patterns (star structures versus symmetric exclusions).
 
-\paragraph{Scenario 1: Package Delivery (Unidirectional Conflict).} Consider a planning problem with goal specification
-\begin{equation*}
-    G = \{\text{delivered}, \text{remote\_done}\}
-\end{equation*}
-where:
-\begin{itemize}
-    \item The agent must deliver a fragile package locally (\textit{delivered}) and complete a remote task (\textit{remote\_done})
-    \item Transport to the remote site destroys the package and invalidates any prior delivery
-    \item From any state where \textit{remote\_done} is achieved, \textit{delivered} becomes permanently unreachable
-    \item However, from \textit{delivered}-states, \textit{remote\_done} remains reachable (via transport, though this deletes \textit{delivered})
-\end{itemize}
-Since both goals are individually achievable but never coexist, this problem also exhibits mutex. The sequencing profile additionally reveals the \emph{direction} of the conflict:
-\begin{itemize}
-    \item Goal propositions with sequencing conflicts: 2 (both involved)
-    \item Sequencing conflict pairs: 1 (ordered pair: \textit{remote\_done} blocks \textit{delivered})
-\end{itemize}
+\paragraph{Scenario 1: Package Delivery.} An agent must deliver a fragile package locally and complete a remote task, but transport destroys the package irreversibly. Both goals are individually achievable, but completing the remote task permanently blocks delivery. The profile yields 2 conflicting goals and 1 ordered conflict pair (\textit{remote\_done} blocks \textit{delivered}).
 
-\paragraph{Scenario 2: Multiple Exclusions (Star Pattern).} A planning problem with $G = \{\text{goal\_A}, \text{goal\_B}, \text{goal\_C}\}$ where achieving \textit{goal\_A} creates a dead-end state where both \textit{goal\_B} and \textit{goal\_C} become unreachable. The profile yields:
-\begin{itemize}
-    \item Goal propositions with sequencing conflicts: 3 (all propositions involved)
-    \item Sequencing conflict pairs: 2 (\textit{goal\_A} blocks \textit{goal\_B}, \textit{goal\_A} blocks \textit{goal\_C})
-\end{itemize}
+\paragraph{Scenario 2: Bidirectional Conflict.} Each of two goals, when achieved, permanently blocks the other. The profile yields 2 conflicting goals and 2 ordered conflict pairs (both directions), distinguishing this symmetric case from the unidirectional Package Delivery scenario.
 
-\paragraph{Scenario 3: Bidirectional Conflict (Symmetric Exclusion).} A planning problem with $G = \{\text{goal\_X}, \text{goal\_Y}\}$ where:
-\begin{itemize}
-    \item Achieving \textit{goal\_X} makes \textit{goal\_Y} unreachable
-    \item Achieving \textit{goal\_Y} makes \textit{goal\_X} unreachable
-\end{itemize}
-The profile yields:
-\begin{itemize}
-    \item Goal propositions with sequencing conflicts: 2 (both propositions involved)
-    \item Sequencing conflict pairs: 2 (ordered pairs in both directions)
-\end{itemize}
-
-This measure provides directional information beyond mutex. When goals have a sequencing conflict, they are necessarily also mutex (both achievable but never coexisting). The sequencing profile adds the crucial information of \emph{which} goal achievement causes the dead-end, suggesting where reversal operators might restore solvability. Reversible mutex problems (like Light Switch) exhibit mutex without sequencing; irreversible problems (like Package Delivery) exhibit both.
+This measure provides directional information beyond mutex. Sequencing conflicts are a subset of mutex relationships (blocking implies non-coexistence), but the ordered pair count reveals \emph{which} goal achievement causes the dead-end. Reversible mutex problems (Light Switch) exhibit mutex without sequencing; irreversible problems (Package Delivery) exhibit both. Formal operator definitions appear in Section~\ref{sec:formalization}.
 
 \subsection{Normalization and Relative Measures}
 
