@@ -101,6 +101,70 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge; existing conflicts are unaffected.
 \end{proof}
 
+\subsubsection{Measure Relationships}
+
+Beyond postulate compliance, formal propositions clarify how the three measures relate to each other, demonstrating they capture complementary aspects of planning inconsistency.
+
+\begin{prop}[Unreachability Precludes Mutex and Sequencing]
+    \label{prop:unreachable_precludes}
+    Let $\langle P, O, I, G \rangle$ be a planning problem and $g \in G$.
+    If $g$ is unreachable (i.e., $\nexists s \in S_{\text{reach}} : g \in s$), then:
+    \begin{enumerate}
+        \item $g$ does not participate in any mutex relationship
+        \item $g$ does not participate in any sequencing conflict
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+    Both mutex (Definition~\ref{defn:mutex}) and sequencing conflict (Definition~\ref{defn:sequencing}) require
+    as their first condition that the goal proposition be achievable:
+    $\exists s \in S_{\text{reach}} : g \in s$. If $g$ is unreachable,
+    this condition fails, precluding both relationship types.
+\end{proof}
+
+This proposition establishes a precedence relationship: unreachability analysis should be performed first, as unreachable goals are excluded from mutex and sequencing analysis by definition.
+
+\begin{prop}[Mutex and Sequencing are Distinct Phenomena]
+    \label{prop:mutex_sequencing_distinct}
+    The following hold:
+    \begin{enumerate}
+        \item Goals can be mutex without having a sequencing conflict
+        \item Goals can have a sequencing conflict without being mutex
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+    \textbf{(1)} Light Switch: Goals $\{\textit{on}, \textit{off}\}$ are mutex
+    (both achievable, never co-occur) but have no sequencing conflict
+    (actions are reversible; from any \textit{on}-state, \textit{off} is reachable and vice versa).
+
+    \textbf{(2)} One-Way Door: $(\textit{has\_item}, \textit{other\_task\_done})$ is a
+    sequencing conflict, but the goals are not mutex: mutex requires
+    goals to never co-occur in any reachable state, while sequencing conflicts
+    concern trajectory constraints (achieving one blocks the other).
+\end{proof}
+
+\begin{prop}[Scope-Structure Bounds]
+    \label{prop:scope_structure_bounds}
+    For any planning problem $\langle P, O, I, G \rangle$:
+    \begin{enumerate}
+        \item $I^{\text{scope}}_{\text{UR}} \leq I^{\text{struct}}_{\text{UR}} \leq |P|$
+        \item $I^{\text{struct}}_{\text{MX}} \leq \binom{I^{\text{scope}}_{\text{MX}}}{2}$
+        \item $I^{\text{struct}}_{\text{GS}} \leq I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1)$
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+    \textbf{(1)} Unreachable goals are a subset of all unreachable propositions,
+    which are a subset of $P$.
+
+    \textbf{(2)} The maximum number of unordered pairs among
+    $I^{\text{scope}}_{\text{MX}}$ goals is $\binom{I^{\text{scope}}_{\text{MX}}}{2}$.
+
+    \textbf{(3)} The maximum number of ordered pairs among
+    $I^{\text{scope}}_{\text{GS}}$ goals is $n(n-1)$ where
+    $n = I^{\text{scope}}_{\text{GS}}$.
+\end{proof}
+
+These bounds enable diagnostic interpretation: ratios approaching the upper bounds indicate dense conflict structures (complete mutex cliques, symmetric sequencing conflicts), while low ratios suggest isolated conflicts.
+
 \subsubsection{Summary}
 
 Table~\ref{tab:postulates} summarizes postulate compliance for the proposed measures.
@@ -121,4 +185,25 @@ Table~\ref{tab:postulates} summarizes postulate compliance for the proposed meas
     \end{tabular}
 \end{table}
 
-The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work. Each measure captures a distinct aspect of unsolvability: $I_{\text{UR}}$ detects dependency failures, $I_{\text{MX}}$ detects state-level exclusions, and $I_{\text{GS}}$ detects trajectory-level dead-ends. The combination of all three profiles provides comprehensive coverage of Category~2 unsolvability causes. This design parallels findings in~\cite{Ulbricht2016}, where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.
+Table~\ref{tab:measure_values} demonstrates measure complementarity across the test scenarios: each scenario type produces non-zero values for exactly one measure, confirming that the measures capture distinct failure modes.
+
+\begin{table}[ht]
+    \centering
+    \caption{Measure values across test scenarios (scope, structure)}
+    \label{tab:measure_values}
+    \begin{tabular}{l|cc|cc|cc}
+        \hline
+        Scenario      & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c}{$I_{\text{GS}}$}                           \\
+                      & scope                                & struct                               & scope                               & struct & scope & struct \\
+        \hline
+        Locked Door   & 1                                    & 3                                    & 0                                   & 0      & 0     & 0      \\
+        Bank Vault    & 1                                    & 7                                    & 0                                   & 0      & 0     & 0      \\
+        Light Switch  & 0                                    & 0                                    & 2                                   & 1      & 0     & 0      \\
+        Traffic Light & 0                                    & 0                                    & 3                                   & 3      & 0     & 0      \\
+        One-Way Door  & 0                                    & 0                                    & 0                                   & 0      & 2     & 1      \\
+        Bidirectional & 0                                    & 0                                    & 0                                   & 0      & 2     & 2      \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work. As established in Propositions~\ref{prop:unreachable_precludes}--\ref{prop:scope_structure_bounds}, the measures form a complementary hierarchy: unreachability analysis takes precedence (Proposition~\ref{prop:unreachable_precludes}), mutex and sequencing capture distinct phenomena (Proposition~\ref{prop:mutex_sequencing_distinct}), and scope-structure bounds enable diagnostic interpretation (Proposition~\ref{prop:scope_structure_bounds}). This design parallels findings in~\cite{Ulbricht2016}, where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.

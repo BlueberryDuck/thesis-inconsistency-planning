@@ -103,6 +103,7 @@ This example demonstrates how $I^{\text{struct}}_{\text{UR}}$ distinguishes shal
 The Goal Mutex Profile quantifies operator-induced mutual exclusions by analyzing which goal pairs can each be achieved but never co-occur in any reachable state. This profile consists of two complementary measures.
 
 \begin{defn}[Mutex Goal Pair]
+    \label{defn:mutex}
     Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. Goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$ are \emph{mutex} if:
     \begin{enumerate}
         \item $\exists s_1 \in S_{\text{reach}} : g_1 \in s_1$ (goal $g_1$ is achievable)
@@ -177,6 +178,7 @@ This example demonstrates a complete mutex clique: all goal pairs are mutually e
 The Goal Sequencing Conflict Profile quantifies Category~2c inconsistency by analyzing irreversible action-based exclusions where achieving certain goals permanently prevents other goals from being achieved. Unlike mutex relationships (Proposal~2) where goals alternate between states via reversible actions, sequencing conflicts involve one-way transitions creating permanent dead-ends. This profile consists of two complementary measures.
 
 \begin{defn}[Sequencing Conflict]
+    \label{defn:sequencing}
     Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. For goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$, a \emph{sequencing conflict} $(g_1, g_2)$ exists if:
     \begin{enumerate}
         \item $\exists s \in S_{\text{reach}} : g_1 \in s$ (goal $g_1$ is achievable from $I$)

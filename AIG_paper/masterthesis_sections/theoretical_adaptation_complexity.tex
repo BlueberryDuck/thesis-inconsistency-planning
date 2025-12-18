@@ -1,0 +1,74 @@
+\subsection{Computational Complexity}
+\label{sec:complexity}
+
+We analyze the computational complexity of the proposed measures. All measures rely on forward reachability analysis as a fundamental building block.
+
+\begin{prop}[Reachability Complexity]
+    \label{prop:reach_complexity}
+    Computing the reachable state set $S_{\text{reach}}$ for a planning
+    problem $\langle P, O, I, G \rangle$ requires $O(2^{|P|} \cdot |O| \cdot |P|)$
+    time and $O(2^{|P|} \cdot |P|)$ space.
+\end{prop}
+\begin{proof}
+    The reachable state set has at most $2^{|P|}$ elements. Each iteration
+    of the fixpoint computation applies up to $|O|$ operators, where each
+    operator application requires $O(|P|)$ for precondition checking and
+    effect computation. Each state requires $O(|P|)$ space.
+\end{proof}
+
+\begin{prop}[Unreachability Profile Complexity]
+    \label{prop:ur_complexity}
+    Given $S_{\text{reach}}$, computing $I^{\text{scope}}_{\text{UR}}$ and
+    $I^{\text{struct}}_{\text{UR}}$ requires $O(|S_{\text{reach}}| \cdot |P|)$
+    time and $O(|P|)$ additional space.
+\end{prop}
+\begin{proof}
+    For each proposition $p \in P$, check whether $p$ appears in any
+    state $s \in S_{\text{reach}}$. This requires one pass through all states.
+\end{proof}
+
+\begin{prop}[Goal Mutex Profile Complexity]
+    \label{prop:mx_complexity}
+    Given $S_{\text{reach}}$, computing $I^{\text{scope}}_{\text{MX}}$ and
+    $I^{\text{struct}}_{\text{MX}}$ requires $O(|S_{\text{reach}}| \cdot |G|^2)$
+    time and $O(|G|^2)$ additional space.
+\end{prop}
+\begin{proof}
+    For each goal pair $(g_1, g_2)$, verify achievability of each goal
+    ($O(|S_{\text{reach}}| \cdot |G|)$) and check no state contains both
+    ($O(|S_{\text{reach}}| \cdot |G|^2)$). Results stored in a $|G| \times |G|$ matrix.
+\end{proof}
+
+\begin{prop}[Goal Sequencing Conflict Profile Complexity]
+    \label{prop:gs_complexity}
+    Computing $I^{\text{scope}}_{\text{GS}}$ and $I^{\text{struct}}_{\text{GS}}$
+    requires $O(|G| \cdot 2^{|P|} \cdot |O| \cdot |P|)$ time in the worst case.
+\end{prop}
+\begin{proof}
+    For each goal $g_1$ and each state $s \in S_{\text{reach}}$ with $g_1 \in s$,
+    compute $\text{Reach}(s)$ to check if any $g_2$ is reachable.
+    Each local reachability computation takes $O(2^{|P|} \cdot |O| \cdot |P|)$,
+    repeated for up to $|S_{\text{reach}}|$ states per goal.
+\end{proof}
+
+Table~\ref{tab:complexity} summarizes these results.
+
+\begin{table}[ht]
+    \centering
+    \caption{Computational complexity of proposed measures}
+    \label{tab:complexity}
+    \begin{tabular}{l|l|l}
+        \hline
+        Measure                                    & Time Complexity                            & Space Complexity       \\
+        \hline
+        $S_{\text{reach}}$                         & $O(2^{|P|} \cdot |O| \cdot |P|)$           & $O(2^{|P|} \cdot |P|)$ \\
+        $I_{\text{UR}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |P|)$          & $O(|P|)$               \\
+        $I_{\text{MX}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |G|^2)$        & $O(|G|^2)$             \\
+        $I_{\text{GS}}$                            & $O(|G| \cdot 2^{|P|} \cdot |O| \cdot |P|)$ & $O(2^{|P|} \cdot |P|)$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\paragraph{Practical Considerations.}
+
+The exponential dependence on $|P|$ reflects the inherent complexity of planning: determining plan existence is PSPACE-complete~\cite{Bylander1994}. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum (e.g., Locked Door has $|P| = 3$ but $|S_{\text{reach}}| = 1$). Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations; for expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.

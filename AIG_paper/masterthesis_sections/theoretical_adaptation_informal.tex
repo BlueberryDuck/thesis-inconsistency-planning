@@ -29,7 +29,7 @@ However, this naive encoding yields uninformative results. Table~\ref{tab:naive_
 
 This uniform result fails to distinguish fundamentally different types of unsolvability. The cause lies in three-valued semantics: the mutual exclusivity constraint $\neg(p \land q)$ is satisfied by assigning the conflicting value $B$ to only \emph{one} proposition, since $\neg(B \land T) = \neg B = B$. Thus, symmetric conflicts (where both propositions are equally problematic) yield the same $I_c$ value as single-point failures.
 
-This finding motivates the development of \emph{planning-native} inconsistency measures that operate directly on planning structures---goals, operators, reachable states---rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology (formal definitions, rationality postulates, complexity analysis) while respecting planning-specific semantics.
+This finding motivates the development of \emph{planning-native} inconsistency measures that operate directly on planning structures (goals, operators, reachable states) rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology (formal definitions, rationality postulates, complexity analysis) while respecting planning-specific semantics.
 
 \subsection{Design Philosophy and Approach}
 
