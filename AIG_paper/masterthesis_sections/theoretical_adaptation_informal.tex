@@ -3,31 +3,31 @@
 
 This chapter presents three proposals for adapting inconsistency measures to classical planning problems. This work develops planning-native measures that operate directly on planning structures: goals, operators, and precondition-effect relationships. The approach employs multi-faceted diagnostic profiles rather than single severity scores, providing actionable information for problem repair without making assumptions about which repairs are valid.
 
-The proposals presented here are \emph{informal and preliminary}, intended to establish the conceptual framework before formal mathematical definitions are developed. Each proposal is motivated by the structural taxonomy introduced in \ref{sec:taxonomy} and illustrated through concrete scenarios demonstrating varying degrees of inconsistency within each structural category.
+This section presents the proposals informally, establishing the conceptual framework and intuition before the formal mathematical definitions in Section~\ref{sec:formalization}. Each proposal is motivated by the structural taxonomy introduced in Section~\ref{sec:taxonomy} and illustrated through concrete scenarios demonstrating varying degrees of inconsistency within each structural category.
 
 \subsection{Motivation: Limitations of Direct Measure Application}
 \label{sec:naive_encoding}
 
 A natural approach to measuring inconsistency in planning problems would encode the planning problem as a propositional knowledge base and apply classical inconsistency measures. Such an encoding would include: (1)~the goal conjunction $\bigwedge_{g \in G} g$, (2)~operator-derived mutex constraints, (3)~precondition dependencies as implications, and (4)~closed-world assertions $\neg p$ for propositions not in $I$. For the Locked Door problem, this yields implications $\textit{in\_room} \rightarrow \textit{door\_unlocked} \rightarrow \textit{has\_key}$ combined with $\neg\textit{has\_key}$, producing a conflict resolvable by assigning $B$ (``both true and false'') to $\textit{has\_key}$, hence $I_c = 1$.
 
-However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that both the contension measure $I_c$ and the minimal inconsistent subset count $I_{\text{MI}}$ yield identical values for representative problems from each structural category.
+However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that $I_c = 1$ for representative problems from each structural category.
 
 \begin{table}[ht]
     \centering
-    \caption{Classical inconsistency measures for naive propositional encodings}
+    \caption{Contension measure $I_c$ for naive propositional encodings}
     \label{tab:naive_ic}
-    \begin{tabular}{llcc}
+    \begin{tabular}{llc}
         \hline
-        Category                & Example Problem  & $I_c$ & $I_{\text{MI}}$ \\
+        Category                & Example Problem  & $I_c$ \\
         \hline
-        2a: Missing Producers   & Locked Door      & 1     & 1               \\
-        2c: Mutex               & Light Switch     & 1     & 1               \\
-        2c: Sequencing Conflict & Package Delivery & 1     & 1               \\
+        2a: Missing Producers   & Locked Door      & 1     \\
+        2c: Mutex               & Light Switch     & 1     \\
+        2c: Sequencing Conflict & Package Delivery & 1     \\
         \hline
     \end{tabular}
 \end{table}
 
-This uniform result fails to distinguish fundamentally different types of unsolvability. The limitation is not specific to individual measures: both syntax-based ($I_{\text{MI}}$) and semantics-based ($I_c$) approaches yield identical values because the propositional encoding reduces structurally different planning failures to equivalent logical conflicts. For $I_c$, mutual exclusivity constraints $\neg(p \land q)$ are satisfied by assigning $B$ to only one proposition. For $I_{\text{MI}}$, each encoding produces exactly one minimal inconsistent subset regardless of the underlying planning structure.
+This uniform result fails to distinguish fundamentally different types of unsolvability. The cause lies in three-valued semantics: the mutual exclusivity constraint $\neg(p \land q)$ is satisfied by assigning the conflicting value $B$ to only \emph{one} proposition, since $\neg(B \land T) = \neg B = B$. Thus, symmetric conflicts (where both propositions are equally problematic) yield the same $I_c$ value as single-point failures.
 
 This finding motivates the development of \emph{planning-native} inconsistency measures that operate directly on planning structures (goals, operators, reachable states) rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology (formal definitions, rationality postulates, complexity analysis) while respecting planning-specific semantics.
 
