@@ -17,7 +17,7 @@ The \ac{PDDL} was developed to provide a standardized language for describing pl
 
 Throughout this thesis, the term ``propositional \ac{PDDL}'' refers to \ac{PDDL} specifications using the \texttt{:strips} and \texttt{:typing} requirements without numeric fluents or other extensions from \ac{PDDL} 2.1 and later versions. This corresponds to the classical planning model with propositional state representations, typed objects, and deterministic actions with conjunctive preconditions and effects.
 
-\textbf{Domain and Problem Separation:} \ac{PDDL} separates planning specifications into two complementary files: a \emph{domain file} that defines the reusable structure of a planning domain, and a \emph{problem file} that specifies a particular instance within that domain. This separation enables domain definitions to be reused across multiple problem instances, similar to the distinction between schema and data in database systems.
+\ac{PDDL} separates planning specifications into two complementary files: a \emph{domain file} that defines the reusable structure of a planning domain, and a \emph{problem file} that specifies a particular instance within that domain. This separation enables domain definitions to be reused across multiple problem instances, similar to the distinction between schema and data in database systems.
 
 A domain file specifies the abstract structure using the following components:
 \begin{equation*}
@@ -31,7 +31,7 @@ A problem file instantiates the domain with concrete elements:
 \end{equation*}
 where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification.
 
-\textbf{Predicates:} Predicates define the vocabulary of a planning domain as parameterized boolean functions. Formally, a predicate declaration has the form:
+Predicates define the vocabulary of a planning domain as parameterized boolean functions. Formally, a predicate declaration has the form:
 \begin{equation*}
     \text{pred}(x_1, x_2, \ldots, x_n)
 \end{equation*}
@@ -39,7 +39,7 @@ where $\text{pred}$ is the predicate name and $x_1, \ldots, x_n$ are typed or un
 
 For example, in the blocksworld domain, the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
 
-\textbf{Actions and Operators:} \ac{PDDL} actions define parameterized operators using a precondition-effect structure. An action schema has the form:
+\ac{PDDL} actions define parameterized operators using a precondition-effect structure. An action schema has the form:
 \begin{equation*}
     \text{action}(\text{params}) = \langle \text{pre}(\text{params}), \text{eff}(\text{params}) \rangle
 \end{equation*}
@@ -58,7 +58,7 @@ where the components are defined as:\footnote{Basic STRIPS requires only positiv
 
 Ground operators result from instantiating action parameters with specific objects from the problem definition, yielding the finite operator set $O$ in the planning problem tuple.
 
-\textbf{Initial State and Goals:} The initial state in \ac{PDDL} is specified as a conjunction of ground atoms:
+The initial state in \ac{PDDL} is specified as a conjunction of ground atoms:
 \begin{equation*}
     \text{Init} = \bigwedge_{i=1}^{n} p_i
 \end{equation*}
@@ -66,7 +66,7 @@ which corresponds to the set $I = \{p_1, p_2, \ldots, p_n\} \subseteq P$ under t
 
 Goal specifications in \ac{PDDL} can be arbitrary logical formulas in the full language, but in basic \ac{PDDL} they are restricted to conjunctions of positive and negated atoms. A goal formula $G_{\text{formula}}$ corresponds to the goal set $G \subseteq P$ where $G$ contains all propositions required to be true in the goal state.
 
-\textbf{PDDL Versions and Extensions:} While \ac{PDDL} has evolved through multiple versions, \ac{PDDL} 2.1~\cite{Fox2003} added numeric fluents and durative actions, \ac{PDDL} 2.2~\cite{Edelkamp2004} introduced derived predicates and timed initial literals, \ac{PDDL} 3.0~\cite{Gerevini2005} added preferences and constraints, and \ac{PDDL}+~\cite{Fox2002} supports continuous processes. This thesis focuses on basic forms of \ac{PDDL} due to their foundational simplicity and well-understood semantics. Simple \ac{PDDL} formulations with conjunctive preconditions and effects provide sufficient expressiveness for systematic adaptation of inconsistency measures without the complications of temporal reasoning, complex preferences, or soft constraints. Extensions to numeric fluents (Category 3 resource constraints) are excluded from formal treatment; as discussed in Section~\ref{sec:taxonomy}, they warrant separate analysis.
+While \ac{PDDL} has evolved through multiple versions, \ac{PDDL} 2.1~\cite{Fox2003} added numeric fluents and durative actions, \ac{PDDL} 2.2~\cite{Edelkamp2004} introduced derived predicates and timed initial literals, \ac{PDDL} 3.0~\cite{Gerevini2005} added preferences and constraints, and \ac{PDDL}+~\cite{Fox2002} supports continuous processes. This thesis focuses on basic forms of \ac{PDDL} due to their foundational simplicity and well-understood semantics. Simple \ac{PDDL} formulations with conjunctive preconditions and effects provide sufficient expressiveness for systematic adaptation of inconsistency measures without the complications of temporal reasoning, complex preferences, or soft constraints.
 
 \textbf{Example: Blocksworld Domain:} To illustrate the correspondence between \ac{PDDL} syntax and the formal planning representation, consider a simplified blocksworld domain with predicates $\text{on}(x,y)$, $\text{ontable}(x)$, $\text{clear}(x)$, and $\text{handempty}$. The action for stacking block $x$ on block $y$ is defined as:
 \begin{align*}
@@ -103,7 +103,8 @@ Nevertheless, goal propositions may be \emph{operator-induced mutex}: each propo
 
 These structural categories are not mutually exclusive and a single planning problem may exhibit multiple categories simultaneously. For instance, resource contention problems (Category 3) often exhibit goal proposition conflicts (Category 1) caused by resource consumption. The taxonomy is organized by what measurement approaches are applicable: logical analysis for goal proposition conflicts, graph algorithms for dependency structures, and numeric accounting for resources.
 
-\paragraph{Scope of This Thesis.} This work develops inconsistency measures for operator-induced goal conflicts (the planning analog of Category~1) and selected aspects of Category~2, focusing on conflicts detectable through reachability-based analysis of propositional \ac{PDDL} planning problems. Specifically, three measures are proposed: one for operator-induced mutex relationships where goals are individually achievable but never simultaneously satisfiable (Goal Mutex Profile), one for irreversible action-based exclusions where achieving certain goals permanently blocks others (Goal Sequencing Conflict Profile), and one providing generic unreachability diagnosis applicable across Category~2 subtypes (Unreachability Profile).
+\subsubsection{Scope of This Thesis}
+This work develops inconsistency measures for operator-induced goal conflicts (the planning analog of Category~1) and selected aspects of Category~2, focusing on conflicts detectable through reachability-based analysis of propositional \ac{PDDL} planning problems. Specifically, three measures are proposed: one for operator-induced mutex relationships where goals are individually achievable but never simultaneously satisfiable (Goal Mutex Profile), one for irreversible action-based exclusions where achieving certain goals permanently blocks others (Goal Sequencing Conflict Profile), and one providing generic unreachability diagnosis applicable across Category~2 subtypes (Unreachability Profile).
 
 Category 2b (circular dependencies) and Category 3 (resource constraints) are recognized as important sources of unsolvability but are excluded from formal measurement in this thesis. Circular dependencies cause unreachability symptoms that are captured by the generic unreachability measure; however, providing specific diagnostics for cycles would require graph-theoretic analysis beyond reachability computation. While such analysis could yield more targeted repair suggestions (identifying which dependency edge to break versus which producer to add), this thesis prioritizes breadth of coverage over depth of cause-specific diagnosis. The generic unreachability measure identifies \emph{which} propositions are blocked; distinguishing \emph{why} they are blocked (missing producer versus cycle versus action-based exclusion) is recognized as valuable future work but is orthogonal to the current goal-level and dependency-level framework.
 
@@ -111,9 +112,15 @@ Resource constraints (Category 3) are excluded for two reasons: first, from a kn
 
 An important practical distinction emerges between \emph{static} and \emph{dynamic} analysis approaches. Static issues can be detected directly from the problem specification $\langle P, O, I, G \rangle$ without state space exploration: goal proposition conflicts are identified by checking $G$ for mutex propositions, missing producers by verifying whether $\exists o \in O$ with $p \in \text{add}(o)$, and simple resource bounds by comparing initial quantities against total requirements. Dynamic issues, conversely, require reasoning about reachable states or execution paths: circular dependencies necessitate graph analysis of precondition chains, unreachable regions require forward or backward reachability computation, and path-dependent resource consumption demands state transition tracking. This static-dynamic distinction has implications for computational complexity and suggests that measures based on static analysis may be more efficiently computable than those requiring dynamic state space reasoning.
 
-To illustrate Category 1 (Goal Specification Conflicts) with a formal specification, consider the planning problem $\langle P, O, I, G \rangle$ with $P = \{\text{light\_on}, \text{light\_off}\}$, $I = \{\text{light\_off}\}$, and $G = \{\text{light\_on}, \text{light\_off}\}$. The operator set $O = \{\text{turn\_on}, \text{turn\_off}\}$ contains
+To illustrate how multiple structural categories can manifest in a single planning problem, consider a security facility scenario formalized as follows:
 \begin{align*}
-    \text{turn\_on}  & = \langle \{\text{light\_off}\}, \{\text{light\_on}\}, \{\text{light\_off}\} \rangle \\
-    \text{turn\_off} & = \langle \{\text{light\_on}\}, \{\text{light\_off}\}, \{\text{light\_on}\} \rangle
+    P & = \{\text{outside}, \text{inside}, \text{has\_badge}, \text{vault\_accessed}, \text{lights\_on}, \text{lights\_off}\}     \\
+    I & = \{\text{outside}, \text{lights\_off}\}                                                                                  \\
+    G & = \{\text{vault\_accessed}, \text{outside}, \text{lights\_on}, \text{lights\_off}\}                                       \\[1ex]
+    O & \ni \text{enter\_facility} = \langle \{\text{outside}, \text{has\_badge}\}, \{\text{inside}\}, \{\text{outside}\} \rangle \\
+      & \ni \text{access\_vault} = \langle \{\text{inside}\}, \{\text{vault\_accessed}\}, \{\} \rangle                            \\
+      & \ni \text{turn\_on} = \langle \{\text{lights\_off}\}, \{\text{lights\_on}\}, \{\text{lights\_off}\} \rangle               \\
+      & \ni \text{turn\_off} = \langle \{\text{lights\_on}\}, \{\text{lights\_off}\}, \{\text{lights\_on}\} \rangle
 \end{align*}
-Since states are subsets of $P$ representing true propositions, and \textit{light\_on} and \textit{light\_off} represent mutually exclusive conditions, no state can contain both propositions simultaneously. Therefore, no sequence of operators can produce a state $s$ where $G \subseteq s$, making the problem unsolvable regardless of the available operators.
+
+This problem exhibits three distinct structural sources of unsolvability. First, Category~1 (operator-induced mutex): the goal requires both \textit{lights\_on} and \textit{lights\_off}, but these propositions are mutually exclusive through operator effects, as achieving one necessarily deletes the other. Second, Category~2a (missing producer): the proposition \textit{has\_badge} appears in the precondition of \textit{enter\_facility} but no operator in $O$ has \textit{has\_badge} in its add effects, making facility entry impossible regardless of other constraints. Third, Category~2c (action-based exclusion): even if a badge-producing operator existed, \textit{enter\_facility} deletes \textit{outside} without any operator to restore it, while the goal requires both \textit{vault\_accessed} (achievable only from inside) and \textit{outside}, creating an irreversible conflict. Each category contributes independently to unsolvability, demonstrating how the taxonomy identifies structurally distinct measurement targets within a single problem.
