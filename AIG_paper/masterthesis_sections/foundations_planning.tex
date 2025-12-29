@@ -115,12 +115,12 @@ An important practical distinction emerges between \emph{static} and \emph{dynam
 To illustrate how multiple structural categories can manifest in a single planning problem, consider a security facility scenario formalized as follows:
 \begin{align*}
     P & = \{\text{outside}, \text{inside}, \text{has\_badge}, \text{vault\_accessed}, \text{lights\_on}, \text{lights\_off}\}     \\
-    I & = \{\text{outside}, \text{lights\_off}\}                                                                                  \\
-    G & = \{\text{vault\_accessed}, \text{outside}, \text{lights\_on}, \text{lights\_off}\}                                       \\[1ex]
     O & \ni \text{enter\_facility} = \langle \{\text{outside}, \text{has\_badge}\}, \{\text{inside}\}, \{\text{outside}\} \rangle \\
       & \ni \text{access\_vault} = \langle \{\text{inside}\}, \{\text{vault\_accessed}\}, \{\} \rangle                            \\
       & \ni \text{turn\_on} = \langle \{\text{lights\_off}\}, \{\text{lights\_on}\}, \{\text{lights\_off}\} \rangle               \\
-      & \ni \text{turn\_off} = \langle \{\text{lights\_on}\}, \{\text{lights\_off}\}, \{\text{lights\_on}\} \rangle
+      & \ni \text{turn\_off} = \langle \{\text{lights\_on}\}, \{\text{lights\_off}\}, \{\text{lights\_on}\} \rangle               \\
+    I & = \{\text{outside}, \text{lights\_off}\}                                                                                  \\
+    G & = \{\text{vault\_accessed}, \text{outside}, \text{lights\_on}, \text{lights\_off}\}
 \end{align*}
 
 This problem exhibits three distinct structural sources of unsolvability. First, Category~1 (operator-induced mutex): the goal requires both \textit{lights\_on} and \textit{lights\_off}, but these propositions are mutually exclusive through operator effects, as achieving one necessarily deletes the other. Second, Category~2a (missing producer): the proposition \textit{has\_badge} appears in the precondition of \textit{enter\_facility} but no operator in $O$ has \textit{has\_badge} in its add effects, making facility entry impossible regardless of other constraints. Third, Category~2c (action-based exclusion): even if a badge-producing operator existed, \textit{enter\_facility} deletes \textit{outside} without any operator to restore it, while the goal requires both \textit{vault\_accessed} (achievable only from inside) and \textit{outside}, creating an irreversible conflict. Each category contributes independently to unsolvability, demonstrating how the taxonomy identifies structurally distinct measurement targets within a single problem.

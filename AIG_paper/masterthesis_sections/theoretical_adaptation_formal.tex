@@ -54,50 +54,22 @@ This measure indicates the \emph{scope} of unreachability problems at the goal l
 
 This measure reveals the \emph{structure} of dependency problems by counting all unreachable propositions throughout the proposition space. The value ranges from $0$ to $|P|$. The difference $I^{\text{struct}}_{\text{UR}} - I^{\text{scope}}_{\text{UR}}$ indicates the depth of cascading dependencies: propositions that are unreachable due to blocked preconditions. Together, $I^{\text{scope}}_{\text{UR}}$ and $I^{\text{struct}}_{\text{UR}}$ form the Unreachability Profile.
 
-\paragraph{Example: Locked Door.} Consider the planning problem $\langle P, O, I, G \rangle$ with:
+\paragraph{Example: Locked Door (Scenario~1).} For the Locked Door scenario defined in Section~\ref{sec:test_scenarios}, forward reachability analysis yields $S_{\text{reach}} = \{\{\}\}$ since no operator is applicable from the initial state. The Unreachability Profile yields:
 \begin{align*}
-    P & = \{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}                              \\
-    G & = \{\text{in\_room}\}                                                                      \\
-    I & = \{\}                                                                                     \\
-    O & = \{\text{unlock}, \text{enter}\}                                                          \\
-      & \text{where:}                                                                              \\
-      & \quad \text{unlock} = \langle \{\text{has\_key}\}, \{\text{door\_unlocked}\}, \{\} \rangle \\
-      & \quad \text{enter} = \langle \{\text{door\_unlocked}\}, \{\text{in\_room}\}, \{\} \rangle
+    I^{\text{scope}}_{\text{UR}}  & = |\{\textit{in\_room}\}| = 1                                             \\
+    I^{\text{struct}}_{\text{UR}} & = |\{\textit{has\_key}, \textit{door\_unlocked}, \textit{in\_room}\}| = 3
+\end{align*}
+The difference of 2 indicates two intermediate propositions in the dependency chain that are unreachable due to the missing \textit{has\_key}.
+
+\paragraph{Example: Bank Vault (Scenario~2).} For the Bank Vault scenario, reachability analysis yields $S_{\text{reach}} = \{\{\}\}$ since none of the root preconditions (\textit{key1}, \textit{key2}, \textit{admin\_approval}) are initially true or produced by any operator. The Unreachability Profile yields:
+\begin{align*}
+    I^{\text{scope}}_{\text{UR}}  & = |\{\textit{in\_vault}\}| = 1                                              \\
+    I^{\text{struct}}_{\text{UR}} & = |\{\textit{key1}, \textit{key2}, \textit{admin\_approval},                \\
+                                  & \quad \textit{door1\_open}, \textit{door2\_open}, \textit{access\_granted}, \\
+                                  & \quad \textit{in\_vault}\}| = 7
 \end{align*}
 
-Forward reachability analysis yields:
-\begin{equation*}
-    S_{\text{reach}} = \{\{\}\}
-\end{equation*}
-
-No operator is applicable from the initial state since $\text{has\_key}$ is not initially true and no operator produces it. The Unreachability Profile yields:
-\begin{align*}
-    I^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_room}\}| = 1                                         \\
-    I^{\text{struct}}_{\text{UR}} & = |\{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}| = 3
-\end{align*}
-
-The difference of 2 indicates two intermediate propositions in the dependency chain that are unreachable due to the missing $\text{has\_key}$.
-
-\paragraph{Example: Bank Vault.} Consider a problem with:
-\begin{align*}
-    P & = \{\text{key1}, \text{key2}, \text{admin\_approval},                                 \\
-      & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted},                 \\
-      & \quad \text{in\_building}\}                                                           \\
-    G & = \{\text{in\_building}\}                                                             \\
-    I & = \{\}                                                                                \\
-    O & = \{\text{open\_door1}, \text{open\_door2}, \text{grant\_access}, \text{enter}\}      \\
-      & \text{where each operator requires its respective key/approval to produce its effect}
-\end{align*}
-
-Reachability analysis yields $S_{\text{reach}} = \{\{\}\}$ since none of the root preconditions ($\text{key1}$, $\text{key2}$, $\text{admin\_approval}$) are initially true or produced by any operator. The Unreachability Profile yields:
-\begin{align*}
-    I^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_building}\}| = 1                                       \\
-    I^{\text{struct}}_{\text{UR}} & = |\{\text{key1}, \text{key2}, \text{admin\_approval},                \\
-                                  & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted}, \\
-                                  & \quad \text{in\_building}\}| = 7
-\end{align*}
-
-This example demonstrates how $I^{\text{struct}}_{\text{UR}}$ distinguishes shallow dependency problems (difference of 2 in Locked Door) from deep cascading failures (difference of 6 in Bank Vault), revealing three independent missing precondition chains converging on a single goal.
+This demonstrates how $I^{\text{struct}}_{\text{UR}}$ distinguishes shallow dependency problems (difference of 2 in Locked Door) from deep cascading failures (difference of 6 in Bank Vault), revealing three independent missing precondition chains converging on a single goal.
 
 \subsubsection{Proposal 2: Goal Mutex Profile (Formal)}
 
@@ -133,46 +105,19 @@ This measure indicates the \emph{scope} of mutex problems at the goal level: how
 
 This measure reveals the \emph{structure} of mutex relationships by counting unordered pairs. Since mutex is symmetric, we count unordered sets $\{g_1, g_2\}$ rather than ordered pairs. The value ranges from $0$ to $\binom{|G|}{2}$. The ratio between $I^{\text{scope}}_{\text{MX}}$ and $I^{\text{struct}}_{\text{MX}}$ reveals conflict patterns: a small ratio suggests isolated mutex pairs, while a large ratio (approaching $\binom{|G|}{2}$) indicates dense mutex cliques. Together, $I^{\text{scope}}_{\text{MX}}$ and $I^{\text{struct}}_{\text{MX}}$ form the Goal Mutex Profile.
 
-\paragraph{Example: Light Switch.} Consider the planning problem $\langle P, O, I, G \rangle$ with:
+\paragraph{Example: Light Switch (Scenario~3).} For the Light Switch scenario defined in Section~\ref{sec:test_scenarios}, forward reachability analysis yields $S_{\text{reach}} = \{\{\textit{off}\}, \{\textit{on}\}\}$. Both goal propositions appear in reachable states, but no state contains both simultaneously. The Goal Mutex Profile yields:
 \begin{align*}
-    P & = \{\text{on}, \text{off}\}                                                           \\
-    G & = \{\text{on}, \text{off}\}                                                           \\
-    I & = \{\text{off}\}                                                                      \\
-    O & = \{\text{turn\_on}, \text{turn\_off}\}                                               \\
-      & \text{where:}                                                                         \\
-      & \quad \text{turn\_on} = \langle \{\text{off}\}, \{\text{on}\}, \{\text{off}\} \rangle \\
-      & \quad \text{turn\_off} = \langle \{\text{on}\}, \{\text{off}\}, \{\text{on}\} \rangle
+    I^{\text{scope}}_{\text{MX}}  & = |\{\textit{on}, \textit{off}\}| = 2     \\
+    I^{\text{struct}}_{\text{MX}} & = |\{\{\textit{on}, \textit{off}\}\}| = 1
 \end{align*}
-
-Forward reachability analysis yields:
-\begin{equation*}
-    S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}
-\end{equation*}
-
-Both goal propositions appear in reachable states ($\text{off} \in I$ and $\text{on}$ is reachable via $\text{turn\_on}$), but no state contains both simultaneously. The Goal Mutex Profile yields:
-\begin{align*}
-    I^{\text{scope}}_{\text{MX}}  & = |\{\text{on}, \text{off}\}| = 2     \\
-    I^{\text{struct}}_{\text{MX}} & = |\{\{\text{on}, \text{off}\}\}| = 1
-\end{align*}
-
 The profile detects operator-induced mutual exclusion despite reversibility: actions allow transitions between states, but effects structurally prevent co-occurrence.
 
-\paragraph{Example: Traffic Light.} Consider a problem with:
+\paragraph{Example: Traffic Light (Scenario~4).} For the Traffic Light scenario, reachability analysis yields $S_{\text{reach}} = \{\{\textit{red}\}, \{\textit{green}\}, \{\textit{yellow}\}\}$. All three goal propositions are individually achievable (the system is cyclic), but no state contains more than one color. The Goal Mutex Profile yields:
 \begin{align*}
-    P & = \{\text{red}, \text{yellow}, \text{green}\}                                 \\
-    G & = \{\text{red}, \text{yellow}, \text{green}\}                                 \\
-    I & = \{\text{red}\}                                                              \\
-    O & = \{\text{red\_to\_green}, \text{green\_to\_yellow}, \text{yellow\_to\_red}\} \\
-      & \text{where each transition deletes the previous state and adds the next}
+    I^{\text{scope}}_{\text{MX}}  & = |\{\textit{red}, \textit{yellow}, \textit{green}\}| = 3                                                            \\
+    I^{\text{struct}}_{\text{MX}} & = |\{\{\textit{red}, \textit{yellow}\}, \{\textit{red}, \textit{green}\}, \{\textit{yellow}, \textit{green}\}\}| = 3
 \end{align*}
-
-Reachability analysis yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goal propositions are individually achievable (the system is cyclic), but no state contains more than one color. The Goal Mutex Profile yields:
-\begin{align*}
-    I^{\text{scope}}_{\text{MX}}  & = |\{\text{red}, \text{yellow}, \text{green}\}| = 3                                                      \\
-    I^{\text{struct}}_{\text{MX}} & = |\{\{\text{red}, \text{yellow}\}, \{\text{red}, \text{green}\}, \{\text{yellow}, \text{green}\}\}| = 3
-\end{align*}
-
-This example demonstrates a complete mutex clique: all goal pairs are mutually exclusive, yielding $I^{\text{struct}}_{\text{MX}} = \binom{3}{2} = 3$. The profile distinguishes this dense conflict structure from isolated mutex pairs (where $I^{\text{struct}}_{\text{MX}}$ would be much smaller).
+This demonstrates a complete mutex clique: all goal pairs are mutually exclusive, yielding $I^{\text{struct}}_{\text{MX}} = \binom{3}{2} = 3$. The profile distinguishes this dense conflict structure from isolated mutex pairs.
 
 \subsubsection{Proposal 3: Goal Sequencing Conflict Profile (Formal)}
 
@@ -212,59 +157,36 @@ This measure indicates the \emph{scope} of sequencing conflicts: how many goal p
 
 This measure reveals the \emph{structure} of sequencing conflicts by counting ordered pairs. Unlike mutex pairs (which are unordered), sequencing conflicts have direction: $(g_1, g_2)$ means achieving $g_1$ blocks $g_2$, but the reverse may not hold. The value ranges from $0$ to $|G| \times (|G|-1)$. Together, $I^{\text{scope}}_{\text{GS}}$ and $I^{\text{struct}}_{\text{GS}}$ form the Goal Sequencing Conflict Profile.
 
-\paragraph{Example: Package Delivery.} Consider the planning problem $\langle P, O, I, G \rangle$ with:
-\begin{align*}
-    P & = \{\text{at\_local}, \text{at\_remote}, \text{package\_intact}, \text{delivered}, \text{remote\_done}\}                                             \\
-    G & = \{\text{delivered}, \text{remote\_done}\}                                                                                                          \\
-    I & = \{\text{at\_local}, \text{package\_intact}\}                                                                                                       \\
-    O & = \{\text{deliver}, \text{transport}, \text{do\_remote}\}                                                                                            \\
-      & \text{where:}                                                                                                                                        \\
-      & \quad \text{deliver} = \langle \{\text{at\_local}, \text{package\_intact}\}, \{\text{delivered}\}, \{\} \rangle                                      \\
-      & \quad \text{transport} = \langle \{\text{at\_local}\}, \{\text{at\_remote}\}, \{\text{at\_local}, \text{package\_intact}, \text{delivered}\} \rangle \\
-      & \quad \text{do\_remote} = \langle \{\text{at\_remote}\}, \{\text{remote\_done}\}, \{\} \rangle
-\end{align*}
+\paragraph{Example: Trust and Travel (Scenario~5).} For the Trust and Travel scenario defined in Section~\ref{sec:test_scenarios}, forward reachability yields states including $\{\textit{at\_local}, \textit{trust}, \textit{partnership}\}$ and $\{\textit{at\_local}, \textit{opportunity}\}$, but no state contains both goals.
 
-The agent must deliver a fragile package locally and complete a task at a remote site. Transport destroys the package and invalidates any prior delivery (deleting $\text{at\_local}$, $\text{package\_intact}$, and $\text{delivered}$). Forward reachability yields states including $\{\text{at\_local}, \text{package\_intact}, \text{delivered}\}$ and $\{\text{at\_remote}, \text{remote\_done}\}$, but no state contains both goals.
-
-Both goals are individually achievable but never coexist, satisfying the mutex definition. Additionally, $(\text{remote\_done}, \text{delivered})$ is a sequencing conflict: from any state with $\text{remote\_done}$, the agent lacks $\text{at\_local}$ and $\text{package\_intact}$ to achieve $\text{delivered}$. However, $(\text{delivered}, \text{remote\_done})$ is \emph{not} a sequencing conflict: from $\text{delivered}$-states, $\text{remote\_done}$ remains reachable via $\text{transport} \rightarrow \text{do\_remote}$ (though this deletes $\text{delivered}$).
+Both goals are individually achievable but never coexist, satisfying the mutex definition. Additionally, $(\textit{opportunity}, \textit{partnership})$ is a sequencing conflict: from any state with \textit{opportunity}, the agent lacks \textit{trust} to achieve \textit{partnership}. However, $(\textit{partnership}, \textit{opportunity})$ is \emph{not} a sequencing conflict: from \textit{partnership}-states, \textit{opportunity} remains reachable via \textit{travel} $\rightarrow$ \textit{exploit} (though this path deletes \textit{partnership}).
 
 The Goal Mutex Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{MX}}  & = |\{\text{delivered}, \text{remote\_done}\}| = 2     \\
-    I^{\text{struct}}_{\text{MX}} & = |\{\{\text{delivered}, \text{remote\_done}\}\}| = 1
+    I^{\text{scope}}_{\text{MX}}  & = |\{\textit{partnership}, \textit{opportunity}\}| = 2     \\
+    I^{\text{struct}}_{\text{MX}} & = |\{\{\textit{partnership}, \textit{opportunity}\}\}| = 1
 \end{align*}
 
 The Goal Sequencing Conflict Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{GS}}  & = |\{\text{delivered}, \text{remote\_done}\}| = 2   \\
-    I^{\text{struct}}_{\text{GS}} & = |\{(\text{remote\_done}, \text{delivered})\}| = 1
+    I^{\text{scope}}_{\text{GS}}  & = |\{\textit{partnership}, \textit{opportunity}\}| = 2   \\
+    I^{\text{struct}}_{\text{GS}} & = |\{(\textit{opportunity}, \textit{partnership})\}| = 1
 \end{align*}
 
-This example demonstrates that irreversible problems exhibit both mutex and sequencing: the goals cannot coexist (mutex), and the sequencing measure additionally identifies the direction of the conflict. Achieving $\text{remote\_done}$ permanently blocks $\text{delivered}$, but not vice versa.
+This demonstrates that irreversible problems exhibit both mutex and sequencing: the goals cannot coexist (mutex), and the sequencing measure additionally identifies the direction of the conflict.
 
-\paragraph{Example: Bidirectional Conflict.} Consider a problem with:
-\begin{align*}
-    P & = \{\text{state\_X}, \text{state\_Y}, \text{goal\_X}, \text{goal\_Y}\}                                 \\
-    G & = \{\text{goal\_X}, \text{goal\_Y}\}                                                                   \\
-    I & = \{\text{state\_X}, \text{state\_Y}\}                                                                 \\
-    O & = \{\text{achieve\_X}, \text{achieve\_Y}\}                                                             \\
-      & \text{where:}                                                                                          \\
-      & \quad \text{achieve\_X} = \langle \{\text{state\_X}\}, \{\text{goal\_X}\}, \{\text{state\_Y}\} \rangle \\
-      & \quad \text{achieve\_Y} = \langle \{\text{state\_Y}\}, \{\text{goal\_Y}\}, \{\text{state\_X}\} \rangle
-\end{align*}
-
-Achieving either goal deletes the precondition needed for the other goal's achievement. Forward reachability yields $S_{\text{reach}} = \{\{\text{state\_X}, \text{state\_Y}\}, \{\text{state\_X}, \text{goal\_Y}\}, \{\text{state\_Y}, \text{goal\_X}\}\}$. Both goals are individually achievable but never coexist.
+\paragraph{Example: Rival Alliances (Scenario~6).} For the Rival Alliances scenario, forward reachability yields $S_{\text{reach}} = \{\{\textit{neutral\_A}, \textit{neutral\_B}\}, \{\textit{neutral\_A}, \textit{allied\_B}\}, \{\textit{neutral\_B}, \textit{allied\_A}\}\}$. Both goals are individually achievable but never coexist, and allying with either faction alienates the other.
 
 The Goal Mutex Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{MX}}  & = |\{\text{goal\_X}, \text{goal\_Y}\}| = 2     \\
-    I^{\text{struct}}_{\text{MX}} & = |\{\{\text{goal\_X}, \text{goal\_Y}\}\}| = 1
+    I^{\text{scope}}_{\text{MX}}  & = |\{\textit{allied\_A}, \textit{allied\_B}\}| = 2     \\
+    I^{\text{struct}}_{\text{MX}} & = |\{\{\textit{allied\_A}, \textit{allied\_B}\}\}| = 1
 \end{align*}
 
 The Goal Sequencing Conflict Profile yields:
 \begin{align*}
-    I^{\text{scope}}_{\text{GS}}  & = |\{\text{goal\_X}, \text{goal\_Y}\}| = 2                                     \\
-    I^{\text{struct}}_{\text{GS}} & = |\{(\text{goal\_X}, \text{goal\_Y}), (\text{goal\_Y}, \text{goal\_X})\}| = 2
+    I^{\text{scope}}_{\text{GS}}  & = |\{\textit{allied\_A}, \textit{allied\_B}\}| = 2                                             \\
+    I^{\text{struct}}_{\text{GS}} & = |\{(\textit{allied\_A}, \textit{allied\_B}), (\textit{allied\_B}, \textit{allied\_A})\}| = 2
 \end{align*}
 
-This example demonstrates symmetric exclusions where both goals block each other. Like Package Delivery, it exhibits both mutex and sequencing, but with $I^{\text{struct}}_{\text{GS}} = 2$ (bidirectional) rather than $1$ (unidirectional). The sequencing structure value thus distinguishes symmetric from asymmetric irreversibility.
+This demonstrates symmetric exclusions where both alliances block each other. Like Trust and Travel, it exhibits both mutex and sequencing, but with $I^{\text{struct}}_{\text{GS}} = 2$ (bidirectional) rather than $1$ (unidirectional). The sequencing structure value thus distinguishes symmetric from asymmetric irreversibility.

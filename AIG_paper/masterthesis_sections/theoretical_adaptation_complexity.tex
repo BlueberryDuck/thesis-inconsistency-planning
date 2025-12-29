@@ -71,7 +71,7 @@ Table~\ref{tab:complexity} summarizes these results.
 
 \paragraph{Practical Considerations.}
 
-The exponential dependence on $|P|$ reflects the inherent complexity of planning: determining plan existence is PSPACE-complete~\cite{Bylander1994}. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum (e.g., Locked Door has $|P| = 3$ but $|S_{\text{reach}}| = 1$). Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations; for expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.
+The exponential dependence on $|P|$ reflects the inherent complexity of planning: determining plan existence is PSPACE-complete~\cite{Bylander1994}. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum (e.g., the Locked Door scenario has $|P| = 3$ but $|S_{\text{reach}}| = 1$). Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations; for expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.
 
 \paragraph{ASP-Based Implementation Considerations.}
 

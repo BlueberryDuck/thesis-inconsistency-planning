@@ -3,14 +3,16 @@
 
 This chapter presents three proposals for adapting inconsistency measures to classical planning problems. This work develops planning-native measures that operate directly on planning structures: goals, operators, and precondition-effect relationships. The approach employs multi-faceted diagnostic profiles rather than single severity scores, providing actionable information for problem repair without making assumptions about which repairs are valid.
 
-This section presents the proposals informally, establishing the conceptual framework and intuition before the formal mathematical definitions in Section~\ref{sec:formalization}. Each proposal is motivated by the structural taxonomy introduced in Section~\ref{sec:taxonomy} and illustrated through concrete scenarios demonstrating varying degrees of inconsistency within each structural category.
+The chapter begins with six test scenarios (Section~\ref{sec:test_scenarios}) that serve as running examples throughout the development, followed by motivation for planning-native measures (Section~\ref{sec:naive_encoding}). Sections~\ref{sec:unreachability_profile}--\ref{sec:sequencing_conflict_profile} present the proposals informally, with formal definitions in Section~\ref{sec:formalization}, rationality postulates in Section~\ref{sec:postulates}, and complexity analysis in Section~\ref{sec:complexity}.
+
+\input{masterthesis_sections/theoretical_adaptation_scenarios.tex}
 
 \subsection{Motivation: Limitations of Direct Measure Application}
 \label{sec:naive_encoding}
 
-A natural approach to measuring inconsistency in planning problems would encode the planning problem as a propositional knowledge base and apply classical inconsistency measures. Such an encoding would include: (1)~the goal conjunction $\bigwedge_{g \in G} g$, (2)~operator-derived mutex constraints, (3)~precondition dependencies as implications, and (4)~closed-world assertions $\neg p$ for propositions not in $I$. For the Locked Door problem, this yields implications $\textit{in\_room} \rightarrow \textit{door\_unlocked} \rightarrow \textit{has\_key}$ combined with $\neg\textit{has\_key}$, producing a conflict resolvable by assigning $B$ (``both true and false'') to $\textit{has\_key}$, hence $I_c = 1$.
+A natural approach to measuring inconsistency in planning problems would encode the planning problem as a propositional knowledge base and apply classical inconsistency measures. Such an encoding would include: (1)~the goal conjunction $\bigwedge_{g \in G} g$, (2)~operator-derived mutex constraints, (3)~precondition dependencies as implications, and (4)~closed-world assertions $\neg p$ for propositions not in $I$. For the Locked Door scenario (Section~\ref{sec:test_scenarios}), this yields implications $\textit{in\_room} \rightarrow \textit{door\_unlocked} \rightarrow \textit{has\_key}$ combined with $\neg\textit{has\_key}$, producing a conflict resolvable by assigning $B$ (``both true and false'') to $\textit{has\_key}$, hence $I_c = 1$.
 
-However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that $I_c = 1$ for representative problems from each structural category.
+However, this naive encoding yields uninformative results. Table~\ref{tab:naive_ic} shows that $I_c = 1$ for representative scenarios from each structural category.
 
 \begin{table}[ht]
     \centering
@@ -18,11 +20,11 @@ However, this naive encoding yields uninformative results. Table~\ref{tab:naive_
     \label{tab:naive_ic}
     \begin{tabular}{llc}
         \hline
-        Category                & Example Problem  & $I_c$ \\
+        Category                & Scenario                      & $I_c$ \\
         \hline
-        2a: Missing Producers   & Locked Door      & 1     \\
-        2c: Mutex               & Light Switch     & 1     \\
-        2c: Sequencing Conflict & Package Delivery & 1     \\
+        2a: Missing Producers   & Locked Door (Scenario 1)      & 1     \\
+        2c: Mutex               & Light Switch (Scenario 3)     & 1     \\
+        2c: Sequencing Conflict & Trust and Travel (Scenario 5) & 1     \\
         \hline
     \end{tabular}
 \end{table}
@@ -81,11 +83,9 @@ The first proposal provides a unified approach to Category~2 unsolvability by ch
 
 The \emph{unreachability profile} employs forward reachability analysis to compute: (1) the number of goal propositions not appearing in any reachable state, and (2) the total number of propositions not appearing in any reachable state. The first value identifies which goal propositions are blocked, while the second reveals the scope of broken dependencies. The difference between these values indicates cascading unreachability depth.
 
-\paragraph{Scenario 1: Locked Door.} An agent must enter a room, but entry requires unlocking a door, which requires a key that no operator produces. The profile yields 1 unreachable goal but 3 total unreachable propositions, revealing a dependency chain of depth 2.
+The Locked Door scenario (Scenario~1) yields 1 unreachable goal but 3 total unreachable propositions, revealing a dependency chain of depth~2. The Bank Vault scenario (Scenario~2) yields 1 unreachable goal but 7 total unreachable propositions, revealing three parallel missing-producer failures.
 
-\paragraph{Scenario 2: Bank Vault.} A more complex variant requires three independent precondition chains (two keys and admin approval) to achieve a single goal. The profile yields 1 unreachable goal but 7 total unreachable propositions, revealing three parallel missing-producer failures.
-
-A small difference between scope and structure indicates shallow failures; a large difference reveals deep cascading dependencies. Formal operator definitions for these scenarios appear in Section~\ref{sec:formalization}. This measure applies uniformly across all Category~2 subtypes, providing a generic diagnostic for dependency-related unsolvability.
+A small difference between scope and structure indicates shallow failures; a large difference reveals deep cascading dependencies. This measure applies uniformly across all Category~2 subtypes, providing a generic diagnostic for dependency-related unsolvability.
 
 \subsection{Proposal 2: Goal Mutex Profile}
 \label{sec:goal_mutex_profile}
@@ -96,11 +96,9 @@ The \emph{goal mutex profile} characterizes these operator-induced exclusions th
 
 The profile computes two values: (1) the number of goal propositions participating in at least one mutex relationship, and (2) the total number of unordered mutex pairs. The first value indicates scope, while the second reveals conflict structure (isolated pairs versus complete conflict cliques).
 
-\paragraph{Scenario 1: Light Switch.} A goal requires both \textit{on} and \textit{off} to be true, but toggle actions enforce mutual exclusion. Both propositions are individually achievable and actions are reversible, but no state contains both. The profile yields 2 mutex goals and 1 mutex pair.
+The Light Switch scenario (Scenario~3) yields 2 mutex goals and 1 mutex pair: both propositions are individually achievable and actions are reversible, but no state contains both. The Traffic Light scenario (Scenario~4) yields 3 mutex goals and 3 mutex pairs (a complete clique): all three colors are individually achievable via cyclic transitions, but exactly one is active at any time.
 
-\paragraph{Scenario 2: Traffic Light.} A goal requires all three colors (\textit{red}, \textit{yellow}, \textit{green}) simultaneously, but cyclic transitions enforce that exactly one color is active at any time. The profile yields 3 mutex goals and 3 mutex pairs (a complete clique).
-
-This measure identifies operator-induced mutual exclusions where goals cannot coexist despite each being individually achievable. The ratio of mutex pairs to mutex goals distinguishes isolated conflicts from dense cliques. Formal operator definitions appear in Section~\ref{sec:formalization}.
+This measure identifies operator-induced mutual exclusions where goals cannot coexist despite each being individually achievable. The ratio of mutex pairs to mutex goals distinguishes isolated conflicts from dense cliques.
 
 \subsection{Proposal 3: Goal Sequencing Conflict Profile}
 \label{sec:sequencing_conflict_profile}
@@ -111,11 +109,9 @@ The \emph{goal sequencing conflict profile} characterizes action-based exclusion
 
 The profile computes two values: (1) the number of goal propositions participating in at least one sequencing conflict (as either blocker or blocked), and (2) the total number of ordered conflict pairs $(g_1, g_2)$. The first value indicates scope, while the second reveals conflict patterns (star structures versus symmetric exclusions).
 
-\paragraph{Scenario 1: Package Delivery.} An agent must deliver a fragile package locally and complete a remote task, but transport destroys the package irreversibly. Both goals are individually achievable, but completing the remote task permanently blocks delivery. The profile yields 2 conflicting goals and 1 ordered conflict pair (\textit{remote\_done} blocks \textit{delivered}).
+The Trust and Travel scenario (Scenario~5) yields 2 conflicting goals and 1 ordered conflict pair: exploiting the remote opportunity permanently blocks securing the partnership, but not vice versa. The Rival Alliances scenario (Scenario~6) yields 2 conflicting goals and 2 ordered conflict pairs (both directions), distinguishing symmetric from asymmetric irreversibility.
 
-\paragraph{Scenario 2: Bidirectional Conflict.} Each of two goals, when achieved, permanently blocks the other. The profile yields 2 conflicting goals and 2 ordered conflict pairs (both directions), distinguishing this symmetric case from the unidirectional Package Delivery scenario.
-
-This measure provides directional information beyond mutex. Sequencing conflicts are a subset of mutex relationships (blocking implies non-coexistence), but the ordered pair count reveals \emph{which} goal achievement causes the dead-end. Reversible mutex problems (Light Switch) exhibit mutex without sequencing; irreversible problems (Package Delivery) exhibit both. Formal operator definitions appear in Section~\ref{sec:formalization}.
+This measure provides directional information beyond mutex. Sequencing conflicts are a subset of mutex relationships (blocking implies non-coexistence), but the ordered pair count reveals \emph{which} goal achievement causes the dead-end. Reversible mutex problems (Light Switch, Scenario~3) exhibit mutex without sequencing; irreversible problems (Trust and Travel, Scenario~5) exhibit both.
 
 \subsection{Normalization and Relative Measures}
 
