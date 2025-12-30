@@ -1,0 +1,10 @@
+\subsection{Discussion}
+\label{sec:discussion}
+
+The three proposals presented above report \emph{absolute} inconsistency values: counts of unreachable propositions, mutex pairs, and sequencing conflict pairs. An important consideration for practical deployment is whether these measures should be \emph{normalized} or made \emph{relative} to problem characteristics such as the total number of goal propositions or the size of the proposition space.
+
+The literature on relative inconsistency measures~\cite{Besnard2020} explores this question in the context of propositional knowledge bases, demonstrating both advantages and limitations of normalization approaches. Relative measures can facilitate comparison across problems of different sizes, potentially providing a notion of ``percentage inconsistency'' analogous to test coverage metrics in software engineering.
+
+However, several considerations suggest that absolute measures may be more appropriate for planning diagnostics. First, the severity of unsolvability is not necessarily proportional to problem size: a planning problem with 100 goal propositions where only 2 conflict may be easier to repair than a problem with 3 goal propositions where all 3 form a complete conflict graph. Second, normalization requires choosing appropriate denominators (total goal propositions? total propositions in the problem? maximum possible conflicts?), and different choices encode different assumptions about problem structure. Third, the proposed measures already provide multiple values that capture relative information: the ratio between unreachable goal propositions and total unreachable propositions indicates dependency depth, while the ratio between mutex goals and mutex pairs (or conflicting goals and sequencing pairs) reveals conflict structure.
+
+For the scope of this thesis, the focus remains on absolute measures that report objective structural properties. Future work may explore normalization schemes tailored to specific use cases, such as comparing inconsistency trends across problem generator parameters or establishing thresholds for automated problem classification.

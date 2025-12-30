@@ -1,9 +1,9 @@
-\subsection{Rationality Postulates}
+\subsubsection{Rationality Postulates}
 \label{sec:postulates}
 
-A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. Following~\cite{Ulbricht2016}, we recognize that domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases (goals, operators, states versus formulas); second, planning exhibits inherently non-monotonic behavior (adding operators can reduce inconsistency by enabling new solution paths).
+A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. Following~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases (goals, operators, states versus formulas); second, planning exhibits inherently non-monotonic behavior (adding operators can reduce inconsistency by enabling new solution paths).
 
-\subsubsection{Planning-Adapted Postulates}
+\paragraph{Planning-Adapted Postulates.}
 
 \begin{defn}[Planning Consistency]
     An inconsistency measure $I$ for planning problems satisfies \emph{Planning Consistency} if:
@@ -32,7 +32,7 @@ Note that Operator Monotonicity reverses classical monotonicity because adding o
 
 Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it.
 
-\subsubsection{Postulate Analysis: Unreachability Profile}
+\paragraph{Postulate Analysis: Unreachability Profile.}
 
 \begin{prop}
     $I^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
@@ -55,7 +55,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
 \end{proof}
 
-\subsubsection{Postulate Analysis: Goal Mutex Profile}
+\paragraph{Postulate Analysis: Goal Mutex Profile.}
 
 \begin{prop}
     $I^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
@@ -78,7 +78,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $I^{\text{scope}}_{\text{MX}}$ increases; otherwise it remains unchanged.
 \end{proof}
 
-\subsubsection{Postulate Analysis: Goal Sequencing Conflict Profile}
+\paragraph{Postulate Analysis: Goal Sequencing Conflict Profile.}
 
 \begin{prop}
     $I^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
@@ -105,7 +105,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
 
 The structure variants $I^{\text{struct}}_{\text{UR}}$, $I^{\text{struct}}_{\text{MX}}$, and $I^{\text{struct}}_{\text{GS}}$ satisfy the same postulates as their scope counterparts. For Operator Monotonicity: adding operators expands reachability, which can only reduce the count of unreachable propositions ($I^{\text{struct}}_{\text{UR}}$), eliminate mutex pairs by enabling co-occurrence ($I^{\text{struct}}_{\text{MX}}$), or remove sequencing conflicts by providing escape paths ($I^{\text{struct}}_{\text{GS}}$). The Mutex structure variant inherits its scope variant's violation: an operator making a previously unreachable goal reachable in mutex states increases $I^{\text{struct}}_{\text{MX}}$. For Goal Monotonicity: adding goals increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted.
 
-\subsubsection{Measure Relationships}
+\paragraph{Measure Relationships.}
 
 Beyond postulate compliance, the following proposition establishes how the three measures relate to each other, forming a diagnostic hierarchy rather than independent failure detectors.
 
@@ -121,23 +121,23 @@ Beyond postulate compliance, the following proposition establishes how the three
     \end{enumerate}
 \end{prop}
 \begin{proof}
-    \textbf{(1)} Both mutex (Definition~\ref{defn:mutex}) and sequencing conflict
-    (Definition~\ref{defn:sequencing}) require participating goals to be achievable.
+    \textbf{(1)} Both mutex (Definition~\ref{defn:mutex_goal_pair}) and sequencing conflict
+    (Definition~\ref{defn:sequencing_conflict}) require participating goals to be achievable.
     If $g$ is unreachable, it fails this condition.
 
     \textbf{(2)} Suppose $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable.
-    By Definition~\ref{defn:sequencing}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
+    By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
     with $g_1 \in s$, we have $\nexists s' \in \text{Reach}(s) : g_2 \in s'$.
     Since $s \in \text{Reach}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
     $g_1$-states. Thus no reachable state contains both $g_1$ and $g_2$. Combined with
-    both goals being achievable, this satisfies Definition~\ref{defn:mutex}.
+    both goals being achievable, this satisfies Definition~\ref{defn:mutex_goal_pair}.
 
-    \textbf{(3)} Light Switch: Goals $\{\textit{on}, \textit{off}\}$ are mutex
+    \textbf{(3)} Light Switch: Goals $\{\text{on}, \text{off}\}$ are mutex
     (both achievable, never co-occur) but have no sequencing conflict (from any
     \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
 \end{proof}
 
-This hierarchy reflects \emph{increasing diagnostic specificity} rather than
+This hierarchy reflects increasing diagnostic specificity rather than
 independent failure modes:
 \begin{itemize}
     \item \textbf{Mutex without sequencing} (e.g., Light Switch): Goals exclude
@@ -151,8 +151,8 @@ independent failure modes:
 \end{itemize}
 
 The analysis distinction remains meaningful: state space analysis (P1, P2)
-determines \emph{what states exist}, while trajectory analysis (P3)
-determines \emph{what paths exist between states}. For irreversible problems,
+determines what states exist, while trajectory analysis (P3)
+determines what paths exist between states. For irreversible problems,
 all three measures report non-zero values, with P3 providing directional
 information about which goal achievements cause the blockage.
 
@@ -182,12 +182,12 @@ These bounds enable diagnostic interpretation through ratio analysis:
 \begin{itemize}
     \item \textbf{Unreachability depth}: The ratio $(I^{\text{struct}}_{\text{UR}} - I^{\text{scope}}_{\text{UR}}) / I^{\text{scope}}_{\text{UR}}$ indicates cascading dependency depth. A ratio of 0 means goals are directly unreachable (no intermediate propositions blocked); larger ratios indicate deeper precondition chains.
 
-    \item \textbf{Mutex density}: If $I^{\text{struct}}_{\text{MX}} = \binom{I^{\text{scope}}_{\text{MX}}}{2}$, the mutex goals form a \emph{complete clique} where every pair is mutually exclusive (as in Traffic Light). Ratios below 1 indicate sparser conflict structures with isolated mutex pairs.
+    \item \textbf{Mutex density}: If $I^{\text{struct}}_{\text{MX}} = \binom{I^{\text{scope}}_{\text{MX}}}{2}$, the mutex goals form a complete clique where every pair is mutually exclusive, as in Traffic Light. Ratios below 1 indicate sparser conflict structures with isolated mutex pairs.
 
-    \item \textbf{Sequencing symmetry}: If $I^{\text{struct}}_{\text{GS}} = I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1)$, all sequencing conflicts are \emph{bidirectional} (achieving any involved goal blocks all others, and vice versa). Ratios near 0.5 suggest predominantly unidirectional conflicts; lower ratios indicate star-shaped conflict patterns where one goal blocks many others but not conversely.
+    \item \textbf{Sequencing symmetry}: If $I^{\text{struct}}_{\text{GS}} = I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1)$, all sequencing conflicts are bidirectional: achieving any involved goal blocks all others, and vice versa. Ratios near 0.5 suggest predominantly unidirectional conflicts; lower ratios indicate star-shaped conflict patterns where one goal blocks many others but not conversely.
 \end{itemize}
 
-\subsubsection{Summary}
+\paragraph{Summary.}
 
 Table~\ref{tab:postulates} summarizes postulate compliance for the proposed measures.
 
@@ -207,7 +207,7 @@ Table~\ref{tab:postulates} summarizes postulate compliance for the proposed meas
     \end{tabular}
 \end{table}
 
-Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: unreachability-dominant problems show only $I_{\text{UR}}$, reversible mutex problems show only $I_{\text{MX}}$, while irreversible problems show \emph{both} $I_{\text{MX}}$ and $I_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
+Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: unreachability-dominant problems show only $I_{\text{UR}}$, reversible mutex problems show only $I_{\text{MX}}$, while irreversible problems show both $I_{\text{MX}}$ and $I_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
 
 \begin{table}[ht]
     \centering
