@@ -1,9 +1,7 @@
 \subsubsection{Rationality Postulates}
 \label{sec:postulates}
 
-A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. Following~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases (goals, operators, states versus formulas); second, planning exhibits inherently non-monotonic behavior (adding operators can reduce inconsistency by enabling new solution paths).
-
-\paragraph{Planning-Adapted Postulates.}
+A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. Following~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas; second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths.
 
 \begin{defn}[Planning Consistency]
     An inconsistency measure $I$ for planning problems satisfies \emph{Planning Consistency} if:
@@ -30,9 +28,7 @@ Note that Operator Monotonicity reverses classical monotonicity because adding o
     \end{equation*}
 \end{defn}
 
-Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it.
-
-\paragraph{Postulate Analysis: Unreachability Profile.}
+Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure.
 
 \begin{prop}
     $I^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
@@ -55,8 +51,6 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
 \end{proof}
 
-\paragraph{Postulate Analysis: Goal Mutex Profile.}
-
 \begin{prop}
     $I^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
 \end{prop}
@@ -78,8 +72,6 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $I^{\text{scope}}_{\text{MX}}$ increases; otherwise it remains unchanged.
 \end{proof}
 
-\paragraph{Postulate Analysis: Goal Sequencing Conflict Profile.}
-
 \begin{prop}
     $I^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
 \end{prop}
@@ -88,10 +80,10 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{GS}}$ satisfies Operator Monotonicity.
+    $I^{\text{scope}}_{\text{GS}}$ does not satisfy Operator Monotonicity in general.
 \end{prop}
 \begin{proof}
-    Adding operator $o$ can only provide new paths from $g_1$-satisfying states. If $(g_1, g_2)$ was a sequencing conflict (no path from any $g_1$-state reaches $g_2$), adding $o$ may create such a path, eliminating the conflict. Adding operators cannot create new sequencing conflicts since it can only expand reachability from each state.
+    Counter-example: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1}$ has $\text{precond} = \{a\}$, $\text{add} = \{g_1\}$, $\text{delete} = \{a\}$. Goal $g_1$ is achievable but $g_2$ is not, so no sequencing conflict exists. Adding operator $\text{reach\_g2}$ with $\text{precond} = \{a\}$, $\text{add} = \{g_2\}$, $\text{delete} = \{a\}$ makes $g_2$ achievable. However, from state $\{g_1\}$, neither operator is applicable since both require $\{a\}$. Thus $(g_1, g_2)$ becomes a sequencing conflict, increasing $I^{\text{scope}}_{\text{GS}}$ from 0 to 2.
 \end{proof}
 
 \begin{prop}
@@ -101,11 +93,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge; existing conflicts are unaffected.
 \end{proof}
 
-\paragraph{Structure Variant Compliance.}
-
-The structure variants $I^{\text{struct}}_{\text{UR}}$, $I^{\text{struct}}_{\text{MX}}$, and $I^{\text{struct}}_{\text{GS}}$ satisfy the same postulates as their scope counterparts. For Operator Monotonicity: adding operators expands reachability, which can only reduce the count of unreachable propositions ($I^{\text{struct}}_{\text{UR}}$), eliminate mutex pairs by enabling co-occurrence ($I^{\text{struct}}_{\text{MX}}$), or remove sequencing conflicts by providing escape paths ($I^{\text{struct}}_{\text{GS}}$). The Mutex structure variant inherits its scope variant's violation: an operator making a previously unreachable goal reachable in mutex states increases $I^{\text{struct}}_{\text{MX}}$. For Goal Monotonicity: adding goals increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted.
-
-\paragraph{Measure Relationships.}
+The structure variants $I^{\text{struct}}_{\text{UR}}$, $I^{\text{struct}}_{\text{MX}}$, and $I^{\text{struct}}_{\text{GS}}$ satisfy the same postulates as their scope counterparts. For Operator Monotonicity, only $I^{\text{struct}}_{\text{UR}}$ satisfies the postulate: adding operators expands reachability, reducing unreachable proposition counts. Both Mutex and Sequencing structure variants inherit their scope variants' violations: an operator making a previously unreachable goal reachable can introduce new mutex pairs or sequencing conflicts if the newly reachable goal states are incompatible with existing goal states. For Goal Monotonicity: adding goals increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted.
 
 Beyond postulate compliance, the following proposition establishes how the three measures relate to each other, forming a diagnostic hierarchy rather than independent failure detectors.
 
@@ -127,8 +115,8 @@ Beyond postulate compliance, the following proposition establishes how the three
 
     \textbf{(2)} Suppose $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable.
     By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
-    with $g_1 \in s$, we have $\nexists s' \in \text{Reach}(s) : g_2 \in s'$.
-    Since $s \in \text{Reach}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
+    with $g_1 \in s$: $\nexists s' \in \text{REACH}(s) : g_2 \in s'$.
+    Since $s \in \text{REACH}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
     $g_1$-states. Thus no reachable state contains both $g_1$ and $g_2$. Combined with
     both goals being achievable, this satisfies Definition~\ref{defn:mutex_goal_pair}.
 
@@ -187,8 +175,6 @@ These bounds enable diagnostic interpretation through ratio analysis:
     \item \textbf{Sequencing symmetry}: If $I^{\text{struct}}_{\text{GS}} = I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1)$, all sequencing conflicts are bidirectional: achieving any involved goal blocks all others, and vice versa. Ratios near 0.5 suggest predominantly unidirectional conflicts; lower ratios indicate star-shaped conflict patterns where one goal blocks many others but not conversely.
 \end{itemize}
 
-\paragraph{Summary.}
-
 Table~\ref{tab:postulates} summarizes postulate compliance for the proposed measures.
 
 \begin{table}[ht]
@@ -201,34 +187,32 @@ Table~\ref{tab:postulates} summarizes postulate compliance for the proposed meas
         Postulate             & scope                                & struct                               & scope                               & struct     & scope      & struct     \\
         \hline
         Planning Consistency  & \texttimes                           & \texttimes                           & \texttimes                          & \texttimes & \texttimes & \texttimes \\
-        Operator Monotonicity & \checkmark                           & \checkmark                           & \texttimes                          & \texttimes & \checkmark & \checkmark \\
+        Operator Monotonicity & \checkmark                           & \checkmark                           & \texttimes                          & \texttimes & \texttimes & \texttimes \\
         Goal Monotonicity     & \checkmark                           & \checkmark                           & \checkmark                          & \checkmark & \checkmark & \checkmark \\
         \hline
     \end{tabular}
 \end{table}
 
-Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: unreachability-dominant problems show only $I_{\text{UR}}$, reversible mutex problems show only $I_{\text{MX}}$, while irreversible problems show both $I_{\text{MX}}$ and $I_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
+Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: unreachability problems show only $I_{\text{UR}}$, reversible mutex problems show only $I_{\text{MX}}$, while irreversible problems show both $I_{\text{MX}}$ and $I_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
 
 \begin{table}[ht]
     \centering
     \caption{Measure values across test scenarios (scope, structure)}
     \label{tab:measure_values}
-    \begin{tabular}{l|cc|cc|cc|l}
+    \begin{tabular}{l|cc|cc|cc}
         \hline
-        Scenario         & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c|}{$I_{\text{GS}}$} & Type                                             \\
-                         & scope                                & struct                               & scope                                & struct & scope & struct &                        \\
+        Scenario         & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c}{$I_{\text{GS}}$}                           \\
+                         & scope                                & struct                               & scope                               & struct & scope & struct \\
         \hline
-        Locked Door      & 1                                    & 3                                    & 0                                    & 0      & 0     & 0      & Unreachability         \\
-        Bank Vault       & 1                                    & 7                                    & 0                                    & 0      & 0     & 0      & Unreachability         \\
-        Light Switch     & 0                                    & 0                                    & 2                                    & 1      & 0     & 0      & Reversible mutex       \\
-        Traffic Light    & 0                                    & 0                                    & 3                                    & 3      & 0     & 0      & Reversible mutex       \\
-        Trust and Travel & 0                                    & 0                                    & 2                                    & 1      & 2     & 1      & Irreversible (unidir.) \\
-        Rival Alliances  & 0                                    & 0                                    & 2                                    & 1      & 2     & 2      & Irreversible (bidir.)  \\
+        Locked Door      & 1                                    & 3                                    & 0                                   & 0      & 0     & 0      \\
+        Bank Vault       & 1                                    & 7                                    & 0                                   & 0      & 0     & 0      \\
+        Light Switch     & 0                                    & 0                                    & 2                                   & 1      & 0     & 0      \\
+        Traffic Light    & 0                                    & 0                                    & 3                                   & 3      & 0     & 0      \\
+        Trust and Travel & 0                                    & 0                                    & 2                                   & 1      & 2     & 1      \\
+        Rival Alliances  & 0                                    & 0                                    & 2                                   & 1      & 2     & 2      \\
         \hline
     \end{tabular}
 \end{table}
-
-\paragraph{Diagnostic Profile Interpretation.}
 
 The complete diagnostic profile for a planning problem is the 6-tuple:
 \begin{equation*}
@@ -237,7 +221,7 @@ The complete diagnostic profile for a planning problem is the 6-tuple:
 
 Each scenario in Table~\ref{tab:measure_values} exhibits a characteristic profile signature:
 \begin{itemize}
-    \item \textbf{Unreachability-dominant}: $(1, 3, 0, 0, 0, 0)$ for Locked Door indicates dependency chain failure with depth 2 (three unreachable propositions blocking one goal)
+    \item \textbf{Unreachability}: $(1, 3, 0, 0, 0, 0)$ for Locked Door indicates dependency chain failure with depth 2 (three unreachable propositions blocking one goal)
     \item \textbf{Reversible mutex}: $(0, 0, 2, 1, 0, 0)$ for Light Switch indicates a single mutex pair involving both goals; $(0, 0, 3, 3, 0, 0)$ for Traffic Light indicates a complete mutex clique (all $\binom{3}{2} = 3$ pairs are mutex)
     \item \textbf{Irreversible mutex}: $(0, 0, 2, 1, 2, 1)$ for Trust and Travel shows both mutex and unidirectional sequencing; $(0, 0, 2, 1, 2, 2)$ for Rival Alliances shows mutex with bidirectional sequencing
 \end{itemize}

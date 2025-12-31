@@ -1,13 +1,14 @@
 \subsection{Proposed Measures}
 \label{sec:proposed_measures}
 
-This section presents the three diagnostic measures with formal definitions. Each measure is defined precisely, followed by worked examples using the test scenarios.
+This section presents the three diagnostic measures with formal definitions. Each measure is defined, followed by worked examples using the test scenarios.
 
 \subsubsection{Preliminary Definitions}
 
 Before defining the measures themselves, several foundational concepts are established.
 
 \begin{defn}[Reachable States]
+    \label{defn:reachable_states}
     Let $\langle P, O, I, G \rangle$ be a planning problem. The set of \emph{reachable states} $S_{\text{reach}}$ is defined as the smallest set satisfying:
     \begin{enumerate}
         \item $I \in S_{\text{reach}}$
@@ -19,17 +20,18 @@ Before defining the measures themselves, several foundational concepts are estab
 The set $S_{\text{reach}}$ can be computed via forward reachability analysis: starting from $I$, iteratively apply all applicable operators until no new states are generated (a fixpoint is reached). Since $P$ is finite and each state is a subset of $P$, this process terminates in at most $2^{|P|}$ iterations, though practical implementations typically converge much faster.
 
 \begin{defn}[Forward Reachability from State]
+    \label{defn:forward_reachability}
     Let $\langle P, O, I, G \rangle$ be a planning problem. For any state $s \subseteq P$,
-    the set of \emph{forward-reachable states from $s$}, denoted $\text{Reach}(s)$, is
+    the set of \emph{forward-reachable states from $s$}, denoted $\text{REACH}(s)$, is
     the smallest set satisfying:
     \begin{enumerate}
-        \item $s \in \text{Reach}(s)$
-        \item If $s' \in \text{Reach}(s)$ and $o \in O$ with $\text{precond}(o) \subseteq s'$,
-              then $\text{RESULT}(s',o) \in \text{Reach}(s)$
+        \item $s \in \text{REACH}(s)$
+        \item If $s' \in \text{REACH}(s)$ and $o \in O$ with $\text{precond}(o) \subseteq s'$,
+              then $\text{RESULT}(s',o) \in \text{REACH}(s)$
     \end{enumerate}
 \end{defn}
 
-Note that $S_{\text{reach}} = \text{Reach}(I)$, and for any $s \in S_{\text{reach}}$, $\text{Reach}(s) \subseteq S_{\text{reach}}$.
+Note that $S_{\text{reach}} = \text{REACH}(I)$, and for any $s \in S_{\text{reach}}$, $\text{REACH}(s) \subseteq S_{\text{reach}}$.
 
 \subsubsection{Unreachability Profile}
 \label{sec:unreachability_profile}
@@ -134,14 +136,14 @@ The Goal Sequencing Conflict Profile addresses Category~2c unsolvability: sequen
         \item $\exists s \in S_{\text{reach}} : g_1 \in s$ (goal $g_1$ is achievable)
         \item $\exists s \in S_{\text{reach}} : g_2 \in s$ (goal $g_2$ is achievable)
         \item $\forall s \in S_{\text{reach}}$ with $g_1 \in s$:
-              $\nexists s' \in \text{Reach}(s) : g_2 \in s'$ (from every $g_1$-state,
+              $\nexists s' \in \text{REACH}(s) : g_2 \in s'$ (from every $g_1$-state,
               $g_2$ is unreachable)
     \end{enumerate}
 \end{defn}
 
 Informally, $(g_1, g_2)$ is a sequencing conflict when both goals are individually achievable, but achieving $g_1$ creates a permanent dead-end from which $g_2$ can never be satisfied. The requirement that $g_2$ be achievable (condition 2) ensures the conflict is meaningful: it distinguishes ``$g_1$ blocks $g_2$'' from ``$g_2$ was never achievable anyway.''
 
-\textbf{Remark on Irreversibility.} The definition captures permanent blocking: once any $g_1$-satisfying state is reached, $g_2$ becomes unreachable. The key semantic property is irreversibility: achieving $g_1$ creates a ``point of no return'' from which $g_2$ can never be satisfied. This contrasts with mutex relationships (Definition~\ref{defn:mutex_goal_pair}), where goals may alternate between states via reversible actions but simply cannot co-occur.
+The definition captures permanent blocking: once any $g_1$-satisfying state is reached, $g_2$ becomes unreachable. The key semantic property is irreversibility: achieving $g_1$ creates a ``point of no return'' from which $g_2$ can never be satisfied. This contrasts with mutex relationships (Definition~\ref{defn:mutex_goal_pair}), where goals may alternate between states via reversible actions but simply cannot co-occur.
 
 \begin{defn}[Conflicting Goal Propositions Count]
     Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $I^{\text{scope}}_{\text{GS}}$ counting goal propositions involved in sequencing conflicts is defined as:

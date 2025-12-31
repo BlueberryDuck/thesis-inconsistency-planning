@@ -1,15 +1,46 @@
 \subsection{Classical Planning}
 \label{sec:foundations_planning}
 
-Classical planning operates on factored representations, meaning the world state is decomposed into individual variables like ``robot at location A'' or ``door is open'' rather than treating each complete world situation as an indivisible atomic state~\cite{Russell2016}. A planning problem is formally defined as a 4-tuple $\langle P, O, I, G \rangle$ where $P$ is a finite set of atomic propositions, $O$ is a finite set of operators, $I \subseteq P$ is the initial state, and $G \subseteq P$ is the goal specification~\cite{Bylander1994}. Each state $s$ is a subset $s \subseteq P$ representing the propositions that are true in that state, following database semantics where the closed-world assumption treats unmentioned propositions as false and the unique names assumption ensures distinct objects are different~\cite{Russell2016}.
+Classical planning operates on factored representations, meaning the world state is decomposed into individual variables like ``robot at location A'' or ``door is open'' rather than treating each complete world situation as an indivisible atomic state~\cite{Russell2016}.
 
-Actions are described by ground operators, which are fully instantiated actions with all variables replaced by specific objects, denoted as $o \in O$ and defined by the triple
-\begin{equation*}
-    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle\,,
-\end{equation*}
-where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects~\cite{Bylander1994}. An operator $o$ is applicable in state $s$ if and only if $\text{precond}(o) \subseteq s$. The result of executing action $o$ in state $s$ is defined as $\text{RESULT}(s,o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$~\cite{Russell2016}. A plan is a sequence of operators $\langle o_1, o_2, \ldots, o_k \rangle$ such that applying this sequence from the initial state $I$ results in a state $s$ where $G \subseteq s$~\cite{Bylander1994}.
+\begin{defn}[Planning Problem]
+    \label{defn:planning_problem}
+    A planning problem is a 4-tuple $\langle P, O, I, G \rangle$ where $P$ is a finite set of atomic propositions, $O$ is a finite set of operators, $I \subseteq P$ is the initial state, and $G \subseteq P$ is the goal specification.
+\end{defn}
 
-A planning problem $\langle P, O, I, G \rangle$ is unsolvable if there does not exist a sequence of operators $\pi = \langle o_1, o_2, \ldots, o_k \rangle$ such that each $o_i$ is applicable in the state resulting from applying $\langle o_1, \ldots, o_{i-1} \rangle$ to $I$, and the final state satisfies $G \subseteq s_k$. More precisely, defining the sequential application of operators as $s_0 = I$ and $s_i = \text{RESULT}(s_{i-1}, o_i)$ for $i = 1, \ldots, k$, a planning problem is unsolvable when no such sequence exists with $G \subseteq s_k$. Determining whether a plan exists is PSPACE-complete~\cite{Bylander1994}, which has motivated extensive research into efficient algorithms and search techniques.
+\begin{defn}[State]
+    \label{defn:state}
+    A state $s$ is a subset $s \subseteq P$ representing the propositions that are true in that state.
+\end{defn}
+
+States follow database semantics: the closed-world assumption treats unmentioned propositions as false, and the unique names assumption ensures distinct objects are different~\cite{Russell2016,Bylander1994}.
+
+\begin{defn}[Operator]
+    \label{defn:operator}
+    An operator $o \in O$ is a triple $\langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects.
+\end{defn}
+
+Operators are ground, meaning all variables have been replaced by specific objects~\cite{Bylander1994}.
+
+\begin{defn}[Applicability and Result]
+    \label{defn:applicability}
+    An operator $o$ is applicable in state $s$ if and only if $\text{precond}(o) \subseteq s$. The result of applying $o$ in $s$ is:
+    \begin{equation*}
+        \text{RESULT}(s,o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)
+    \end{equation*}
+\end{defn}
+
+\begin{defn}[Plan]
+    \label{defn:plan}
+    A plan is a sequence of operators $\langle o_1, o_2, \ldots, o_k \rangle$ such that each $o_i$ is applicable in state $s_{i-1}$, where $s_0 = I$ and $s_i = \text{RESULT}(s_{i-1}, o_i)$, and the final state satisfies $G \subseteq s_k$.
+\end{defn}
+
+\begin{defn}[Solvability]
+    \label{defn:solvability}
+    A planning problem $\langle P, O, I, G \rangle$ is solvable if there exists a plan; it is unsolvable otherwise.
+\end{defn}
+
+Determining whether a planning problem is solvable is PSPACE-complete~\cite{Bylander1994}, which has motivated extensive research into efficient algorithms and search techniques.
 
 \subsubsection{The Planning Domain Definition Language}
 
@@ -45,11 +76,7 @@ For example, in the blocksworld domain, the predicate $\text{on}(x, y)$ with par
 \end{equation*}
 where $\text{params}$ are typed parameters, $\text{pre}(\text{params})$ is a logical formula specifying preconditions, and $\text{eff}(\text{params})$ specifies effects as a conjunction of positive and negative literals.
 
-In basic \ac{PDDL}, both preconditions and effects are restricted to conjunctions of positive and negated atoms. The set-based operator representation directly captures this structure:
-\begin{equation*}
-    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
-\end{equation*}
-where the components are defined as:\footnote{Basic STRIPS requires only positive preconditions; negative preconditions ($\neg p$ in pre) are a later extension. This thesis assumes positive preconditions only, so $\text{precond}(o) = \{p \mid p \text{ appears positively in pre}\}$.}
+In basic \ac{PDDL}, preconditions are conjunctions of positive atoms, while effects are conjunctions of positive and negated atoms. The set-based operator representation directly captures this structure:
 \begin{align*}
     \text{precond}(o) & = \{p \mid p \text{ appears in pre}\}      \\
     \text{add}(o)     & = \{p \mid p \text{ appears in eff}\}      \\

@@ -41,14 +41,17 @@ This section analyzes the computational complexity of the proposed measures. All
 
 \begin{prop}[Goal Sequencing Conflict Profile Complexity]
     \label{prop:gs_complexity}
-    Computing $I^{\text{scope}}_{\text{GS}}$ and $I^{\text{struct}}_{\text{GS}}$
-    requires $O(|G| \cdot 2^{|P|} \cdot |O| \cdot |P|)$ time in the worst case.
+    Given $S_{\text{reach}}$, computing $I^{\text{scope}}_{\text{GS}}$ and
+    $I^{\text{struct}}_{\text{GS}}$ requires $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$
+    time and $O(|S_{\text{reach}}|)$ additional space.
 \end{prop}
 \begin{proof}
-    For each goal $g_1$ and each state $s \in S_{\text{reach}}$ with $g_1 \in s$,
-    compute $\text{Reach}(s)$ to check if any $g_2$ is reachable.
-    Each local reachability computation takes $O(2^{|P|} \cdot |O| \cdot |P|)$,
-    repeated for up to $|S_{\text{reach}}|$ states per goal.
+    Since $\text{REACH}(s) \subseteq S_{\text{reach}}$ for any $s \in S_{\text{reach}}$,
+    local reachability is computed as graph traversal within the pre-computed state
+    space rather than full reachability. For each goal pair $(g_1, g_2)$, check all
+    $g_1$-states; each requires traversing at most $|S_{\text{reach}}|$ states with
+    $|O|$ transitions each. There are $O(|G|^2)$ pairs and up to $|S_{\text{reach}}|$
+    starting states per pair.
 \end{proof}
 
 Table~\ref{tab:complexity} summarizes these results.
@@ -59,21 +62,17 @@ Table~\ref{tab:complexity} summarizes these results.
     \label{tab:complexity}
     \begin{tabular}{l|l|l}
         \hline
-        Measure                                    & Time Complexity                            & Space Complexity       \\
+        Measure                                    & Time Complexity                                 & Space Complexity        \\
         \hline
-        $S_{\text{reach}}$                         & $O(2^{|P|} \cdot |O| \cdot |P|)$           & $O(2^{|P|} \cdot |P|)$ \\
-        $I_{\text{UR}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |P|)$          & $O(|P|)$               \\
-        $I_{\text{MX}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |G|^2)$        & $O(|G|^2)$             \\
-        $I_{\text{GS}}$                            & $O(|G| \cdot 2^{|P|} \cdot |O| \cdot |P|)$ & $O(2^{|P|} \cdot |P|)$ \\
+        $S_{\text{reach}}$                         & $O(2^{|P|} \cdot |O| \cdot |P|)$                & $O(2^{|P|} \cdot |P|)$  \\
+        $I_{\text{UR}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |P|)$               & $O(|P|)$                \\
+        $I_{\text{MX}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |G|^2)$             & $O(|G|^2)$              \\
+        $I_{\text{GS}}$ (given $S_{\text{reach}}$) & $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ & $O(|S_{\text{reach}}|)$ \\
         \hline
     \end{tabular}
 \end{table}
 
-\paragraph{Practical Considerations.}
-
 The exponential dependence on $|P|$ reflects the inherent complexity of planning: determining plan existence is PSPACE-complete~\cite{Bylander1994}. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum (e.g., the Locked Door scenario has $|P| = 3$ but $|S_{\text{reach}}| = 1$). Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations; for expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.
-
-\paragraph{ASP-Based Implementation Considerations.}
 
 The complexity analysis above assumes explicit state space enumeration. \ac{ASP}-based implementations may exhibit different practical performance characteristics due to several factors. First, modern \ac{ASP} solvers employ conflict-driven clause learning, unit propagation, and other optimizations that can prune large portions of the search space~\cite{Kuhlmann2025}. Second, symbolic representations in \ac{ASP} avoid explicit state enumeration when possible, potentially achieving sub-exponential performance on structured problems. Third, the declarative nature of \ac{ASP} encodings allows solvers to exploit problem structure automatically.
 
