@@ -109,20 +109,22 @@ Beyond postulate compliance, the following proposition establishes how the three
     \end{enumerate}
 \end{prop}
 \begin{proof}
-    \textbf{(1)} Both mutex (Definition~\ref{defn:mutex_goal_pair}) and sequencing conflict
-    (Definition~\ref{defn:sequencing_conflict}) require participating goals to be achievable.
-    If $g$ is unreachable, it fails this condition.
+    \begin{enumerate}
+        \item Both mutex (Definition~\ref{defn:mutex_goal_pair}) and sequencing conflict
+              (Definition~\ref{defn:sequencing_conflict}) require participating goals to be achievable.
+              If $g$ is unreachable, it fails this condition.
 
-    \textbf{(2)} Suppose $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable.
-    By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
-    with $g_1 \in s$: $\nexists s' \in \text{REACH}(s) : g_2 \in s'$.
-    Since $s \in \text{REACH}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
-    $g_1$-states. Thus no reachable state contains both $g_1$ and $g_2$. Combined with
-    both goals being achievable, this satisfies Definition~\ref{defn:mutex_goal_pair}.
+        \item Suppose $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable.
+              By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
+              with $g_1 \in s$: $\nexists s' \in \text{REACH}(s) : g_2 \in s'$.
+              Since $s \in \text{REACH}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
+              $g_1$-states. Thus no reachable state contains both $g_1$ and $g_2$. Combined with
+              both goals being achievable, this satisfies Definition~\ref{defn:mutex_goal_pair}.
 
-    \textbf{(3)} Light Switch: Goals $\{\text{on}, \text{off}\}$ are mutex
-    (both achievable, never co-occur) but have no sequencing conflict (from any
-    \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
+        \item Light Switch: Goals $\{\text{on}, \text{off}\}$ are mutex
+              (both achievable, never co-occur) but have no sequencing conflict (from any
+              \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
+    \end{enumerate}
 \end{proof}
 
 This hierarchy reflects increasing diagnostic specificity rather than
@@ -154,15 +156,17 @@ information about which goal achievements cause the blockage.
     \end{enumerate}
 \end{prop}
 \begin{proof}
-    \textbf{(1)} Unreachable goals are a subset of all unreachable propositions,
-    which are a subset of $P$.
+    \begin{enumerate}
+        \item Unreachable goals are a subset of all unreachable propositions,
+              which are a subset of $P$.
 
-    \textbf{(2)} The maximum number of unordered pairs among
-    $I^{\text{scope}}_{\text{MX}}$ goals is $\binom{I^{\text{scope}}_{\text{MX}}}{2}$.
+        \item The maximum number of unordered pairs among
+              $I^{\text{scope}}_{\text{MX}}$ goals is $\binom{I^{\text{scope}}_{\text{MX}}}{2}$.
 
-    \textbf{(3)} The maximum number of ordered pairs among
-    $I^{\text{scope}}_{\text{GS}}$ goals is $n(n-1)$ where
-    $n = I^{\text{scope}}_{\text{GS}}$.
+        \item The maximum number of ordered pairs among
+              $I^{\text{scope}}_{\text{GS}}$ goals is $n(n-1)$ where
+              $n = I^{\text{scope}}_{\text{GS}}$.
+    \end{enumerate}
 \end{proof}
 
 These bounds enable diagnostic interpretation through ratio analysis:
