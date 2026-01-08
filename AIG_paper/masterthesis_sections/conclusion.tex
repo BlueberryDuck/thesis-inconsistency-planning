@@ -2,3 +2,13 @@
 \label{sec:conclusion}
 
 This section will summarize the findings, contributions, and limitations of the research, along with directions for future work. The conclusion will provide a comprehensive assessment of how effectively inconsistency measures from propositional logic have been adapted to classical planning problems, highlighting both the theoretical insights gained and the practical value demonstrated through implementation and evaluation.
+
+\subsection{Future Work}
+
+Several directions merit further investigation.
+
+\paragraph{Higher-Order Goal Analysis.}
+The proposed measures detect pairwise conflicts: mutex relationships between goal pairs and sequencing conflicts between ordered goal pairs. For problems with two or fewer goals ($|G| \leq 2$), the conjunction of all measures equaling zero implies solvability. However, for problems with three or more goals, pairwise achievability does not guarantee joint achievability. Consider goals $G = \{g_1, g_2, g_3\}$ with reachable states $\{g_1, g_2\}$, $\{g_2, g_3\}$, and $\{g_1, g_3\}$: every pair coexists in some state, yet no state satisfies all three goals simultaneously. Extending the mutex definition to $k$-tuples would address this limitation, analogous to the distinction between 2-SAT and $k$-SAT in satisfiability theory.
+
+\paragraph{Additional Future Directions.}
+% TODO: Add future work from implementation and evaluation chapters
