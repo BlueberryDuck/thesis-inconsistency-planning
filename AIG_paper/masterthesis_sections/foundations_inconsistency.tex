@@ -42,10 +42,10 @@ The contension measure employs three-valued paraconsistent semantics based on Pr
 \begin{equation*}
     I_c(K) = \min\{|\upsilon^{-1}(B) \cap \text{At}(K)| \mid \upsilon \models_3 K\}
 \end{equation*}
-where $\text{At}(K)$ denotes the atoms appearing in $K$ and $\upsilon \models_3 K$ indicates that $\upsilon$ satisfies $K$ under three-valued semantics.
+where $\upsilon : \text{At}(K) \to \{T, F, B\}$ is a three-valued truth assignment, $\text{At}(K)$ denotes the atoms appearing in $K$, and $\upsilon \models_3 K$ indicates that $\upsilon$ satisfies $K$ under three-valued semantics.
 
 \begin{example}[Contension Measure]
-    Consider $K = \{a \land b, \neg a, \neg b\}$. Setting both $a$ and $b$ to $B$ satisfies all formulas: $a \land b$ evaluates to $B$ (the minimum of $B$ and $B$), and $\neg a$ and $\neg b$ both evaluate to $B$ (negation of $B$ is $B$). Since the truth value $B$ propagates through negation, this is the minimal resolution, yielding $I_c(K) = 2$.
+    Consider $K = \{a \land b, \neg a, \neg b\}$. Setting both $a$ and $b$ to $B$ satisfies all formulas: $a \land b$ evaluates to $B$ under the three-valued semantics where conjunction takes the minimum value with ordering $F < B < T$, and $\neg a$ and $\neg b$ both evaluate to $B$ (negation of $B$ is $B$). Since the truth value $B$ propagates through negation, this is the minimal resolution, yielding $I_c(K) = 2$.
 \end{example}
 
 The contension measure counts atoms, not formulas or conflicts. This means that multiple formula conflicts may be resolved by assigning $B$ to a single shared atom. For instance, the knowledge base $K = \{a \land b, \neg a \land b, \neg a \land c, a \land c\}$ contains multiple pairwise conflicts but can be satisfied by setting only $a$ to $B$, yielding $I_c(K) = 1$. This atom-level granularity distinguishes contension from formula-counting measures.

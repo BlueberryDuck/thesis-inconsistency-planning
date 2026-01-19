@@ -30,6 +30,11 @@ Operators are ground, meaning all variables have been replaced by specific objec
     \end{equation*}
 \end{defn}
 
+\begin{example}[Operator Application]
+    \label{ex:operator_application}
+    Consider state $s = \{a, b\}$ and operator $o = \langle \{a\}, \{c\}, \{b\} \rangle$ with $\text{precond}(o) = \{a\}$, $\text{add}(o) = \{c\}$, and $\text{delete}(o) = \{b\}$. Since $\{a\} \subseteq \{a, b\}$, operator $o$ is applicable in $s$. The result is $\text{RESULT}(s, o) = (\{a, b\} \setminus \{b\}) \cup \{c\} = \{a, c\}$.
+\end{example}
+
 \begin{defn}[Plan~\cite{Russell2016}]
     \label{defn:plan}
     A plan is a sequence of operators $\langle o_1, o_2, \ldots, o_k \rangle$ such that each $o_i$ is applicable in state $s_{i-1}$, where $s_0 = I$ and $s_i = \text{RESULT}(s_{i-1}, o_i)$, and the final state satisfies $G \subseteq s_k$.
@@ -60,7 +65,7 @@ A problem file instantiates the domain with concrete elements:
 \begin{equation*}
     \text{Problem} = \langle \text{DomainRef}, \text{Objects}, \text{Init}, \text{Goal} \rangle
 \end{equation*}
-where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification.
+where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification. For instance, a logistics domain file would define predicates like $\textit{at}(x, y)$ and actions like $\textit{drive}$, while a problem file would specify particular trucks, locations, and delivery goals.
 
 Predicates define the vocabulary of a planning domain as parameterized Boolean functions. Formally, a predicate declaration has the form:
 \begin{equation*}
@@ -68,7 +73,7 @@ Predicates define the vocabulary of a planning domain as parameterized Boolean f
 \end{equation*}
 where $\text{pred}$ is the predicate name and $x_1, \ldots, x_n$ are typed or untyped parameters. When instantiated with concrete objects, a predicate becomes a ground atom (proposition) that can be true or false in a state.
 
-For example, in the blocksworld domain, the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
+For example, in the blocksworld domain\footnote{Blocksworld is a classical planning benchmark involving stacking and unstacking blocks on a table; see Example~\ref{ex:blocksworld} for a detailed illustration.}, the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
 
 \ac{PDDL} actions define parameterized operators using a precondition-effect structure. An action schema has the form:
 \begin{equation*}
