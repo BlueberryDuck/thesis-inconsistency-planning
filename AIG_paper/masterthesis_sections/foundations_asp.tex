@@ -1,0 +1,44 @@
+\subsection{Answer Set Programming}
+
+\ac{ASP} is a declarative programming paradigm based on the stable model semantics of logic programs~\cite{Dimopoulos1997}. This section provides formal definitions of \ac{ASP} concepts used in the implementation chapter.
+
+\begin{defn}[Logic Program~\cite{Dimopoulos1997}]
+    \label{defn:logic_program}
+    A \emph{logic program} $\Pi$ is a finite set of rules. Each rule has the form:
+    \begin{equation*}
+        h \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n
+    \end{equation*}
+    where $h$ is the \emph{head} (an atom or empty), $b_1, \ldots, b_m$ are the \emph{positive body} atoms, and $c_1, \ldots, c_n$ are the \emph{negative body} atoms preceded by default negation $\mathbf{not}$.
+\end{defn}
+
+A rule with an empty head is a \emph{constraint} (denoted $\leftarrow b_1, \ldots, b_m$), which eliminates answer sets containing the body atoms. A rule with an empty body is a \emph{fact} (denoted $h.$).
+
+\begin{defn}[Answer Set~\cite{Dimopoulos1997}]
+    \label{defn:answer_set}
+    An \emph{answer set} (or \emph{stable model}) of a logic program $\Pi$ is a minimal set of atoms $S$ such that:
+    \begin{enumerate}
+        \item For every rule $h \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n$ in $\Pi$: if $\{b_1, \ldots, b_m\} \subseteq S$ and $\{c_1, \ldots, c_n\} \cap S = \emptyset$, then $h \in S$.
+        \item $S$ is minimal with respect to set inclusion among all sets satisfying condition 1.
+    \end{enumerate}
+\end{defn}
+
+\begin{example}[Simple ASP Program]
+    Consider the program with rules: $a.$ (fact), $b \leftarrow a.$ (conditional), $\leftarrow a, c.$ (constraint). The unique answer set is $\{a, b\}$: the fact establishes $a$, the conditional rule derives $b$ from $a$, and $c$ is not derived so the constraint is not violated.
+\end{example}
+
+\subsubsection{ASP for Planning}
+
+\ac{ASP} provides a natural framework for encoding planning problems. The modern tool plasp~3 by Dimopoulos et al.~\cite{Dimopoulos2019} translates \ac{PDDL} specifications into \ac{ASP} programs where answer sets correspond to valid plans. The system generates rules encoding operator applicability, effect application, and goal satisfaction.
+
+\begin{defn}[Sequential Planning Encoding~\cite{Dimopoulos2019}]
+    \label{defn:sequential_encoding}
+    A \emph{sequential encoding} for horizon $i$, denoted $S(i)$, is an \ac{ASP} program that searches for plans of exactly $i$ steps. The encoding includes time-indexed fluents $\text{holds}(p, t)$ for propositions $p$ at time steps $t \in \{0, 1, \ldots, i\}$, action atoms $\text{occurs}(o, t)$ indicating operator $o$ executes at step $t$, and constraints ensuring exactly one action occurs at each step.
+\end{defn}
+
+Sequential encodings enforce that exactly one operator executes at each time step. To find plans of unknown length, the encoding is solved iteratively for increasing horizons $i = 0, 1, 2, \ldots$ until either an answer set is found or a termination condition is met.
+
+Parallel encodings relax the single-action restriction, allowing multiple non-interfering actions to execute simultaneously at each step. To ensure valid parallel execution, these encodings include \emph{serialization constraints} that prevent conflicting actions from occurring at the same time step. Two actions conflict if one deletes a precondition or add effect of the other, or if both add and delete the same proposition. Serialization constraints take the form $\leftarrow \text{occurs}(o_1, t), \text{occurs}(o_2, t)$ for each pair of conflicting actions $o_1$ and $o_2$.
+
+For inconsistency measurement applications, \ac{ASP} offers several advantages. First, the declarative nature of \ac{ASP} programs allows for systematic analysis of conflicts through unsatisfiable cores and related computational structures, as demonstrated by Ulbricht et al.~\cite{Ulbricht2016} in their adaptation of inconsistency measures to \ac{ASP}. Second, \ac{ASP} provides natural support for non-monotonic reasoning through default negation, which is essential for planning domains where the monotonicity postulate of classical inconsistency measures may not hold due to the frame problem.
+
+Regarding computational performance, the choice between \ac{ASP} and \ac{SAT}-based approaches depends on the specific measures and encodings. Kuhlmann et al.~\cite{Kuhlmann2025} found that \ac{ASP}-based algorithms outperform basic \ac{SAT} encodings for several inconsistency measures. However, Niskanen et al.~\cite{Niskanen2023} demonstrated that specialized MaxSAT approaches can significantly outperform \ac{ASP} methods for the same measures. This thesis employs \ac{ASP} for implementation due to its expressiveness for encoding reachability-based measures and its natural support for the non-monotonic reasoning patterns that arise in planning diagnostics.

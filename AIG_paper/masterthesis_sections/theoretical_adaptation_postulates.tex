@@ -1,7 +1,7 @@
 \subsubsection{Rationality Postulates}
 \label{sec:postulates}
 
-A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. Following~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas; second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths.
+A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. As demonstrated by Ulbricht et al.~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas; second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths.
 
 \begin{defn}[Planning Consistency]
     An inconsistency measure $I$ for planning problems satisfies \emph{Planning Consistency} if:
@@ -19,7 +19,7 @@ This adapts the classical Consistency postulate ($I(K) = 0$ iff $K$ is consisten
     \end{equation*}
 \end{defn}
 
-Note that Operator Monotonicity reverses classical monotonicity because adding operators can only enable new paths, potentially reducing inconsistency. This parallels~\cite{Ulbricht2016}'s observation that non-monotonic logics require inverted monotonicity postulates.
+Note that Operator Monotonicity reverses classical monotonicity because adding operators can only enable new paths, potentially reducing inconsistency. This parallels the observation by Ulbricht et al.~\cite{Ulbricht2016} that non-monotonic logics require inverted monotonicity postulates.
 
 \begin{defn}[Goal Monotonicity]
     An inconsistency measure $I$ satisfies \emph{Goal Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and goals $g$:
@@ -134,7 +134,7 @@ independent failure modes:
           each other but actions are reversible. The conflict is symmetric;
           neither goal ``causes'' the problem more than the other.
     \item \textbf{Mutex with sequencing} (e.g., Trust and Travel): Goals exclude
-          each other AND achieving specific goals creates permanent dead-ends.
+          each other \emph{and} achieving specific goals creates permanent dead-ends.
           The sequencing measure identifies which goal achievement causes the
           blockage, providing actionable diagnostic information for adding
           reversal operators.

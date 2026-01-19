@@ -2,42 +2,62 @@
 
 Inconsistency measurement provides formal methods for quantifying the degree of inconsistency within logical knowledge bases. Rather than treating inconsistency as a binary property, these measures assign numerical values that reflect the severity or extent of conflicts, enabling comparative analysis and systematic approaches to conflict resolution~\cite{Thimm2019}.
 
-\subsubsection{Inconsistency Measures and Rationality Postulates}
+\subsubsection{Knowledge Bases and Inconsistency Measures}
+
+\begin{defn}[Knowledge Base~\cite{Thimm2019}]
+    \label{defn:knowledge_base}
+    A \emph{knowledge base} $K$ is a finite set of propositional formulas. Let $\mathbb{K}$ denote the set of all finite propositional knowledge bases. A knowledge base $K$ is \emph{consistent} if there exists a truth assignment satisfying all formulas in $K$; otherwise it is \emph{inconsistent}.
+\end{defn}
+
+\begin{example}[Consistent and Inconsistent Knowledge Bases]
+    The knowledge base $K_1 = \{a, a \rightarrow b\}$ is consistent: the truth assignment $a = b = \text{true}$ satisfies both formulas. The knowledge base $K_2 = \{a, \neg a\}$ is inconsistent since no truth assignment can satisfy both formulas simultaneously.
+\end{example}
 
 An inconsistency measure provides a systematic way to assign numerical values reflecting the degree of inconsistency.
 
-\begin{defn}[Inconsistency Measure]
+\begin{defn}[Inconsistency Measure~\cite{Thimm2019}]
     \label{defn:inconsistency_measure}
-    An \emph{inconsistency measure} is a function $I : \mathcal{K} \to \mathbb{R}_{\geq 0}$ that maps every knowledge base from a given class $\mathcal{K}$ to a non-negative real number.
+    An \emph{inconsistency measure} is a function $I : \mathbb{K} \to \mathbb{R}_{\geq 0}$ that maps each knowledge base to a non-negative real number quantifying its degree of inconsistency.
 \end{defn}
 
-Inconsistency measures are typically required to satisfy certain rationality postulates that capture intuitive properties of inconsistency quantification~\cite{Hunter2008,Thimm2019}:
+Inconsistency measures are typically required to satisfy certain rationality postulates that capture intuitive properties of inconsistency quantification. Hunter and Konieczny~\cite{Hunter2008} and Thimm~\cite{Thimm2019} identify the following core postulates:
 
 \begin{enumerate}
-    \item \textbf{Consistency:} $I(K) = 0$ if and only if $K$ is consistent.
-    \item \textbf{Monotonicity:} If $K \subseteq K'$, then $I(K) \leq I(K')$.
-    \item \textbf{Free Formula Independence:} $I(K \cup \{\phi\}) = I(K)$ if $\phi$ is not involved in any inconsistency of $K \cup \{\phi\}$.
+    \item \textbf{Consistency:} $I(K) = 0$ if and only if $K$ is consistent. This ensures the measure correctly identifies the absence of conflicts.
+    \item \textbf{Monotonicity:} If $K \subseteq K'$, then $I(K) \leq I(K')$. Adding formulas cannot decrease inconsistency in classical propositional logic.
+    \item \textbf{Free Formula Independence:} $I(K \cup \{\phi\}) = I(K)$ if $\phi$ is not involved in any inconsistency of $K \cup \{\phi\}$. Irrelevant formulas do not affect the measure.
 \end{enumerate}
 
-These postulates may require modification when adapting measures to specific domains. In particular, Monotonicity assumes that adding information can only increase inconsistency, which does not hold in non-monotonic contexts.
+\begin{example}[Rationality Postulates]
+    Consider $K = \{a, \neg a\}$. By Consistency, $I(K) > 0$ since $K$ is inconsistent. Adding the formula $b$ yields $K' = \{a, \neg a, b\}$; by Monotonicity, $I(K') \geq I(K)$. Since $b$ shares no atoms with the conflict and is therefore not involved in any inconsistency, Free Formula Independence implies $I(K') = I(K)$.
+\end{example}
+
+These postulates may require modification when adapting measures to specific domains. In particular, Monotonicity assumes that adding information can only increase inconsistency, which does not hold in non-monotonic contexts where new information can resolve conflicts.
 
 \subsubsection{The Contension Measure}
 
-Several approaches to inconsistency quantification exist, including syntactic approaches based on minimal inconsistent subsets and semantic approaches based on model-theoretic analysis~\cite{Thimm2019}. Among semantic approaches, the contension measure $I_c$~\cite{Grant2011} is particularly relevant as a baseline for domain adaptations.
+Several approaches to inconsistency measurement exist, including syntactic approaches based on minimal inconsistent subsets and semantic approaches based on model-theoretic analysis~\cite{Thimm2019}. Among semantic approaches, the contension measure $I_c$ introduced by Grant and Hunter~\cite{Grant2011} is particularly relevant as a baseline for domain adaptations.
 
-The contension measure employs three-valued paraconsistent semantics~\cite{Priest1979}, where propositions can be assigned a third truth value $B$ (``both true and false'') representing conflict. The measure counts the minimum number of propositions that must be assigned $B$ to satisfy the knowledge base:
+The contension measure employs three-valued paraconsistent semantics based on Priest's Logic of Paradox~\cite{Priest1979}, where propositions can be assigned a third truth value $B$ (``both true and false'') representing conflict. The measure counts the minimum number of \emph{atoms} that must be assigned $B$ to satisfy the knowledge base under three-valued semantics:
 \begin{equation*}
-    I_c(K) = \min\{|\upsilon^{-1}(B) \cap \text{At}| \mid \upsilon \models_3 K\}
+    I_c(K) = \min\{|\upsilon^{-1}(B) \cap \text{At}(K)| \mid \upsilon \models_3 K\}
 \end{equation*}
+where $\text{At}(K)$ denotes the atoms appearing in $K$ and $\upsilon \models_3 K$ indicates that $\upsilon$ satisfies $K$ under three-valued semantics.
 
-This proposition-level analysis provides finer granularity than formula-based measures: while $\{a, \neg a\}$ and $\{a \land b \land c, \neg a \land \neg b \land \neg c\}$ both contain one minimal inconsistent subset, $I_c$ yields 1 and 3 respectively, reflecting the number of conflicting propositions~\cite{Thimm2019}. Section~\ref{sec:naive_encoding} demonstrates that despite this granularity, $I_c$ yields uninformative results when applied to naive propositional encodings of planning problems.
+\begin{example}[Contension Measure]
+    Consider $K = \{a \land b, \neg a, \neg b\}$. Setting both $a$ and $b$ to $B$ satisfies all formulas: $a \land b$ evaluates to $B$ (the minimum of $B$ and $B$), and $\neg a$ and $\neg b$ both evaluate to $B$ (negation of $B$ is $B$). Since the truth value $B$ propagates through negation, this is the minimal resolution, yielding $I_c(K) = 2$.
+\end{example}
+
+The contension measure counts atoms, not formulas or conflicts. This means that multiple formula conflicts may be resolved by assigning $B$ to a single shared atom. For instance, the knowledge base $K = \{a \land b, \neg a \land b, \neg a \land c, a \land c\}$ contains multiple pairwise conflicts but can be satisfied by setting only $a$ to $B$, yielding $I_c(K) = 1$. This atom-level granularity distinguishes contension from formula-counting measures.
+
+Section~\ref{sec:naive_encoding} demonstrates that despite this granularity, $I_c$ yields uninformative results when applied to naive propositional encodings of planning problems.
 
 \subsubsection{Domain Adaptation Precedents}
 
 Inconsistency measurement techniques have been successfully adapted to diverse logical domains, establishing methodological precedent for this thesis.
 
-\cite{Ulbricht2016} adapted inconsistency measures to \ac{ASP}, addressing the fundamental challenge that non-monotonic reasoning violates classical monotonicity postulates. Their key observation, that adding information to a non-monotonic knowledge base can reduce inconsistency, directly parallels the planning context, where adding operators can enable new solution paths. This motivates the Operator Monotonicity postulate developed in Section~\ref{sec:postulates}.
+Ulbricht et al.~\cite{Ulbricht2016} adapted inconsistency measures to \ac{ASP}, addressing the fundamental challenge that non-monotonic reasoning violates classical monotonicity postulates. Their key observation, that adding information to a non-monotonic knowledge base can reduce inconsistency, directly parallels the planning context, where adding operators can enable new solution paths. This motivates the Operator Monotonicity postulate developed in Section~\ref{sec:postulates}.
 
-\cite{Corea2022} developed inconsistency measures for temporal logic applied to declarative process specifications. Their work demonstrates that traditional measures fail to adequately capture temporal operators, requiring domain-specific semantics for meaningful conflict quantification. This parallels the finding in this thesis that naive propositional encodings of planning problems yield uninformative measure values, motivating planning-native measures.
+Corea et al.~\cite{Corea2022} developed inconsistency measures for temporal logic applied to declarative process specifications. Their work demonstrates that traditional measures fail to adequately capture temporal operators, requiring domain-specific semantics for meaningful conflict quantification. This parallels the finding in this thesis that naive propositional encodings of planning problems yield uninformative measure values, motivating planning-native measures.
 
 These adaptations establish that inconsistency measures can be meaningfully extended to diverse formalisms when domain-specific conflict semantics are carefully considered.
