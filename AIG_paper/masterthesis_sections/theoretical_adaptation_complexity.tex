@@ -18,8 +18,8 @@ This section analyzes the computational complexity of the proposed measures. All
 
 \begin{prop}[Unreachability Profile Complexity]
     \label{prop:ur_complexity}
-    Given $S_{\text{reach}}$, computing $I^{\text{scope}}_{\text{UR}}$ and
-    $I^{\text{struct}}_{\text{UR}}$ requires $O(|S_{\text{reach}}| \cdot |P|)$
+    Given $S_{\text{reach}}$, computing $\mathcal{I}^{\text{scope}}_{\text{UR}}$ and
+    $\mathcal{I}^{\text{struct}}_{\text{UR}}$ requires $O(|S_{\text{reach}}| \cdot |P|)$
     time and $O(|P|)$ additional space.
 \end{prop}
 \begin{proof}
@@ -29,8 +29,8 @@ This section analyzes the computational complexity of the proposed measures. All
 
 \begin{prop}[Goal Mutex Profile Complexity]
     \label{prop:mx_complexity}
-    Given $S_{\text{reach}}$, computing $I^{\text{scope}}_{\text{MX}}$ and
-    $I^{\text{struct}}_{\text{MX}}$ requires $O(|S_{\text{reach}}| \cdot |G|^2)$
+    Given $S_{\text{reach}}$, computing $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and
+    $\mathcal{I}^{\text{struct}}_{\text{MX}}$ requires $O(|S_{\text{reach}}| \cdot |G|^2)$
     time and $O(|G|^2)$ additional space.
 \end{prop}
 \begin{proof}
@@ -41,8 +41,8 @@ This section analyzes the computational complexity of the proposed measures. All
 
 \begin{prop}[Goal Sequencing Conflict Profile Complexity]
     \label{prop:gs_complexity}
-    Given $S_{\text{reach}}$, computing $I^{\text{scope}}_{\text{GS}}$ and
-    $I^{\text{struct}}_{\text{GS}}$ requires $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$
+    Given $S_{\text{reach}}$, computing $\mathcal{I}^{\text{scope}}_{\text{GS}}$ and
+    $\mathcal{I}^{\text{struct}}_{\text{GS}}$ requires $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$
     time and $O(|S_{\text{reach}}|)$ additional space.
 \end{prop}
 \begin{proof}
@@ -62,17 +62,19 @@ Table~\ref{tab:complexity} summarizes these results.
     \label{tab:complexity}
     \begin{tabular}{l|l|l}
         \hline
-        Measure                                    & Time Complexity                                 & Space Complexity        \\
+        Measure                                              & Time Complexity                                 & Space Complexity        \\
         \hline
-        $S_{\text{reach}}$                         & $O(2^{|P|} \cdot |O| \cdot |P|)$                & $O(2^{|P|} \cdot |P|)$  \\
-        $I_{\text{UR}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |P|)$               & $O(|P|)$                \\
-        $I_{\text{MX}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |G|^2)$             & $O(|G|^2)$              \\
-        $I_{\text{GS}}$ (given $S_{\text{reach}}$) & $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ & $O(|S_{\text{reach}}|)$ \\
+        $S_{\text{reach}}$                                   & $O(2^{|P|} \cdot |O| \cdot |P|)$                & $O(2^{|P|} \cdot |P|)$  \\
+        $\mathcal{I}_{\text{UR}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |P|)$               & $O(|P|)$                \\
+        $\mathcal{I}_{\text{MX}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |G|^2)$             & $O(|G|^2)$              \\
+        $\mathcal{I}_{\text{GS}}$ (given $S_{\text{reach}}$) & $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ & $O(|S_{\text{reach}}|)$ \\
         \hline
     \end{tabular}
 \end{table}
 
-The exponential dependence on $|P|$ reflects the inherent complexity of planning: determining plan existence is PSPACE-complete~\cite{Bylander1994}. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum (e.g., the Locked Door scenario has $|P| = 3$ but $|S_{\text{reach}}| = 1$). Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations; for expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.
+The decision problems underlying each measure relate to known complexity classes. Computing $S_{\text{reach}}$ is closely related to plan existence, which is PSPACE-complete~\cite{Bylander1994}. Given $S_{\text{reach}}$, the individual measure computations are polynomial in the size of the reachable state set, as shown in Table~\ref{tab:complexity}. A detailed analysis of hardness and completeness results for the specific decision problems (e.g., ``is $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$?'') is deferred to future work.
+
+The exponential dependence on $|P|$ reflects the inherent complexity of planning. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum (e.g., the Locked Door scenario has $|P| = 4$ but $|S_{\text{reach}}| = 1$). Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations; for expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.
 
 The complexity analysis above assumes explicit state space enumeration. \ac{ASP}-based implementations may exhibit different practical performance characteristics due to several factors. First, modern \ac{ASP} solvers employ conflict-driven clause learning, unit propagation, and other optimizations that can prune large portions of the search space~\cite{Kuhlmann2025}. Second, symbolic representations in \ac{ASP} avoid explicit state enumeration when possible, potentially achieving sub-exponential performance on structured problems. Third, the declarative nature of \ac{ASP} encodings allows solvers to exploit problem structure automatically.
 

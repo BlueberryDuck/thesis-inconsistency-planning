@@ -17,40 +17,40 @@ An inconsistency measure provides a systematic way to assign numerical values re
 
 \begin{defn}[Inconsistency Measure~\cite{Thimm2019}]
     \label{defn:inconsistency_measure}
-    An \emph{inconsistency measure} is a function $I : \mathbb{K} \to \mathbb{R}_{\geq 0}$ that maps each knowledge base to a non-negative real number quantifying its degree of inconsistency.
+    An \emph{inconsistency measure} is a function $\mathcal{I} : \mathbb{K} \to \mathbb{R}_{\geq 0}$ that maps each knowledge base to a non-negative real number quantifying its degree of inconsistency.
 \end{defn}
 
 Inconsistency measures are typically required to satisfy certain rationality postulates that capture intuitive properties of inconsistency quantification. Hunter and Konieczny~\cite{Hunter2008} and Thimm~\cite{Thimm2019} identify the following core postulates:
 
 \begin{enumerate}
-    \item \textbf{Consistency:} $I(K) = 0$ if and only if $K$ is consistent. This ensures the measure correctly identifies the absence of conflicts.
-    \item \textbf{Monotonicity:} If $K \subseteq K'$, then $I(K) \leq I(K')$. Adding formulas cannot decrease inconsistency in classical propositional logic.
-    \item \textbf{Free Formula Independence:} $I(K \cup \{\phi\}) = I(K)$ if $\phi$ is not involved in any inconsistency of $K \cup \{\phi\}$. Irrelevant formulas do not affect the measure.
+    \item \textbf{Consistency:} $\mathcal{I}(K) = 0$ if and only if $K$ is consistent. This ensures the measure correctly identifies the absence of conflicts.
+    \item \textbf{Monotonicity:} If $K \subseteq K'$, then $\mathcal{I}(K) \leq \mathcal{I}(K')$. Adding formulas cannot decrease inconsistency in classical propositional logic.
+    \item \textbf{Free Formula Independence:} $\mathcal{I}(K \cup \{\phi\}) = \mathcal{I}(K)$ if $\phi$ is not involved in any inconsistency of $K \cup \{\phi\}$. Irrelevant formulas do not affect the measure.
 \end{enumerate}
 
 \begin{example}[Rationality Postulates]
-    Consider $K = \{a, \neg a\}$. By Consistency, $I(K) > 0$ since $K$ is inconsistent. Adding the formula $b$ yields $K' = \{a, \neg a, b\}$; by Monotonicity, $I(K') \geq I(K)$. Since $b$ shares no atoms with the conflict and is therefore not involved in any inconsistency, Free Formula Independence implies $I(K') = I(K)$.
+    Consider $K = \{a, \neg a\}$. By Consistency, $\mathcal{I}(K) > 0$ since $K$ is inconsistent. Adding the formula $b$ yields $K' = \{a, \neg a, b\}$; by Monotonicity, $\mathcal{I}(K') \geq \mathcal{I}(K)$. Since $b$ shares no atoms with the conflict and is therefore not involved in any inconsistency, Free Formula Independence implies $\mathcal{I}(K') = \mathcal{I}(K)$.
 \end{example}
 
 These postulates may require modification when adapting measures to specific domains. In particular, Monotonicity assumes that adding information can only increase inconsistency, which does not hold in non-monotonic contexts where new information can resolve conflicts.
 
 \subsubsection{The Contension Measure}
 
-Several approaches to inconsistency measurement exist, including syntactic approaches based on minimal inconsistent subsets and semantic approaches based on model-theoretic analysis~\cite{Thimm2019}. Among semantic approaches, the contension measure $I_c$ introduced by Grant and Hunter~\cite{Grant2011} is particularly relevant as a baseline for domain adaptations.
+Several approaches to inconsistency measurement exist, including syntactic approaches based on minimal inconsistent subsets and semantic approaches based on model-theoretic analysis~\cite{Thimm2019}. Among semantic approaches, the contension measure $\mathcal{I}_c$ introduced by Grant and Hunter~\cite{Grant2011} is particularly relevant as a baseline for domain adaptations.
 
 The contension measure employs three-valued paraconsistent semantics based on Priest's Logic of Paradox~\cite{Priest1979}, where propositions can be assigned a third truth value $B$ (``both true and false'') representing conflict. The measure counts the minimum number of \emph{atoms} that must be assigned $B$ to satisfy the knowledge base under three-valued semantics:
 \begin{equation*}
-    I_c(K) = \min\{|\upsilon^{-1}(B) \cap \text{At}(K)| \mid \upsilon \models_3 K\}
+    \mathcal{I}_c(K) = \min\{|\upsilon^{-1}(B) \cap \text{At}(K)| \mid \upsilon \models_3 K\}
 \end{equation*}
 where $\upsilon : \text{At}(K) \to \{T, F, B\}$ is a three-valued truth assignment, $\text{At}(K)$ denotes the atoms appearing in $K$, and $\upsilon \models_3 K$ indicates that $\upsilon$ satisfies $K$ under three-valued semantics.
 
 \begin{example}[Contension Measure]
-    Consider $K = \{a \land b, \neg a, \neg b\}$. Setting both $a$ and $b$ to $B$ satisfies all formulas: $a \land b$ evaluates to $B$ under the three-valued semantics where conjunction takes the minimum value with ordering $F < B < T$, and $\neg a$ and $\neg b$ both evaluate to $B$ (negation of $B$ is $B$). Since the truth value $B$ propagates through negation, this is the minimal resolution, yielding $I_c(K) = 2$.
+    Consider $K = \{a \land b, \neg a, \neg b\}$. Setting both $a$ and $b$ to $B$ satisfies all formulas: $a \land b$ evaluates to $B$ under the three-valued semantics where conjunction takes the minimum value with ordering $F < B < T$, and $\neg a$ and $\neg b$ both evaluate to $B$ (negation of $B$ is $B$). Since the truth value $B$ propagates through negation, this is the minimal resolution, yielding $\mathcal{I}_c(K) = 2$.
 \end{example}
 
-The contension measure counts atoms, not formulas or conflicts. This means that multiple formula conflicts may be resolved by assigning $B$ to a single shared atom. For instance, the knowledge base $K = \{a \land b, \neg a \land b, \neg a \land c, a \land c\}$ contains multiple pairwise conflicts but can be satisfied by setting only $a$ to $B$, yielding $I_c(K) = 1$. This atom-level granularity distinguishes contension from formula-counting measures.
+The contension measure counts atoms, not formulas or conflicts. This means that multiple formula conflicts may be resolved by assigning $B$ to a single shared atom. For instance, the knowledge base $K = \{a \land b, \neg a \land b, \neg a \land c, a \land c\}$ contains multiple pairwise conflicts but can be satisfied by setting only $a$ to $B$, yielding $\mathcal{I}_c(K) = 1$. This atom-level granularity distinguishes contension from formula-counting measures.
 
-Section~\ref{sec:naive_encoding} demonstrates that despite this granularity, $I_c$ yields uninformative results when applied to naive propositional encodings of planning problems.
+Section~\ref{sec:naive_encoding} demonstrates that despite this granularity, $\mathcal{I}_c$ yields uninformative results when applied to naive propositional encodings of planning problems.
 
 \subsubsection{Domain Adaptation Precedents}
 

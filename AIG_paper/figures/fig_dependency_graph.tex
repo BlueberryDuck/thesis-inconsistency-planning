@@ -1,0 +1,30 @@
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[
+            prop/.style={circle, draw, thick, minimum size=1.1cm, font=\small, align=center},
+            missing/.style={circle, draw, thick, dashed, minimum size=1.1cm, font=\small, align=center, fill=black!5},
+            initial/.style={circle, draw, thick, minimum size=1.1cm, font=\small, align=center, fill=white, double},
+            op/.style={font=\footnotesize\itshape, above, sloped},
+            >=stealth',
+        ]
+        % Nodes
+        \node[initial] (atdoor) at (0,0) {at\_door};
+        \node[missing] (haskey) at (4,0) {has\_key};
+        \node[prop] (unlocked) at (4,-2.5) {door\_\\unlocked};
+        \node[prop] (inroom) at (0,-2.5) {in\_room};
+
+        % Edges: precondition → effect (through operators)
+        \draw[->, thick] (haskey) -- node[op] {unlock} (unlocked);
+        \draw[->, thick] (atdoor) -- node[op, below, sloped] {unlock} (unlocked);
+        \draw[->, thick] (unlocked) -- node[op] {enter} (inroom);
+        \draw[->, thick] (atdoor) -- node[op, left] {enter} (inroom);
+
+        % Legend
+        \node[font=\footnotesize, anchor=west] at (6, 0) {dashed = no producer};
+        \node[font=\footnotesize, anchor=west] at (6, -0.5) {double = in $I$};
+        \node[font=\footnotesize, anchor=west] at (6, -1.0) {arrows = precondition};
+
+    \end{tikzpicture}
+    \caption[Precondition-effect dependency graph for the Locked Door scenario]{Precondition-effect dependency graph for the Locked Door scenario (Scenario~1). The proposition \textit{has\_key} (dashed) has no incoming edge from any operator add effect, making it the root cause of unreachability. Edges indicate that the target proposition is an effect of an operator requiring the source proposition as a precondition.}
+    \label{fig:dependency_graph}
+\end{figure}

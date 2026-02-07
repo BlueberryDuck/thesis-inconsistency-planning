@@ -3,6 +3,10 @@
 
 Before presenting the proposed measures, this section establishes a structural taxonomy that organizes unsolvable planning problems by features relevant to inconsistency measurement. This taxonomy identifies distinct measurement targets and motivates the design choices in subsequent sections.
 
+\input{figures/fig_taxonomy}
+
+\subsubsection{Structural Categories}
+
 Unsolvable planning problems can be organized by structural features that suggest different approaches for inconsistency measurement. This taxonomy is organized by mathematical ideas needed to detect and quantify conflicts, rather than by mutually exclusive categories. The three structural categories are:
 
 \textbf{Category 1: Goal Specification Conflicts.} The goal specification $G$ contains propositions that cannot simultaneously be true in any valid state. In classical propositional logic, this would include explicit contradictions such as $\{p, \neg p\}$. However, in propositional \ac{PDDL} with \texttt{:strips} requirements, goal specifications consist exclusively of positive literals; negative goal literals require \ac{PDDL} 3.0 extensions~\cite{Gerevini2005}. Consequently, specification-level contradictions of the form $\{p, \neg p\}$ cannot occur in the planning formalism addressed by this thesis.
@@ -17,7 +21,9 @@ This category encompasses three structural features analyzable via graph algorit
     \item \textbf{(2b) Circular dependencies:} Preconditions form cycles without initialization. In the dependency graph, a cycle exists where no node in the cycle is initially true. For example, requiring a security badge to be activated to enter a building while needing to be inside the building to activate the badge.
     \item \textbf{(2c) Action-based exclusions:} Achieving certain goal propositions via irreversible actions creates dead-end states preventing other goal propositions from being reached. For example, entering a one-way door to retrieve an item while becoming trapped and unable to complete other objectives.
 \end{itemize}
-This category suggests graph-based measures such as counting missing producers, measuring precondition chain depth, detecting cycles, or analyzing reachability from hypothetical goal states.
+This category suggests graph-based measures such as counting missing producers, measuring precondition chain depth, detecting cycles, or analyzing reachability from hypothetical goal states. Figure~\ref{fig:dependency_graph} illustrates a dependency graph for the Locked Door scenario (Scenario~1 in Section~\ref{sec:test_scenarios}).
+
+\input{figures/fig_dependency_graph}
 
 \textbf{Category 3: Resource Constraints.} Consumable resources (such as time, fuel, budget, or battery) are insufficient to satisfy goal requirements. This includes both total resource deficit, where the cumulative consumption exceeds the available supply (such as requiring two fuel-consuming moves but having only one unit of fuel), and resource contention, where multiple goal propositions compete for the same limited resource (such as two surfaces requiring painting but only one can of paint being available). This category requires numeric tracking and accounting measures, such as computing absolute or relative resource deficits, counting over-subscribed resources, or tracking path-dependent consumption patterns.
 
@@ -31,18 +37,18 @@ Category 2b (circular dependencies) and Category 3 (resource constraints) are re
 
 Resource constraints (Category 3) are excluded for two reasons: first, from a knowledge representation perspective, numeric resource insufficiency often reduces to missing producer problems (Category 2a); second, numeric fluents introduce significant complexity through \ac{PDDL} 2.1 extensions~\cite{Fox2003}, requiring fundamentally different measurement approaches. This thesis focuses on propositional \ac{PDDL} planning with the \texttt{:strips} and \texttt{:typing} requirements; numeric extensions warrant separate treatment. Future work may develop specialized measures for cycles and numeric resources, building on the foundational framework established here.
 
-An important practical distinction emerges between static and dynamic analysis approaches. Static issues can be detected directly from the problem specification $\langle P, O, I, G \rangle$ without state space exploration: goal proposition conflicts are identified by checking $G$ for mutex propositions, missing producers by verifying whether $\exists o \in O$ with $p \in \text{add}(o)$, and simple resource bounds by comparing initial quantities against total requirements. Dynamic issues, conversely, require reasoning about reachable states or execution paths: circular dependencies necessitate graph analysis of precondition chains, unreachable regions require forward or backward reachability computation, and path-dependent resource consumption demands state transition tracking. This static-dynamic distinction has implications for computational complexity and suggests that measures based on static analysis may be more efficiently computable than those requiring dynamic state space reasoning.
+An important practical distinction emerges between static and dynamic analysis approaches. Static issues can be detected directly from the problem specification $\langle P, O, I, G \rangle$ without state space exploration: goal proposition conflicts are identified by checking $G$ against the operator effects in $O$ for mutex propositions (operator delete effects directly reveal potential mutual exclusions without state space exploration), missing producers by verifying whether $\exists o \in O$ with $p \in \text{add}(o)$, and simple resource bounds by comparing initial quantities against total requirements. Dynamic issues, conversely, require reasoning about reachable states or execution paths: circular dependencies necessitate graph analysis of precondition chains, unreachable regions require forward or backward reachability computation, and path-dependent resource consumption demands state transition tracking. This static-dynamic distinction has implications for computational complexity and suggests that measures based on static analysis may be more efficiently computable than those requiring dynamic state space reasoning.
 
 \begin{example}[Multiple Structural Categories]
     \label{ex:security_facility}
     To illustrate how multiple structural categories can manifest in a single planning problem, consider a security facility scenario:
     \begin{align*}
-        P & = \{\textit{outside}, \textit{inside}, \textit{has\_badge}, \textit{vault\_accessed}, \textit{lights\_on}, \textit{lights\_off}\}   \\
-        O & \ni \textit{enter\_facility} = \langle \{\textit{outside}, \textit{has\_badge}\}, \{\textit{inside}\}, \{\textit{outside}\} \rangle \\
-          & \ni \textit{access\_vault} = \langle \{\textit{inside}\}, \{\textit{vault\_accessed}\}, \{\} \rangle                                \\
-          & \ni \textit{turn\_on} = \langle \{\textit{lights\_off}\}, \{\textit{lights\_on}\}, \{\textit{lights\_off}\} \rangle                 \\
-          & \ni \textit{turn\_off} = \langle \{\textit{lights\_on}\}, \{\textit{lights\_off}\}, \{\textit{lights\_on}\} \rangle                 \\
-        I & = \{\textit{outside}, \textit{lights\_off}\}                                                                                        \\
+        P & = \{\textit{outside}, \textit{inside}, \textit{has\_badge}, \textit{vault\_accessed}, \textit{lights\_on}, \textit{lights\_off}\}     \\
+        O & = \{ \textit{enter\_facility} = \langle \{\textit{outside}, \textit{has\_badge}\}, \{\textit{inside}\}, \{\textit{outside}\} \rangle, \\
+          & \quad \textit{access\_vault} = \langle \{\textit{inside}\}, \{\textit{vault\_accessed}\}, \{\} \rangle,                               \\
+          & \quad \textit{turn\_on} = \langle \{\textit{lights\_off}\}, \{\textit{lights\_on}\}, \{\textit{lights\_off}\} \rangle,                \\
+          & \quad \textit{turn\_off} = \langle \{\textit{lights\_on}\}, \{\textit{lights\_off}\}, \{\textit{lights\_on}\} \rangle \}              \\
+        I & = \{\textit{outside}, \textit{lights\_off}\}                                                                                          \\
         G & = \{\textit{vault\_accessed}, \textit{outside}, \textit{lights\_on}, \textit{lights\_off}\}
     \end{align*}
 

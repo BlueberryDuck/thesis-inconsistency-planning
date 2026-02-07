@@ -4,96 +4,119 @@
 A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. As demonstrated by Ulbricht et al.~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas; second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths.
 
 \begin{defn}[Planning Consistency]
-    An inconsistency measure $I$ for planning problems satisfies \emph{Planning Consistency} if:
+    An inconsistency measure $\mathcal{I}$ for planning problems satisfies \emph{Planning Consistency} if:
     \begin{equation*}
-        I(\langle P, O, I, G \rangle) = 0 \text{ iff } \langle P, O, I, G \rangle \text{ is solvable}
+        \mathcal{I}(\langle P, O, I, G \rangle) = 0 \text{ iff } \langle P, O, I, G \rangle \text{ is solvable}
     \end{equation*}
 \end{defn}
 
-This adapts the classical Consistency postulate ($I(K) = 0$ iff $K$ is consistent) to the planning domain, where solvability replaces logical consistency.
+This adapts the classical Consistency postulate ($\mathcal{I}(K) = 0$ iff $K$ is consistent) to the planning domain, where solvability replaces logical consistency.
 
 \begin{defn}[Operator Monotonicity]
-    An inconsistency measure $I$ satisfies \emph{Operator Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and operators $o$:
+    An inconsistency measure $\mathcal{I}$ satisfies \emph{Operator Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and operators $o$:
     \begin{equation*}
-        I(\langle P, O \cup \{o\}, I, G \rangle) \leq I(\langle P, O, I, G \rangle)
+        \mathcal{I}(\langle P, O \cup \{o\}, I, G \rangle) \leq \mathcal{I}(\langle P, O, I, G \rangle)
     \end{equation*}
 \end{defn}
 
 Note that Operator Monotonicity reverses classical monotonicity because adding operators can only enable new paths, potentially reducing inconsistency. This parallels the observation by Ulbricht et al.~\cite{Ulbricht2016} that non-monotonic logics require inverted monotonicity postulates.
 
 \begin{defn}[Goal Monotonicity]
-    An inconsistency measure $I$ satisfies \emph{Goal Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and goals $g$:
+    An inconsistency measure $\mathcal{I}$ satisfies \emph{Goal Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and goals $g$:
     \begin{equation*}
-        I(\langle P, O, I, G \cup \{g\} \rangle) \geq I(\langle P, O, I, G \rangle)
+        \mathcal{I}(\langle P, O, I, G \cup \{g\} \rangle) \geq \mathcal{I}(\langle P, O, I, G \rangle)
     \end{equation*}
 \end{defn}
 
 Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure.
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
+    $\mathcal{I}^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Light Switch problem has $I^{\text{scope}}_{\text{UR}} = 0$ (both goals \textit{on} and \textit{off} appear in reachable states) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $I = 0$ only for solvable problems.
+    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$ (both goals \textit{on} and \textit{off} appear in reachable states) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $\mathcal{I} = 0$ only for solvable problems.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{UR}}$ satisfies Operator Monotonicity.
+    $\mathcal{I}^{\text{scope}}_{\text{UR}}$ satisfies Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding an operator $o$ can only expand $S_{\text{reach}}$ or leave it unchanged. If goal $g$ was unreachable (not appearing in any state in $S_{\text{reach}}$), adding $o$ may make it reachable by enabling new state transitions. This can only reduce or maintain $I^{\text{scope}}_{\text{UR}}$, never increase it.
+    Adding an operator $o$ can only expand $S_{\text{reach}}$ or leave it unchanged. If goal $g$ was unreachable (not appearing in any state in $S_{\text{reach}}$), adding $o$ may make it reachable by enabling new state transitions. This can only reduce or maintain $\mathcal{I}^{\text{scope}}_{\text{UR}}$, never increase it.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{UR}}$ satisfies Goal Monotonicity.
+    $\mathcal{I}^{\text{scope}}_{\text{UR}}$ satisfies Goal Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S_{\text{reach}}$, so $I^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
+    Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S_{\text{reach}}$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S_{\text{reach}}$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
+    $\mathcal{I}^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Locked Door problem has $I^{\text{scope}}_{\text{MX}} = 0$ (no mutex relationships exist since the goal \textit{in\_room} is not even achievable) but is unsolvable.
+    Counter-example: The Locked Door problem has $\mathcal{I}^{\text{scope}}_{\text{MX}} = 0$ (no mutex relationships exist since the goal \textit{in\_room} is not even achievable) but is unsolvable.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{MX}}$ does not satisfy Operator Monotonicity in general.
+    $\mathcal{I}^{\text{scope}}_{\text{MX}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding an operator can introduce new reachable states, potentially creating new mutex relationships. Consider a problem where goal $g_2$ is initially unreachable (hence no mutex with $g_1$). Adding an operator that makes $g_2$ reachable but in states that never contain $g_1$ creates a new mutex pair, increasing $I^{\text{scope}}_{\text{MX}}$.
+    Counter-example: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no mutex exists and $\mathcal{I}^{\text{scope}}_{\text{MX}} = 0$. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, no reachable state contains both $g_1$ and $g_2$ (both operators delete $a$, which is the only initial proposition), so $g_1$ and $g_2$ become mutex, increasing $\mathcal{I}^{\text{scope}}_{\text{MX}}$ to 2.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{MX}}$ satisfies Goal Monotonicity.
+    $\mathcal{I}^{\text{scope}}_{\text{MX}}$ satisfies Goal Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $I^{\text{scope}}_{\text{MX}}$ increases; otherwise it remains unchanged.
+    Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ increases; otherwise it remains unchanged.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
+    $\mathcal{I}^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Light Switch problem has $I^{\text{scope}}_{\text{GS}} = 0$ (no sequencing conflicts since actions are reversible) but is unsolvable (goals are mutex).
+    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{GS}} = 0$ (no sequencing conflicts since actions are reversible) but is unsolvable (goals are mutex).
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{GS}}$ does not satisfy Operator Monotonicity in general.
+    $\mathcal{I}^{\text{scope}}_{\text{GS}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Counter-example: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1}$ has $\text{precond} = \{a\}$, $\text{add} = \{g_1\}$, $\text{delete} = \{a\}$. Goal $g_1$ is achievable but $g_2$ is not, so no sequencing conflict exists. Adding operator $\text{reach\_g2}$ with $\text{precond} = \{a\}$, $\text{add} = \{g_2\}$, $\text{delete} = \{a\}$ makes $g_2$ achievable. However, from state $\{g_1\}$, neither operator is applicable since both require $\{a\}$. Thus $(g_1, g_2)$ becomes a sequencing conflict, increasing $I^{\text{scope}}_{\text{GS}}$ from 0 to 2.
+    Counter-example: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no sequencing conflict exists. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, from state $\{g_1\}$, neither operator is applicable since both require $\{a\}$. Thus $(g_1, g_2)$ becomes a sequencing conflict, increasing $\mathcal{I}^{\text{scope}}_{\text{GS}}$ from 0 to 2.
 \end{proof}
 
 \begin{prop}
-    $I^{\text{scope}}_{\text{GS}}$ satisfies Goal Monotonicity.
+    $\mathcal{I}^{\text{scope}}_{\text{GS}}$ satisfies Goal Monotonicity.
 \end{prop}
 \begin{proof}
     Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge; existing conflicts are unaffected.
 \end{proof}
 
-The structure variants $I^{\text{struct}}_{\text{UR}}$, $I^{\text{struct}}_{\text{MX}}$, and $I^{\text{struct}}_{\text{GS}}$ satisfy the same postulates as their scope counterparts. For Operator Monotonicity, only $I^{\text{struct}}_{\text{UR}}$ satisfies the postulate: adding operators expands reachability, reducing unreachable proposition counts. Both Mutex and Sequencing structure variants inherit their scope variants' violations: an operator making a previously unreachable goal reachable can introduce new mutex pairs or sequencing conflicts if the newly reachable goal states are incompatible with existing goal states. For Goal Monotonicity: adding goals increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted.
+The structure variants satisfy the same postulates as their scope counterparts:
+
+\begin{prop}
+    $\mathcal{I}^{\text{struct}}_{\text{UR}}$ satisfies Operator Monotonicity.
+\end{prop}
+\begin{proof}
+    Adding an operator can only expand $S_{\text{reach}}$, potentially making previously unreachable propositions reachable. This can only decrease or maintain the count of unreachable propositions in $P$.
+\end{proof}
+
+\begin{prop}
+    $\mathcal{I}^{\text{struct}}_{\text{MX}}$ does not satisfy Operator Monotonicity.
+\end{prop}
+\begin{proof}
+    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{MX}}$ applies: adding $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ creates a new mutex pair $\{g_1, g_2\}$, increasing $\mathcal{I}^{\text{struct}}_{\text{MX}}$ from 0 to 1.
+\end{proof}
+
+\begin{prop}
+    $\mathcal{I}^{\text{struct}}_{\text{GS}}$ does not satisfy Operator Monotonicity.
+\end{prop}
+\begin{proof}
+    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{GS}}$ applies: adding $\text{reach\_g2}$ creates sequencing conflicts $(g_1, g_2)$ and $(g_2, g_1)$, increasing $\mathcal{I}^{\text{struct}}_{\text{GS}}$ from 0 to 2.
+\end{proof}
+
+All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S_{\text{reach}}$ depends only on $I$ and $O$.
 
 Beyond postulate compliance, the following proposition establishes how the three measures relate to each other, forming a diagnostic hierarchy rather than independent failure detectors.
 
@@ -127,6 +150,8 @@ Beyond postulate compliance, the following proposition establishes how the three
     \end{enumerate}
 \end{proof}
 
+\input{figures/fig_measure_hierarchy}
+
 This hierarchy reflects increasing diagnostic specificity rather than
 independent failure modes:
 \begin{itemize}
@@ -150,9 +175,9 @@ information about which goal achievements cause the blockage.
     \label{prop:scope_structure_bounds}
     For any planning problem $\langle P, O, I, G \rangle$:
     \begin{enumerate}
-        \item $I^{\text{scope}}_{\text{UR}} \leq I^{\text{struct}}_{\text{UR}} \leq |P|$
-        \item $I^{\text{struct}}_{\text{MX}} \leq \binom{I^{\text{scope}}_{\text{MX}}}{2}$
-        \item $I^{\text{struct}}_{\text{GS}} \leq I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1)$
+        \item $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq \mathcal{I}^{\text{struct}}_{\text{UR}} \leq |P|$
+        \item $\mathcal{I}^{\text{struct}}_{\text{MX}} \leq \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$
+        \item $\mathcal{I}^{\text{struct}}_{\text{GS}} \leq \mathcal{I}^{\text{scope}}_{\text{GS}} \times (\mathcal{I}^{\text{scope}}_{\text{GS}} - 1)$
     \end{enumerate}
 \end{prop}
 \begin{proof}
@@ -161,22 +186,22 @@ information about which goal achievements cause the blockage.
               which are a subset of $P$.
 
         \item The maximum number of unordered pairs among
-              $I^{\text{scope}}_{\text{MX}}$ goals is $\binom{I^{\text{scope}}_{\text{MX}}}{2}$.
+              $\mathcal{I}^{\text{scope}}_{\text{MX}}$ goals is $\binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$.
 
         \item The maximum number of ordered pairs among
-              $I^{\text{scope}}_{\text{GS}}$ goals is $n(n-1)$ where
-              $n = I^{\text{scope}}_{\text{GS}}$.
+              $\mathcal{I}^{\text{scope}}_{\text{GS}}$ goals is $n(n-1)$ where
+              $n = \mathcal{I}^{\text{scope}}_{\text{GS}}$.
     \end{enumerate}
 \end{proof}
 
 These bounds enable diagnostic interpretation through ratio analysis:
 
 \begin{itemize}
-    \item \textbf{Unreachability depth}: The ratio $(I^{\text{struct}}_{\text{UR}} - I^{\text{scope}}_{\text{UR}}) / I^{\text{scope}}_{\text{UR}}$ indicates cascading dependency depth. A ratio of 0 means goals are directly unreachable (no intermediate propositions blocked); larger ratios indicate deeper precondition chains.
+    \item \textbf{Unreachability depth}: The ratio $(\mathcal{I}^{\text{struct}}_{\text{UR}} - \mathcal{I}^{\text{scope}}_{\text{UR}}) / \mathcal{I}^{\text{scope}}_{\text{UR}}$ indicates cascading dependency depth. A ratio of 0 means goals are directly unreachable (no intermediate propositions blocked); larger ratios indicate deeper precondition chains.
 
-    \item \textbf{Mutex density}: If $I^{\text{struct}}_{\text{MX}} = \binom{I^{\text{scope}}_{\text{MX}}}{2}$, the mutex goals form a complete clique where every pair is mutually exclusive, as in Traffic Light. Ratios below 1 indicate sparser conflict structures with isolated mutex pairs.
+    \item \textbf{Mutex density}: If $\mathcal{I}^{\text{struct}}_{\text{MX}} = \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$, the mutex goals form a complete clique where every pair is mutually exclusive, as in Traffic Light. Ratios below 1 indicate sparser conflict structures with isolated mutex pairs.
 
-    \item \textbf{Sequencing symmetry}: If $I^{\text{struct}}_{\text{GS}} = I^{\text{scope}}_{\text{GS}} \times (I^{\text{scope}}_{\text{GS}} - 1)$, all sequencing conflicts are bidirectional: achieving any involved goal blocks all others, and vice versa. Ratios near 0.5 suggest predominantly unidirectional conflicts; lower ratios indicate star-shaped conflict patterns where one goal blocks many others but not conversely.
+    \item \textbf{Sequencing symmetry}: If $\mathcal{I}^{\text{struct}}_{\text{GS}} = \mathcal{I}^{\text{scope}}_{\text{GS}} \times (\mathcal{I}^{\text{scope}}_{\text{GS}} - 1)$, all sequencing conflicts are bidirectional: achieving any involved goal blocks all others, and vice versa. Ratios near 0.5 suggest predominantly unidirectional conflicts; lower ratios indicate star-shaped conflict patterns where one goal blocks many others but not conversely.
 \end{itemize}
 
 Table~\ref{tab:postulates} summarizes postulate compliance for the proposed measures.
@@ -187,17 +212,17 @@ Table~\ref{tab:postulates} summarizes postulate compliance for the proposed meas
     \label{tab:postulates}
     \begin{tabular}{l|cc|cc|cc}
         \hline
-                              & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c}{$I_{\text{GS}}$}                                        \\
-        Postulate             & scope                                & struct                               & scope                               & struct     & scope      & struct     \\
+                              & \multicolumn{2}{c|}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c|}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                                        \\
+        Postulate             & scope                                          & struct                                         & scope                                         & struct     & scope      & struct     \\
         \hline
-        Planning Consistency  & \texttimes                           & \texttimes                           & \texttimes                          & \texttimes & \texttimes & \texttimes \\
-        Operator Monotonicity & \checkmark                           & \checkmark                           & \texttimes                          & \texttimes & \texttimes & \texttimes \\
-        Goal Monotonicity     & \checkmark                           & \checkmark                           & \checkmark                          & \checkmark & \checkmark & \checkmark \\
+        Planning Consistency  & \texttimes                                     & \texttimes                                     & \texttimes                                    & \texttimes & \texttimes & \texttimes \\
+        Operator Monotonicity & \checkmark                                     & \checkmark                                     & \texttimes                                    & \texttimes & \texttimes & \texttimes \\
+        Goal Monotonicity     & \checkmark                                     & \checkmark                                     & \checkmark                                    & \checkmark & \checkmark & \checkmark \\
         \hline
     \end{tabular}
 \end{table}
 
-Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: unreachability problems show only $I_{\text{UR}}$, reversible mutex problems show only $I_{\text{MX}}$, while irreversible problems show both $I_{\text{MX}}$ and $I_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
+Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the test scenarios: for problems exhibiting only unreachability, only $\mathcal{I}_{\text{UR}}$ yields non-zero values; for reversible mutex problems, only $\mathcal{I}_{\text{MX}}$ yields non-zero values; while irreversible problems yield non-zero values for both $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_hierarchy}.
 
 \begin{table}[ht]
     \centering
@@ -205,31 +230,31 @@ Table~\ref{tab:measure_values} demonstrates the diagnostic hierarchy across the 
     \label{tab:measure_values}
     \begin{tabular}{l|cc|cc|cc}
         \hline
-        Scenario         & \multicolumn{2}{c|}{$I_{\text{UR}}$} & \multicolumn{2}{c|}{$I_{\text{MX}}$} & \multicolumn{2}{c}{$I_{\text{GS}}$}                           \\
-                         & scope                                & struct                               & scope                               & struct & scope & struct \\
+        Scenario         & \multicolumn{2}{c|}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c|}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
+                         & scope                                          & struct                                         & scope                                         & struct & scope & struct \\
         \hline
-        Locked Door      & 1                                    & 3                                    & 0                                   & 0      & 0     & 0      \\
-        Bank Vault       & 1                                    & 7                                    & 0                                   & 0      & 0     & 0      \\
-        Light Switch     & 0                                    & 0                                    & 2                                   & 1      & 0     & 0      \\
-        Traffic Light    & 0                                    & 0                                    & 3                                   & 3      & 0     & 0      \\
-        Trust and Travel & 0                                    & 0                                    & 2                                   & 1      & 2     & 1      \\
-        Rival Alliances  & 0                                    & 0                                    & 2                                   & 1      & 2     & 2      \\
+        Locked Door      & 1                                              & 3                                              & 0                                             & 0      & 0     & 0      \\
+        Bank Vault       & 1                                              & 7                                              & 0                                             & 0      & 0     & 0      \\
+        Light Switch     & 0                                              & 0                                              & 2                                             & 1      & 0     & 0      \\
+        Traffic Light    & 0                                              & 0                                              & 3                                             & 3      & 0     & 0      \\
+        Trust and Travel & 0                                              & 0                                              & 2                                             & 1      & 2     & 1      \\
+        Rival Alliances  & 0                                              & 0                                              & 2                                             & 1      & 2     & 2      \\
         \hline
     \end{tabular}
 \end{table}
 
 The complete diagnostic profile for a planning problem is the 6-tuple:
 \begin{equation*}
-    \text{Profile} = (I^{\text{scope}}_{\text{UR}}, I^{\text{struct}}_{\text{UR}}, I^{\text{scope}}_{\text{MX}}, I^{\text{struct}}_{\text{MX}}, I^{\text{scope}}_{\text{GS}}, I^{\text{struct}}_{\text{GS}})
+    \text{Profile} = (\mathcal{I}^{\text{scope}}_{\text{UR}}, \mathcal{I}^{\text{struct}}_{\text{UR}}, \mathcal{I}^{\text{scope}}_{\text{MX}}, \mathcal{I}^{\text{struct}}_{\text{MX}}, \mathcal{I}^{\text{scope}}_{\text{GS}}, \mathcal{I}^{\text{struct}}_{\text{GS}})
 \end{equation*}
 
 Each scenario in Table~\ref{tab:measure_values} exhibits a characteristic profile signature:
 \begin{itemize}
-    \item \textbf{Unreachability}: $(1, 3, 0, 0, 0, 0)$ for Locked Door indicates dependency chain failure with depth 2 (three unreachable propositions blocking one goal)
+    \item \textbf{Unreachability}: $(1, 3, 0, 0, 0, 0)$ for Locked Door indicates dependency structure failure with depth 2 (three unreachable propositions blocking one goal)
     \item \textbf{Reversible mutex}: $(0, 0, 2, 1, 0, 0)$ for Light Switch indicates a single mutex pair involving both goals; $(0, 0, 3, 3, 0, 0)$ for Traffic Light indicates a complete mutex clique (all $\binom{3}{2} = 3$ pairs are mutex)
     \item \textbf{Irreversible mutex}: $(0, 0, 2, 1, 2, 1)$ for Trust and Travel shows both mutex and unidirectional sequencing; $(0, 0, 2, 1, 2, 2)$ for Rival Alliances shows mutex with bidirectional sequencing
 \end{itemize}
 
-The sequencing structure value distinguishes unidirectional conflicts ($I^{\text{struct}}_{\text{GS}} = 1$ for Trust and Travel) from bidirectional conflicts ($I^{\text{struct}}_{\text{GS}} = 2$ for Rival Alliances), while the mutex structure value is identical ($I^{\text{struct}}_{\text{MX}} = 1$) for both. This illustrates how trajectory analysis (P3) provides finer-grained diagnostic information beyond state space analysis (P1, P2).
+The sequencing structure value distinguishes unidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}} = 1$ for Trust and Travel) from bidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}} = 2$ for Rival Alliances), while the mutex structure value is identical ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$) for both. This illustrates how trajectory analysis (P3) provides finer-grained diagnostic information beyond state space analysis (P1, P2).
 
 The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work. As established in Proposition~\ref{prop:measure_hierarchy}, the measures form a diagnostic hierarchy with increasing specificity: unreachability precludes other conflict types, sequencing implies mutex, and mutex without sequencing indicates reversible conflicts. Scope-structure bounds (Proposition~\ref{prop:scope_structure_bounds}) enable diagnostic interpretation of conflict density and symmetry. This design parallels findings in~\cite{Ulbricht2016}, where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.

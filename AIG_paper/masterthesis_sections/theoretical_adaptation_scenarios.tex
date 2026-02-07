@@ -1,9 +1,9 @@
 \subsection{Test Scenarios}
 \label{sec:test_scenarios}
 
-This section introduces six test scenarios that serve as running examples throughout the theoretical development. Each scenario represents a minimal planning problem exhibiting a specific structural pattern of unsolvability. The scenarios are organized by the measure designed to detect their failure mode, though some scenarios (particularly sequencing conflicts) trigger multiple measures.
+This section introduces six test scenarios that serve as running examples throughout the theoretical development. Each scenario represents a small, focused planning problem exhibiting a specific structural pattern of unsolvability. The scenarios are organized by the measure designed to detect their failure mode, though some scenarios (particularly sequencing conflicts) trigger multiple measures.
 
-All scenarios are expressed as STRIPS planning problems $\langle P, O, I, G \rangle$ following the notation established in Section~\ref{sec:foundations_planning}. For each scenario, the intuitive description, formal specification, and structural pattern are provided.
+All scenarios are expressed as STRIPS planning problems $\langle P, O, I, G \rangle$ following the notation established in Section~\ref{sec:foundations_planning}. For each scenario, the intuitive description, formal specification, and structural pattern are provided, along with forward reachability $S_{\text{reach}}$ (formally defined in Definition~\ref{defn:reachable_states}).
 
 \subsubsection{Unreachability Scenarios}
 
@@ -11,34 +11,34 @@ The following scenarios exhibit dependency structure failures where required pro
 
 \paragraph{Scenario 1: Locked Door.}
 
-An agent must enter a room, but entry requires unlocking a door, which requires a key that no operator produces. This creates a linear dependency chain of depth~2.
+An agent must enter a room, but entry requires unlocking a door, which requires a key that no operator produces. The dependency structure forms a linear chain: \textit{in\_room} depends on \textit{door\_unlocked}, which depends on \textit{has\_key}.
 
 \begin{align*}
-  P & = \{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}                            \\
-  O & \ni \text{unlock} = \langle \{\text{has\_key}\}, \{\text{door\_unlocked}\}, \{\} \rangle \\
-    & \ni \text{enter} = \langle \{\text{door\_unlocked}\}, \{\text{in\_room}\}, \{\} \rangle  \\
-  I & = \{\}                                                                                   \\
+  P & = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}                                               \\
+  O & = \{ \text{unlock} = \langle \{\text{at\_door}, \text{has\_key}\}, \{\text{door\_unlocked}\}, \{\} \rangle,                  \\
+    & \quad \text{enter} = \langle \{\text{at\_door}, \text{door\_unlocked}\}, \{\text{in\_room}\}, \{\text{at\_door}\} \rangle \} \\
+  I & = \{\text{at\_door}\}                                                                                                        \\
   G & = \{\text{in\_room}\}
 \end{align*}
 
-The dependency chain $\textit{in\_room} \leftarrow \textit{door\_unlocked} \leftarrow \textit{has\_key}$ fails at the root: no operator produces \textit{has\_key}. Forward reachability yields $S_{\text{reach}} = \{\{\}\}$.
+The \textit{unlock} operator requires \textit{has\_key}, which has no producer and is not in $I$, blocking the entire dependency structure. Forward reachability yields $S_{\text{reach}} = \{\{\text{at\_door}\}\}$.
 
 \paragraph{Scenario 2: Bank Vault.}
 
-A more complex variant requires three independent precondition chains (two keys and admin approval) to achieve a single goal. This creates parallel dependency failures with width~3.
+A more complex variant requires three independent precondition chains (two keys and admin approval) to achieve a single goal. Three independent dependency failures occur in parallel, each blocking a different precondition of the final operator.
 
 \begin{align*}
-  P & = \{\text{key1}, \text{key2}, \text{admin\_approval},                                                                             \\
-    & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted}, \text{in\_vault}\}                                          \\
-  O & \ni \text{open\_door1} = \langle \{\text{key1}\}, \{\text{door1\_open}\}, \{\} \rangle                                            \\
-    & \ni \text{open\_door2} = \langle \{\text{key2}\}, \{\text{door2\_open}\}, \{\} \rangle                                            \\
-    & \ni \text{grant\_access} = \langle \{\text{admin\_approval}\}, \{\text{access\_granted}\}, \{\} \rangle                           \\
-    & \ni \text{enter} = \langle \{\text{door1\_open}, \text{door2\_open}, \text{access\_granted}\}, \{\text{in\_vault}\}, \{\} \rangle \\
-  I & = \{\}                                                                                                                            \\
+  P & = \{\text{at\_facility}, \text{key1}, \text{key2}, \text{admin\_approval},                                                                                                     \\
+    & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted}, \text{in\_vault}\}                                                                                       \\
+  O & = \{ \text{open\_door1} = \langle \{\text{at\_facility}, \text{key1}\}, \{\text{door1\_open}\}, \{\} \rangle,                                                                  \\
+    & \quad \text{open\_door2} = \langle \{\text{at\_facility}, \text{key2}\}, \{\text{door2\_open}\}, \{\} \rangle,                                                                 \\
+    & \quad \text{grant\_access} = \langle \{\text{admin\_approval}\}, \{\text{access\_granted}\}, \{\} \rangle,                                                                     \\
+    & \quad \text{enter} = \langle \{\text{at\_facility}, \text{door1\_open}, \text{door2\_open}, \text{access\_granted}\}, \{\text{in\_vault}\}, \{\text{at\_facility}\} \rangle \} \\
+  I & = \{\text{at\_facility}\}                                                                                                                                                      \\
   G & = \{\text{in\_vault}\}
 \end{align*}
 
-Three independent chains fail at their roots (\textit{key1}, \textit{key2}, \textit{admin\_approval} are all missing producers), blocking all downstream propositions. Forward reachability yields $S_{\text{reach}} = \{\{\}\}$.
+Three independent chains fail at their roots (\textit{key1}, \textit{key2}, \textit{admin\_approval} are all missing producers), blocking all downstream propositions. Forward reachability yields $S_{\text{reach}} = \{\{\text{at\_facility}\}\}$.
 
 \subsubsection{Mutex Scenarios}
 
@@ -49,10 +49,10 @@ The following scenarios exhibit operator-induced mutual exclusions where goal pr
 A goal requires both \textit{on} and \textit{off} to be true simultaneously, but toggle actions enforce mutual exclusion.
 
 \begin{align*}
-  P & = \{\text{on}, \text{off}\}                                                         \\
-  O & \ni \text{turn\_on} = \langle \{\text{off}\}, \{\text{on}\}, \{\text{off}\} \rangle \\
-    & \ni \text{turn\_off} = \langle \{\text{on}\}, \{\text{off}\}, \{\text{on}\} \rangle \\
-  I & = \{\text{off}\}                                                                    \\
+  P & = \{\text{on}, \text{off}\}                                                              \\
+  O & = \{ \text{turn\_on} = \langle \{\text{off}\}, \{\text{on}\}, \{\text{off}\} \rangle,    \\
+    & \quad \text{turn\_off} = \langle \{\text{on}\}, \{\text{off}\}, \{\text{on}\} \rangle \} \\
+  I & = \{\text{off}\}                                                                         \\
   G & = \{\text{on}, \text{off}\}
 \end{align*}
 
@@ -63,15 +63,15 @@ Forward reachability yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\
 A goal requires all three colors (\textit{red}, \textit{yellow}, \textit{green}) simultaneously, but cyclic transitions enforce that exactly one color is active at any time.
 
 \begin{align*}
-  P & = \{\text{red}, \text{yellow}, \text{green}\}                                                        \\
-  O & \ni \text{red\_to\_green} = \langle \{\text{red}\}, \{\text{green}\}, \{\text{red}\} \rangle         \\
-    & \ni \text{green\_to\_yellow} = \langle \{\text{green}\}, \{\text{yellow}\}, \{\text{green}\} \rangle \\
-    & \ni \text{yellow\_to\_red} = \langle \{\text{yellow}\}, \{\text{red}\}, \{\text{yellow}\} \rangle    \\
-  I & = \{\text{red}\}                                                                                     \\
+  P & = \{\text{red}, \text{yellow}, \text{green}\}                                                           \\
+  O & = \{ \text{red\_to\_green} = \langle \{\text{red}\}, \{\text{green}\}, \{\text{red}\} \rangle,          \\
+    & \quad \text{green\_to\_yellow} = \langle \{\text{green}\}, \{\text{yellow}\}, \{\text{green}\} \rangle, \\
+    & \quad \text{yellow\_to\_red} = \langle \{\text{yellow}\}, \{\text{red}\}, \{\text{yellow}\} \rangle \}  \\
+  I & = \{\text{red}\}                                                                                        \\
   G & = \{\text{red}, \text{yellow}, \text{green}\}
 \end{align*}
 
-Forward reachability yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goals are individually achievable (the cycle is complete), but no state contains more than one. This forms a complete mutex clique: every pair of goals is mutually exclusive.
+Forward reachability yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goals are individually achievable (the cycle is complete), but no state contains more than one. Every pair of goals is mutually exclusive, forming a complete conflict graph where all $\binom{3}{2} = 3$ pairs are in conflict.
 
 \subsubsection{Sequencing Conflict Scenarios}
 
@@ -82,12 +82,12 @@ The following scenarios exhibit irreversible exclusions where achieving certain 
 An agent must secure a local partnership that requires established trust, and exploit a remote opportunity. Traveling destroys the trust relationship irreversibly. This creates a unidirectional sequencing conflict.
 
 \begin{align*}
-  P & = \{\text{at\_local}, \text{at\_remote}, \text{trust}, \text{partnership}, \text{opportunity}\}                                         \\
-  O & \ni \text{secure} = \langle \{\text{at\_local}, \text{trust}\}, \{\text{partnership}\}, \{\} \rangle                                    \\
-    & \ni \text{travel} = \langle \{\text{at\_local}\}, \{\text{at\_remote}\}, \{\text{at\_local}, \text{trust}, \text{partnership}\} \rangle \\
-    & \ni \text{exploit} = \langle \{\text{at\_remote}\}, \{\text{opportunity}\}, \{\} \rangle                                                \\
-    & \ni \text{return} = \langle \{\text{at\_remote}\}, \{\text{at\_local}\}, \{\text{at\_remote}\} \rangle                                  \\
-  I & = \{\text{at\_local}, \text{trust}\}                                                                                                    \\
+  P & = \{\text{at\_local}, \text{at\_remote}, \text{trust}, \text{partnership}, \text{opportunity}\}                                            \\
+  O & = \{ \text{secure} = \langle \{\text{at\_local}, \text{trust}\}, \{\text{partnership}\}, \{\} \rangle,                                     \\
+    & \quad \text{travel} = \langle \{\text{at\_local}\}, \{\text{at\_remote}\}, \{\text{at\_local}, \text{trust}, \text{partnership}\} \rangle, \\
+    & \quad \text{exploit} = \langle \{\text{at\_remote}\}, \{\text{opportunity}\}, \{\} \rangle,                                                \\
+    & \quad \text{return} = \langle \{\text{at\_remote}\}, \{\text{at\_local}\}, \{\text{at\_remote}\} \rangle \}                                \\
+  I & = \{\text{at\_local}, \text{trust}\}                                                                                                       \\
   G & = \{\text{partnership}, \text{opportunity}\}
 \end{align*}
 
@@ -102,10 +102,10 @@ Both goals are individually achievable: \textit{partnership} via \textit{secure}
 An agent seeks alliances with two rival factions, but each faction demands exclusive loyalty. Allying with one faction alienates the other. This creates a symmetric sequencing conflict.
 
 \begin{align*}
-  P & = \{\text{neutral\_A}, \text{neutral\_B}, \text{allied\_A}, \text{allied\_B}\}                          \\
-  O & \ni \text{ally\_A} = \langle \{\text{neutral\_A}\}, \{\text{allied\_A}\}, \{\text{neutral\_B}\} \rangle \\
-    & \ni \text{ally\_B} = \langle \{\text{neutral\_B}\}, \{\text{allied\_B}\}, \{\text{neutral\_A}\} \rangle \\
-  I & = \{\text{neutral\_A}, \text{neutral\_B}\}                                                              \\
+  P & = \{\text{neutral\_A}, \text{neutral\_B}, \text{allied\_A}, \text{allied\_B}\}                               \\
+  O & = \{ \text{ally\_A} = \langle \{\text{neutral\_A}\}, \{\text{allied\_A}\}, \{\text{neutral\_B}\} \rangle,    \\
+    & \quad \text{ally\_B} = \langle \{\text{neutral\_B}\}, \{\text{allied\_B}\}, \{\text{neutral\_A}\} \rangle \} \\
+  I & = \{\text{neutral\_A}, \text{neutral\_B}\}                                                                   \\
   G & = \{\text{allied\_A}, \text{allied\_B}\}
 \end{align*}
 
@@ -122,16 +122,18 @@ Table~\ref{tab:scenario_summary} summarizes the test scenarios and their structu
   \small
   \begin{tabular}{lllll}
     \hline
-    Scenario         & Category & Pattern         & Measure         & Notes         \\
+    Scenario         & Category & Pattern         & Measure                   & Notes         \\
     \hline
-    Locked Door      & 2a       & Linear chain    & $I_{\text{UR}}$ & Depth 2       \\
-    Bank Vault       & 2a       & Parallel chains & $I_{\text{UR}}$ & Width 3       \\
-    Light Switch     & 2c       & Simple pair     & $I_{\text{MX}}$ & Reversible    \\
-    Traffic Light    & 2c       & Complete clique & $I_{\text{MX}}$ & 3 mutex pairs \\
-    Trust and Travel & 2c       & Unidirectional  & $I_{\text{GS}}$ & One-way block \\
-    Rival Alliances  & 2c       & Symmetric       & $I_{\text{GS}}$ & Mutual block  \\
+    Locked Door      & 2a       & Linear chain    & $\mathcal{I}_{\text{UR}}$ & Depth 2       \\
+    Bank Vault       & 2a       & Parallel chains & $\mathcal{I}_{\text{UR}}$ & Width 3       \\
+    Light Switch     & 2c       & Simple pair     & $\mathcal{I}_{\text{MX}}$ & Reversible    \\
+    Traffic Light    & 2c       & Complete clique & $\mathcal{I}_{\text{MX}}$ & 3 mutex pairs \\
+    Trust and Travel & 2c       & Unidirectional  & $\mathcal{I}_{\text{GS}}$ & One-way block \\
+    Rival Alliances  & 2c       & Symmetric       & $\mathcal{I}_{\text{GS}}$ & Mutual block  \\
     \hline
   \end{tabular}
 \end{table}
+
+The structural patterns referenced in Table~\ref{tab:scenario_summary} are characterized as follows. \textbf{Linear chain}: a sequence of dependency edges from precondition to effect forming a single path to the goal. \textbf{Parallel chains}: multiple independent dependency paths converging on a single goal operator. \textbf{Simple pair}: two goals involved in a single mutex relationship. \textbf{Complete clique}: every pair of goals is mutually exclusive. \textbf{Unidirectional}: a sequencing conflict in one direction only (achieving $g_1$ blocks $g_2$ but not vice versa). \textbf{Symmetric}: sequencing conflicts exist in both directions between each goal pair.
 
 These scenarios will be referenced throughout the remainder of this chapter to illustrate measure definitions (Section~\ref{sec:proposed_measures}), demonstrate postulate compliance (Section~\ref{sec:postulates}), and provide concrete measure values for comparison (Table~\ref{tab:measure_values}).

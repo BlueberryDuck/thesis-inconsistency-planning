@@ -8,38 +8,38 @@ A natural approach to measuring inconsistency in planning problems would encode 
 A propositional encoding of a planning problem $\langle P, O, I, G \rangle$ includes:
 \begin{enumerate}
     \item \textbf{Goals}: $g$ for each $g \in G$
-    \item \textbf{Precondition dependencies}: $\text{add}(o) \rightarrow \text{precond}(o)$ for each $o \in O$, since achieving an add effect requires its preconditions
+    \item \textbf{Precondition dependencies}: For each $o \in O$ and each $p \in \text{add}(o)$: $p \rightarrow \bigwedge_{q \in \text{precond}(o)} q$, since achieving an add effect requires its preconditions
     \item \textbf{Closed-world assumptions}: $\neg p$ for propositions $p$ that are neither in $I$ nor produced by any operator
 \end{enumerate}
 
 \paragraph{Example: Unreachability Encoding.}
 
-Consider a planning problem where an agent must enter a room, but entry requires unlocking a door, which requires a key that no operator produces. The encoding yields:
+Consider the Locked Door scenario (Scenario~1) where an agent must enter a room, but entry requires unlocking a door, which requires a key that no operator produces. The encoding yields:
 \begin{align*}
-    K_{\text{LD}} = \{ & \text{in\_room},                                   & \text{(goal)}                      \\
-                       & \text{in\_room} \rightarrow \text{door\_unlocked}, & \text{(enter precondition)}        \\
-                       & \text{door\_unlocked} \rightarrow \text{has\_key}, & \text{(unlock precondition)}       \\
-                       & \neg \text{has\_key} \}                            & \text{(closed world: no producer)}
+    K_{\text{LD}} = \{ & \text{in\_room},                                                         & \text{(goal)}                      \\
+                       & \text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked}, & \text{(enter preconditions)}       \\
+                       & \text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key}, & \text{(unlock preconditions)}      \\
+                       & \neg \text{has\_key} \}                                                  & \text{(closed world: no producer)}
 \end{align*}
 
 This knowledge base is classically inconsistent: the goal \textit{in\_room} requires \textit{door\_unlocked} via modus ponens, which requires \textit{has\_key}, but $\neg\textit{has\_key}$ is asserted.
 
 \subsubsection{Contension Measure Analysis}
 
-The contension measure $I_c$ counts the minimum number of propositions assigned the conflicting value $B$ in Priest's three-valued logic LP to satisfy all formulas. The value $B$ represents ``both true and false.'' In LP, a formula is satisfied if it evaluates to $T$ or $B$ rather than $F$.
+The contension measure $\mathcal{I}_c$ counts the minimum number of propositions assigned the conflicting value $B$ in Priest's three-valued Logic of Paradox (LP)~\cite{Priest1979} to satisfy all formulas. The value $B$ represents ``both true and false.'' In LP, a formula is satisfied if it evaluates to $T$ or $B$ rather than $F$.
 
 \begin{prop}
-    $I_c(K_{\text{LD}}) = 1$.
+    $\mathcal{I}_c(K_{\text{LD}}) = 1$.
 \end{prop}
 \begin{proof}
-    Consider the three-valued interpretation $v$ with $v(\text{has\_key}) = B$ and $v(\text{door\_unlocked}) = v(\text{in\_room}) = T$. Verification:
+    Consider the three-valued interpretation $v$ with $v(\text{has\_key}) = B$, $v(\text{at\_door}) = v(\text{door\_unlocked}) = v(\text{in\_room}) = T$. Verification:
     \begin{itemize}
         \item $\text{in\_room}$: evaluates to $T$ \checkmark
-        \item $\text{in\_room} \rightarrow \text{door\_unlocked}$: $T \rightarrow T = T$ \checkmark
-        \item $\text{door\_unlocked} \rightarrow \text{has\_key}$: $T \rightarrow B = B$ \checkmark
+        \item $\text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked}$: $T \rightarrow T \land T = T$ \checkmark
+        \item $\text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key}$: $T \rightarrow T \land B = B$ \checkmark
         \item $\neg\text{has\_key}$: $\neg B = B$ \checkmark
     \end{itemize}
-    All formulas evaluate to $T$ or $B$, so $v$ is a model. Since only \textit{has\_key} is assigned $B$, $I_c \leq 1$. Since $K_{\text{LD}}$ is classically inconsistent, $I_c \geq 1$. Thus $I_c(K_{\text{LD}}) = 1$.
+    All formulas evaluate to $T$ or $B$, so $v$ is a model. Since only \textit{has\_key} is assigned $B$, $\mathcal{I}_c \leq 1$. Since $K_{\text{LD}}$ is classically inconsistent, $\mathcal{I}_c \geq 1$. Thus $\mathcal{I}_c(K_{\text{LD}}) = 1$.
 \end{proof}
 
 \subsubsection{Fundamental Limitation: Dynamic Conflicts}
@@ -55,9 +55,17 @@ The Locked Door encoding works because the closed-world assumption $\neg\textit{
 
 No closed-world negations apply since both propositions are producible. This knowledge base is classically consistent: the interpretation $v(\textit{on}) = v(\textit{off}) = T$ satisfies all formulas. Yet the planning problem is unsolvable.
 
-To detect unsolvability, a mutex constraint $\neg(\textit{on} \land \textit{off})$ would be required. But this constraint is not derivable from the STRIPS specification alone. It requires planning analysis to compute reachable states and discover that \textit{on} and \textit{off} never co-occur. This is circular: solving the planning analysis problem becomes necessary to construct an encoding that detects unsolvability.
+To detect unsolvability, a mutex constraint $\neg(\textit{on} \land \textit{off})$ would be required. But this constraint is not derivable from the STRIPS specification alone. Note that the encoding does not model delete effects: the implication $\text{on} \rightarrow \text{off}$ captures only the precondition relationship of \textit{turn\_on}, not the fact that \textit{turn\_on} deletes \textit{off}. To fully capture operator semantics, one would need to encode delete effects and their state-dependent interactions. However, expressing that two propositions never co-occur in any reachable state requires reasoning about the state space itself, which is precisely the planning analysis the encoding was meant to replace. This is circular: solving the planning analysis problem becomes necessary to construct an encoding that detects unsolvability.
 
-\paragraph{Example: Sequencing Conflict Encoding.} Consider a planning problem where an agent must secure a local partnership that requires established trust, and also exploit a remote opportunity, but traveling destroys the trust relationship irreversibly. The encoding yields implications from operator preconditions, but no direct contradiction. The sequencing conflict where achieving \textit{opportunity} permanently blocks \textit{partnership} is a path-dependent property requiring trajectory analysis to discover. Propositional logic, being static, cannot express ``from states where $p$ holds, $q$ becomes unreachable.''
+\paragraph{Example: Sequencing Conflict Encoding.} Consider the Trust and Travel scenario (Scenario~5) where an agent must secure a partnership requiring trust and exploit a remote opportunity, but traveling destroys trust irreversibly. The encoding yields:
+\begin{align*}
+    K_{\text{TT}} = \{ & \text{partnership}, \text{opportunity},                             & \text{(goals)}                \\
+                       & \text{partnership} \rightarrow \text{at\_local} \land \text{trust}, & \text{(secure preconditions)} \\
+                       & \text{opportunity} \rightarrow \text{at\_remote},                   & \text{(exploit precondition)} \\
+                       & \text{at\_remote} \rightarrow \text{at\_local},                     & \text{(travel precondition)}  \\
+                       & \text{at\_local} \rightarrow \text{at\_remote} \}                   & \text{(return precondition)}
+\end{align*}
+This knowledge base is classically consistent: setting all propositions to true satisfies every implication. The sequencing conflict, where achieving \textit{opportunity} permanently blocks \textit{partnership} because \textit{travel} deletes \textit{trust} irreversibly, is a path-dependent property requiring trajectory analysis to discover. Propositional logic, being static, cannot express ``from states where $p$ holds, $q$ becomes unreachable.''
 
 \subsubsection{Why Direct Encoding Fails}
 
@@ -66,22 +74,22 @@ The analysis reveals two distinct failure modes:
 \begin{enumerate}
     \item \textbf{Failure to detect}: For operator-induced conflicts such as mutex and sequencing, the pure STRIPS-derived encoding is consistent despite the planning problem being unsolvable. Detecting these conflicts requires planning-specific analysis that the encoding was meant to replace.
 
-    \item \textbf{Uninformative when detected}: For dependency failures from missing producers, the encoding detects inconsistency but $I_c = 1$ regardless of problem structure. Assigning $B$ to the root proposition satisfies all downstream implications, so dependency chain depth and width are invisible to the measure.
+    \item \textbf{Uninformative when detected}: For dependency failures from missing producers, the encoding detects inconsistency but $\mathcal{I}_c = 1$ regardless of problem structure. Assigning $B$ to the root proposition satisfies all downstream implications, so dependency graph depth and width are invisible to the measure.
 \end{enumerate}
 
 These limitations motivate planning-native measures that operate directly on planning structures such as goals, operators, and reachable states, rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology of formal definitions, rationality postulates, and complexity analysis, while respecting planning-specific semantics.
 
 \subsubsection{Design Principles}
 
-The adaptation strategy is guided by several key principles. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide diagnostic profiles consisting of multiple complementary values. This recognizes that different aspects of unsolvability serve different debugging purposes: the number of affected goals versus the extent of broken dependencies.
+The adaptation strategy is guided by several key principles. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide diagnostic profiles consisting of multiple complementary values (formally defined in Definition~\ref{defn:diagnostic_profile}). This recognizes that different aspects of unsolvability serve different debugging purposes: the number of affected goals versus the extent of broken dependencies.
 
-A fundamental principle is to ``measure what \emph{is}, not what \emph{should be}.'' Traditional repair-based inconsistency measures implicitly encode assumptions about valid repairs by counting minimal changes needed to restore consistency. In planning contexts, however, determining which components ``should'' exist requires domain expertise that automated measures cannot provide. Whether the fix involves missing operators, initial state facts, or goal modifications depends on the application. The proposed measures therefore report objective structural properties without presupposing which repairs are appropriate.
+A fundamental principle is to ``measure what \emph{is}, not what \emph{should be}.'' Traditional repair-based inconsistency measures implicitly encode assumptions about valid repairs by counting minimal changes needed to restore consistency. In planning contexts, however, determining which components ``should'' exist requires domain expertise or exhaustive enumeration that is computationally prohibitive. Whether the fix involves missing operators, initial state facts, or goal modifications depends on the application. The proposed measures therefore report objective structural properties without presupposing which repairs are appropriate.
 
-The structural taxonomy in Section~\ref{sec:taxonomy} organizes unsolvability causes by their mathematical properties: goal specification conflicts in Category~1, dependency graph failures in Category~2, and resource insufficiency in Category~3. This chapter focuses on Category~2 problems with three measures forming a diagnostic hierarchy. The first two measures, Unreachability and Mutex, perform state space analysis: they compute reachability once and analyze properties of the resulting state set. The third measure, Sequencing, performs trajectory analysis: it examines path-dependent properties from goal-achieving states. Sequencing conflicts imply mutex since achieving one goal that blocks another implies they never coexist, so the measures form a hierarchy rather than detecting independent phenomena.
+The structural taxonomy in Section~\ref{sec:taxonomy} organizes unsolvability causes by their mathematical properties: goal specification conflicts in Category~1, dependency graph failures in Category~2, and resource insufficiency in Category~3. This chapter focuses on Category~1 and Category~2 problems with three measures forming a diagnostic hierarchy. The first two measures, Unreachability and Mutex, perform state space analysis: they compute reachability once and analyze properties of the resulting state set. The third measure, Sequencing, performs trajectory analysis: it examines path-dependent properties from goal-achieving states. Sequencing conflicts imply mutex since achieving one goal that blocks another implies they never coexist, so the measures form a hierarchy rather than detecting independent phenomena.
 
-Each profile provides two complementary values following a standardized pattern: the scope variant reports goal-level severity, while the structure variant reveals underlying complexity. Scope values are directly comparable across measures; structure values provide diagnostic depth within each measure. Specifically:
+Each profile provides two complementary values following a standardized pattern: the scope variant reports goal-level severity, while the structure variant reveals underlying structural detail. Scope values are directly comparable across measures; structure values provide diagnostic depth within each measure. Specifically:
 \begin{itemize}
-    \item \textbf{Unreachability}: Structure expands vertically from goals to all propositions, revealing dependency depth
-    \item \textbf{Mutex}: Structure expands horizontally to count pairwise relationships, revealing conflict complexity
-    \item \textbf{Sequencing}: Structure counts ordered pairs, revealing directional conflict patterns
+    \item \textbf{Unreachability}: Structure expands from goal propositions to all propositions in the dependency graph, revealing cascading failure depth
+    \item \textbf{Mutex}: Structure counts pairwise conflict relationships among affected goals, revealing conflict density
+    \item \textbf{Sequencing}: Structure counts directed conflict pairs, revealing asymmetry in irreversible exclusions
 \end{itemize}

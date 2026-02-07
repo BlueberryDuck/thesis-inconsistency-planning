@@ -1,0 +1,38 @@
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[
+            every node/.style={align=center, font=\small},
+            category/.style={rectangle, draw, rounded corners, minimum width=3.2cm, minimum height=0.8cm, thick},
+            subcategory/.style={rectangle, draw, rounded corners=2pt, minimum width=2.8cm, minimum height=0.6cm, thin},
+            root/.style={rectangle, draw, rounded corners, minimum width=4cm, minimum height=0.8cm, thick, fill=black!8},
+            inscope/.style={draw=black!60, dashed, rounded corners=4pt, inner sep=6pt},
+            level 1/.style={sibling distance=5cm},
+        ]
+        % Root
+        \node[root] (root) {Unsolvable Planning\\Problems};
+
+        % Three categories
+        \node[category, below left=1.2cm and 3.5cm of root] (cat1) {Category 1:\\Goal Specification\\Conflicts};
+        \node[category, below=1.2cm of root] (cat2) {Category 2:\\Dependency Graph\\Structure};
+        \node[category, below right=1.2cm and 3.5cm of root] (cat3) {Category 3:\\Resource\\Constraints};
+
+        % Category 2 subcategories
+        \node[subcategory, below left=1.0cm and 0.8cm of cat2] (cat2a) {2a: Missing\\producers};
+        \node[subcategory, below=1.0cm of cat2] (cat2b) {2b: Circular\\dependencies};
+        \node[subcategory, below right=1.0cm and 0.8cm of cat2] (cat2c) {2c: Action-based\\exclusions};
+
+        % Edges
+        \draw[->, thick] (root) -- (cat1);
+        \draw[->, thick] (root) -- (cat2);
+        \draw[->, thick] (root) -- (cat3);
+        \draw[->, thin] (cat2) -- (cat2a);
+        \draw[->, thin] (cat2) -- (cat2b);
+        \draw[->, thin] (cat2) -- (cat2c);
+
+        % Scope boundary
+        \node[inscope, fit=(cat1)(cat2a)(cat2c), label={[font=\footnotesize\itshape, anchor=south]below:Scope of this thesis}] {};
+
+    \end{tikzpicture}
+    \caption[Structural taxonomy for unsolvable planning problems]{Structural taxonomy for unsolvable planning problems. The dashed boundary indicates categories addressed by the measures proposed in this thesis.}
+    \label{fig:taxonomy}
+\end{figure}
