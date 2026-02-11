@@ -120,6 +120,8 @@ All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$
 
 Beyond postulate compliance, the following proposition establishes how the three measures relate to each other, forming a diagnostic hierarchy rather than independent failure detectors.
 
+\input{figures/fig_measure_hierarchy}
+
 \begin{prop}[Measure Hierarchy]
     \label{prop:measure_hierarchy}
     The proposed measures form a diagnostic hierarchy:
@@ -150,10 +152,7 @@ Beyond postulate compliance, the following proposition establishes how the three
     \end{enumerate}
 \end{proof}
 
-\input{figures/fig_measure_hierarchy}
-
-This hierarchy reflects increasing diagnostic specificity rather than
-independent failure modes:
+Figure~\ref{fig:measure_hierarchy} illustrates this hierarchy, which reflects increasing diagnostic specificity rather than independent failure modes:
 \begin{itemize}
     \item \textbf{Mutex without sequencing} (e.g., Light Switch): Goals exclude
           each other but actions are reversible. The conflict is symmetric;

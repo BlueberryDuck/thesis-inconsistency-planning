@@ -1,30 +1,49 @@
 \begin{figure}[ht]
     \centering
     \begin{tikzpicture}[
-            level/.style={rectangle, draw, thick, rounded corners, minimum width=4.5cm, minimum height=1.0cm, align=center, font=\small},
-            example/.style={font=\footnotesize\itshape, text=black!70, align=center},
-            annotation/.style={font=\footnotesize, anchor=west, align=left},
-            implication/.style={->, thick, >=stealth'},
+            region/.style={rectangle, draw, thick, rounded corners=4pt},
+            mlabel/.style={font=\small},
         ]
-        % Levels (top = broadest)
-        \node[level, fill=black!5] (ur) at (0, 0) {Unreachability\\$\mathcal{I}_{\text{UR}}$: state space analysis};
-        \node[level, fill=black!10] (mx) at (0, -2.5) {Mutex\\$\mathcal{I}_{\text{MX}}$: state space analysis};
-        \node[level, fill=black!15] (gs) at (0, -5.0) {Sequencing\\$\mathcal{I}_{\text{GS}}$: trajectory analysis};
+        % Sequencing label (right side, lower)
+        \node[mlabel] (gs-label) at (2, -1)
+        {\textbf{Sequencing} $\mathcal{I}_{\text{GS}}$};
 
-        % Implications
-        \draw[implication] (gs) -- node[right, font=\footnotesize, align=left, xshift=3pt] {sequencing $\Rightarrow$ mutex\\(Prop.~\ref{prop:measure_hierarchy}.2)} (mx);
-        \draw[implication, dashed] (ur) -- node[right, font=\footnotesize, align=left, xshift=3pt] {unreachable $\Rightarrow$ not in\\mutex or sequencing\\(Prop.~\ref{prop:measure_hierarchy}.1)} (mx);
+        % Mutex label (right side, upper)
+        \node[mlabel] (mx-label) at (0.7, 0)
+        {\textbf{Mutex} $\mathcal{I}_{\text{MX}}$};
 
-        % Example scenarios
-        \node[example, left=1.0cm of ur] {Locked Door,\\Bank Vault};
-        \node[example, left=1.0cm of mx] {Light Switch,\\Traffic Light};
-        \node[example, left=1.0cm of gs] {Trust \& Travel,\\Rival Alliances};
+        % Unreachability label (left side, upper)
+        \node[mlabel] (ur-label) at (-2.8, 0)
+        {\textbf{Unreachability} $\mathcal{I}_{\text{UR}}$};
 
-        % Annotation
-        \node[annotation] at (3.5, -1.25) {mutex without\\sequencing =\\reversible conflicts};
-        \node[annotation] at (3.5, -3.75) {mutex with\\sequencing =\\irreversible conflicts};
+        % Sequencing box (tight around label)
+        \node[region, fit=(gs-label), inner xsep=8pt, inner ysep=6pt] (gs) {};
+
+        % Mutex box (around label + sequencing)
+        \node[region, fit=(mx-label)(gs), inner xsep=10pt, inner ysep=6pt] (mx) {};
+
+        % Unreachability box (match mutex height exactly)
+        \node[region, fit=(ur-label)(ur-label |- mx.south)(ur-label |- mx.north),
+            inner xsep=10pt, inner ysep=0pt] (ur) {};
+
+        % Outer label (placed first, then included in fit so box expands to hold it)
+        \node[font=\small\bfseries] (all-label) at (0, 0.8)
+        {All (Goal) Propositions};
+
+        % Outer box (fits inner boxes AND the label)
+        \node[region, fit=(ur)(mx)(all-label), inner xsep=12pt, inner ysep=6pt] (all) {};
+
+        % --- Fills (background layer: outside to inside) ---
+        \begin{scope}[on background layer]
+            \fill[black!5, rounded corners=4pt]
+            (ur.south west) rectangle (ur.north east);
+            \fill[black!8, rounded corners=4pt]
+            (mx.south west) rectangle (mx.north east);
+            \fill[black!15, rounded corners=4pt]
+            (gs.south west) rectangle (gs.north east);
+        \end{scope}
 
     \end{tikzpicture}
-    \caption[Diagnostic measure hierarchy]{Diagnostic measure hierarchy. Solid arrow: sequencing conflicts imply mutex relationships. Dashed arrow: unreachable goals are excluded from mutex and sequencing analysis. Example scenarios are shown for each level.}
+    \caption[Diagnostic measure hierarchy.]{Diagnostic measure hierarchy. Sequencing conflicts are a subset of mutex relationships; unreachable (goal) propositions are excluded from both measures.}
     \label{fig:measure_hierarchy}
 \end{figure}

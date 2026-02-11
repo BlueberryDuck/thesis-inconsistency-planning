@@ -1,7 +1,7 @@
 \subsection{Structural Taxonomy for Unsolvable Planning Problems}
 \label{sec:taxonomy}
 
-Before presenting the proposed measures, this section establishes a structural taxonomy that organizes unsolvable planning problems by features relevant to inconsistency measurement. This taxonomy identifies distinct measurement targets and motivates the design choices in subsequent sections.
+Before presenting the proposed measures, this section establishes a structural taxonomy (Figure~\ref{fig:taxonomy}) that organizes unsolvable planning problems by features relevant to inconsistency measurement. This taxonomy identifies distinct measurement targets and motivates the design choices in subsequent sections.
 
 \input{figures/fig_taxonomy}
 
@@ -13,7 +13,9 @@ Unsolvable planning problems can be organized by structural features that sugges
 
 Nevertheless, goal propositions may be \emph{operator-induced mutex} (mutual exclusion): each proposition is individually achievable, but action effects structurally prevent their simultaneous satisfaction in any reachable state. For instance, a goal requiring both $\{\textit{light\_on}, \textit{light\_off}\}$ when operators enforce mutual exclusion, where turning on deletes off and vice versa, cannot be satisfied by any reachable state. This operator-induced mutex represents the planning analog of specification-level conflicts. This category is detectable through reachability analysis of $G$ against the state space induced by $O$, and suggests logical and combinatorial measures such as counting mutex pairs, identifying maximal conflicting sets (largest subsets of $G$ where all pairs are mutex), or computing minimal covering sets (smallest subsets whose removal eliminates all mutex relationships).
 
-\textbf{Category 2: Dependency Graph Structure.} Problems arise in the precondition and effect relationships between propositions and operators. The \emph{precondition-effect dependency graph} captures these relationships: nodes represent propositions, and directed edges connect preconditions to effects through operators, indicating that achieving a proposition $p$ (as an effect) requires first satisfying proposition $q$ (as a precondition). For example, if operator $o$ has $\text{precond}(o) = \{q\}$ and $\text{add}(o) = \{p\}$, the graph contains an edge from $q$ to $p$ labeled with $o$.
+\textbf{Category 2: Dependency Graph Structure.} Problems arise in the precondition and effect relationships between propositions and operators. The \emph{precondition-effect dependency graph} captures these relationships: nodes represent propositions, and directed edges connect preconditions to effects through operators, indicating that achieving a proposition $p$ requires first satisfying proposition $q$. For example, if operator $o$ has $\text{precond}(o) = \{q\}$ and $\text{add}(o) = \{p\}$, the graph contains an edge from $q$ to $p$ labeled with $o$. Figure~\ref{fig:dependency_graph} illustrates this for the Locked Door scenario (Scenario~1 in Section~\ref{sec:test_scenarios}), where the proposition \textit{has\_key} has no producer, making it the root cause of unreachability.
+
+\input{figures/fig_dependency_graph}
 
 This category encompasses three structural features analyzable via graph algorithms on the dependency graph:
 \begin{itemize}
@@ -21,9 +23,7 @@ This category encompasses three structural features analyzable via graph algorit
     \item \textbf{(2b) Circular dependencies:} Preconditions form cycles without initialization. In the dependency graph, a cycle exists where no node in the cycle is initially true. For example, requiring a security badge to be activated to enter a building while needing to be inside the building to activate the badge.
     \item \textbf{(2c) Action-based exclusions:} Achieving certain goal propositions via irreversible actions creates dead-end states preventing other goal propositions from being reached. For example, entering a one-way door to retrieve an item while becoming trapped and unable to complete other objectives.
 \end{itemize}
-This category suggests graph-based measures such as counting missing producers, measuring precondition chain depth, detecting cycles, or analyzing reachability from hypothetical goal states. Figure~\ref{fig:dependency_graph} illustrates a dependency graph for the Locked Door scenario (Scenario~1 in Section~\ref{sec:test_scenarios}).
-
-\input{figures/fig_dependency_graph}
+This category suggests graph-based measures such as counting missing producers, measuring precondition chain depth, detecting cycles, or analyzing reachability from hypothetical goal states.
 
 \textbf{Category 3: Resource Constraints.} Consumable resources (such as time, fuel, budget, or battery) are insufficient to satisfy goal requirements. This includes both total resource deficit, where the cumulative consumption exceeds the available supply (such as requiring two fuel-consuming moves but having only one unit of fuel), and resource contention, where multiple goal propositions compete for the same limited resource (such as two surfaces requiring painting but only one can of paint being available). This category requires numeric tracking and accounting measures, such as computing absolute or relative resource deficits, counting over-subscribed resources, or tracking path-dependent consumption patterns.
 
