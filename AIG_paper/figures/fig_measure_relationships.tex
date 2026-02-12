@@ -5,7 +5,7 @@
             mlabel/.style={font=\small},
         ]
         % Sequencing label (right side, lower)
-        \node[mlabel] (gs-label) at (2, -1)
+        \node[mlabel] (gs-label) at (1.3, -1)
         {\textbf{Sequencing} $\mathcal{I}_{\text{GS}}$};
 
         % Mutex label (right side, upper)
@@ -27,7 +27,7 @@
             inner xsep=10pt, inner ysep=0pt] (ur) {};
 
         % Outer label (placed first, then included in fit so box expands to hold it)
-        \node[font=\small\bfseries] (all-label) at (0, 0.8)
+        \node[font=\small\bfseries] (all-label) at (-0.7, 0.8)
         {All (Goal) Propositions};
 
         % Outer box (fits inner boxes AND the label)
@@ -44,6 +44,6 @@
         \end{scope}
 
     \end{tikzpicture}
-    \caption[Diagnostic measure hierarchy.]{Diagnostic measure hierarchy. Sequencing conflicts are a subset of mutex relationships; unreachable (goal) propositions are excluded from both measures.}
-    \label{fig:measure_hierarchy}
+    \caption[Diagnostic measure relationships.]{Diagnostic measure relationships. Sequencing conflicts are a subset of mutex relationships; unreachable (goal) propositions are excluded from both measures.}
+    \label{fig:measure_relationships}
 \end{figure}

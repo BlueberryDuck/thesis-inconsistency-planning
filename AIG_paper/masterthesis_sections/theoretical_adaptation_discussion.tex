@@ -1,6 +1,72 @@
 \subsection{Discussion}
 \label{sec:discussion}
 
+This section interprets the formal results from Section~\ref{sec:theoretical_properties}, showing how the measure relationships and scope-structure bounds translate into actionable diagnostic information. It then discusses normalization considerations for practical deployment.
+
+\subsubsection{Diagnostic Interpretation}
+
+The measure relationships established in Proposition~\ref{prop:measure_relationships} reflect increasing diagnostic specificity. Unreachability identifies goals that cannot be achieved at all; mutex identifies achievable goals that cannot coexist; sequencing identifies mutex goals where the exclusion is irreversible. Figure~\ref{fig:measure_relationships} illustrates this containment structure. Two cases are particularly informative:
+
+\begin{itemize}
+    \item \textbf{Mutex without sequencing} (e.g., Light Switch): Goals exclude
+          each other but actions are reversible. The conflict is symmetric;
+          neither goal ``causes'' the problem more than the other.
+    \item \textbf{Mutex with sequencing} (e.g., Trust and Travel): Goals exclude
+          each other \emph{and} achieving specific goals creates permanent dead-ends.
+          The sequencing measure identifies which goal achievement causes the
+          blockage, providing actionable diagnostic information for adding
+          reversal operators.
+\end{itemize}
+
+State space analysis (P1, P2) determines what states exist, while trajectory analysis (P3) determines what paths exist between states. For irreversible problems, all three measures report non-zero values, with P3 providing directional information about which goal achievements cause the blockage.
+
+The scope-structure bounds (Proposition~\ref{prop:scope_structure_bounds}) enable further diagnostic interpretation through ratio analysis:
+
+\begin{itemize}
+    \item \textbf{Unreachability depth}: The ratio $(\mathcal{I}^{\text{struct}}_{\text{UR}} - \mathcal{I}^{\text{scope}}_{\text{UR}}) / \mathcal{I}^{\text{scope}}_{\text{UR}}$ indicates cascading dependency depth. A ratio of 0 means goals are directly unreachable (no intermediate propositions blocked); larger ratios indicate deeper precondition chains.
+
+    \item \textbf{Mutex density}: If $\mathcal{I}^{\text{struct}}_{\text{MX}} = \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$, the mutex goals form a complete clique where every pair is mutually exclusive, as in Traffic Light. Ratios below 1 indicate sparser conflict structures with isolated mutex pairs.
+
+    \item \textbf{Sequencing symmetry}: If $\mathcal{I}^{\text{struct}}_{\text{GS}} = \mathcal{I}^{\text{scope}}_{\text{GS}} \times (\mathcal{I}^{\text{scope}}_{\text{GS}} - 1)$, all sequencing conflicts are bidirectional: achieving any involved goal blocks all others, and vice versa. Ratios near 0.5 suggest predominantly unidirectional conflicts; lower ratios indicate star-shaped conflict patterns where one goal blocks many others but not conversely.
+\end{itemize}
+
+Table~\ref{tab:measure_values} demonstrates these relationships across the test scenarios: for problems exhibiting only unreachability, only $\mathcal{I}_{\text{UR}}$ yields non-zero values; for reversible mutex problems, only $\mathcal{I}_{\text{MX}}$ yields non-zero values; while irreversible problems yield non-zero values for both $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$, consistent with Proposition~\ref{prop:measure_relationships}.
+
+\begin{table}[ht]
+    \centering
+    \caption{Measure values across test scenarios (scope, structure)}
+    \label{tab:measure_values}
+    \begin{tabular}{l|cc|cc|cc}
+        \hline
+        Scenario         & \multicolumn{2}{c|}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c|}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
+                         & scope                                          & struct                                         & scope                                         & struct & scope & struct \\
+        \hline
+        Locked Door      & 1                                              & 3                                              & 0                                             & 0      & 0     & 0      \\
+        Bank Vault       & 1                                              & 7                                              & 0                                             & 0      & 0     & 0      \\
+        Light Switch     & 0                                              & 0                                              & 2                                             & 1      & 0     & 0      \\
+        Traffic Light    & 0                                              & 0                                              & 3                                             & 3      & 0     & 0      \\
+        Trust and Travel & 0                                              & 0                                              & 2                                             & 1      & 2     & 1      \\
+        Rival Alliances  & 0                                              & 0                                              & 2                                             & 1      & 2     & 2      \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The complete diagnostic profile for a planning problem is the 6-tuple:
+\begin{equation*}
+    \text{Profile} = (\mathcal{I}^{\text{scope}}_{\text{UR}}, \mathcal{I}^{\text{struct}}_{\text{UR}}, \mathcal{I}^{\text{scope}}_{\text{MX}}, \mathcal{I}^{\text{struct}}_{\text{MX}}, \mathcal{I}^{\text{scope}}_{\text{GS}}, \mathcal{I}^{\text{struct}}_{\text{GS}})
+\end{equation*}
+
+Each scenario in Table~\ref{tab:measure_values} exhibits a characteristic profile signature:
+\begin{itemize}
+    \item \textbf{Unreachability}: $(1, 3, 0, 0, 0, 0)$ for Locked Door indicates dependency structure failure with depth 2 (three unreachable propositions blocking one goal)
+    \item \textbf{Reversible mutex}: $(0, 0, 2, 1, 0, 0)$ for Light Switch indicates a single mutex pair involving both goals; $(0, 0, 3, 3, 0, 0)$ for Traffic Light indicates a complete mutex clique (all $\binom{3}{2} = 3$ pairs are mutex)
+    \item \textbf{Irreversible mutex}: $(0, 0, 2, 1, 2, 1)$ for Trust and Travel shows both mutex and unidirectional sequencing; $(0, 0, 2, 1, 2, 2)$ for Rival Alliances shows mutex with bidirectional sequencing
+\end{itemize}
+
+The sequencing structure value distinguishes unidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}} = 1$ for Trust and Travel) from bidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}} = 2$ for Rival Alliances), while the mutex structure value is identical ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$) for both. This illustrates how trajectory analysis (P3) provides finer-grained diagnostic information beyond state space analysis (P1, P2).
+
+\subsubsection{Normalization Considerations}
+
 The three proposals presented above report absolute inconsistency values: counts of unreachable propositions, mutex pairs, and sequencing conflict pairs. An important consideration for practical deployment is whether these measures should be normalized or made relative to problem characteristics such as the total number of goal propositions or the size of the proposition space.
 
 The literature on relative inconsistency measures~\cite{Besnard2020} explores this question in the context of propositional knowledge bases, demonstrating both advantages and limitations of normalization approaches. Relative measures can facilitate comparison across problems of different sizes, potentially providing a notion of ``percentage inconsistency'' analogous to test coverage metrics in software engineering.

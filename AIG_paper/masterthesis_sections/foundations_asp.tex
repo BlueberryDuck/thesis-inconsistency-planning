@@ -26,8 +26,6 @@ A rule with an empty head is a \emph{constraint} (denoted $\leftarrow b_1, \ldot
     Consider the program with rules: $a.$ (fact), $b \leftarrow a.$ (conditional), $\leftarrow a, c.$ (constraint). The unique answer set is $\{a, b\}$: the fact establishes $a$, the conditional rule derives $b$ from $a$, and $c$ is not derived so the constraint is not violated.
 \end{example}
 
-\subsubsection{ASP for Planning}
-
 \ac{ASP} provides a natural framework for encoding planning problems. The modern tool plasp~3 by Dimopoulos et al.~\cite{Dimopoulos2019} translates \ac{PDDL} specifications into \ac{ASP} programs where answer sets correspond to valid plans. The system generates rules encoding operator applicability, effect application, and goal satisfaction.
 
 \begin{defn}[Sequential Planning Encoding~\cite{Dimopoulos2019}]

@@ -1,0 +1,61 @@
+\subsubsection{Measure Relationships}
+\label{sec:measure_relationships}
+
+Beyond postulate compliance, the following propositions establish how the three measures relate to each other. Rather than detecting independent failure modes, the measures exhibit a containment structure: sequencing conflicts are a strict subset of mutex relationships, while unreachability is independent of both.
+
+\input{figures/fig_measure_relationships}
+
+\begin{prop}[Measure Relationships]
+    \label{prop:measure_relationships}
+    The proposed measures exhibit the following relationships:
+    \begin{enumerate}
+        \item If goal $g$ is unreachable, then $g$ does not participate in any
+              mutex relationship or sequencing conflict
+        \item If $(g_1, g_2)$ is a sequencing conflict (with $g_2$ achievable),
+              then $g_1$ and $g_2$ are mutex
+        \item Goals can be mutex without having any sequencing conflict
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+    \begin{enumerate}
+        \item Both mutex (Definition~\ref{defn:mutex_goal_pair}) and sequencing conflict
+              (Definition~\ref{defn:sequencing_conflict}) require participating goals to be achievable.
+              If $g$ is unreachable, it fails this condition.
+
+        \item Suppose $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable.
+              By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and for all $s \in S_{\text{reach}}$
+              with $g_1 \in s$: $\nexists s' \in \text{REACH}(s) : g_2 \in s'$.
+              Since $s \in \text{REACH}(s)$ (reflexivity), this implies $g_2 \notin s$ for all
+              $g_1$-states. Thus no reachable state contains both $g_1$ and $g_2$. Combined with
+              both goals being achievable, this satisfies Definition~\ref{defn:mutex_goal_pair}.
+
+        \item Light Switch: Goals $\{\text{on}, \text{off}\}$ are mutex
+              (both achievable, never co-occur) but have no sequencing conflict (from any
+              \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
+    \end{enumerate}
+\end{proof}
+
+The scope and structure variants of each measure are also formally related:
+
+\begin{prop}[Scope-Structure Bounds]
+    \label{prop:scope_structure_bounds}
+    For any planning problem $\langle P, O, I, G \rangle$:
+    \begin{enumerate}
+        \item $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq \mathcal{I}^{\text{struct}}_{\text{UR}} \leq |P|$
+        \item $\mathcal{I}^{\text{struct}}_{\text{MX}} \leq \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$
+        \item $\mathcal{I}^{\text{struct}}_{\text{GS}} \leq \mathcal{I}^{\text{scope}}_{\text{GS}} \times (\mathcal{I}^{\text{scope}}_{\text{GS}} - 1)$
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+    \begin{enumerate}
+        \item Unreachable goals are a subset of all unreachable propositions,
+              which are a subset of $P$.
+
+        \item The maximum number of unordered pairs among
+              $\mathcal{I}^{\text{scope}}_{\text{MX}}$ goals is $\binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$.
+
+        \item The maximum number of ordered pairs among
+              $\mathcal{I}^{\text{scope}}_{\text{GS}}$ goals is $n(n-1)$ where
+              $n = \mathcal{I}^{\text{scope}}_{\text{GS}}$.
+    \end{enumerate}
+\end{proof}
