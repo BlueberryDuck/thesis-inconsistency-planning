@@ -26,7 +26,7 @@ This knowledge base is classically inconsistent: the goal \textit{in\_room} requ
 
 \subsubsection{Contension Measure Analysis}
 
-The contension measure $\mathcal{I}_c$ counts the minimum number of propositions assigned the conflicting value $B$ in Priest's three-valued Logic of Paradox (LP)~\cite{Priest1979} to satisfy all formulas. The value $B$ represents ``both true and false.'' In LP, a formula is satisfied if it evaluates to $T$ or $B$ rather than $F$.
+The contension measure $\mathcal{I}_c$ counts the minimum number of propositions assigned the conflicting value $B$ in Priest's three-valued logic of paradox~\cite{Priest1979} to satisfy all formulas. The value $B$ represents ``both true and false.'' A formula is satisfied if it evaluates to $T$ or $B$ rather than $F$.
 
 \begin{prop}
     $\mathcal{I}_c(K_{\text{LD}}) = 1$.
@@ -42,22 +42,29 @@ The contension measure $\mathcal{I}_c$ counts the minimum number of propositions
     All formulas evaluate to $T$ or $B$, so $v$ is a model. Since only \textit{has\_key} is assigned $B$, $\mathcal{I}_c \leq 1$. Since $K_{\text{LD}}$ is classically inconsistent, $\mathcal{I}_c \geq 1$. Thus $\mathcal{I}_c(K_{\text{LD}}) = 1$.
 \end{proof}
 
-\subsubsection{Fundamental Limitation: Dynamic Conflicts}
+\subsubsection{Limitations for Operator-Induced Conflicts}
 
-The Locked Door encoding works because the closed-world assumption $\neg\textit{has\_key}$ follows directly from the STRIPS specification: no operator produces \textit{has\_key}, and it is not in $I$. However, for scenarios involving operator-induced conflicts such as mutex and sequencing, the encoding faces a fundamental problem.
+The Locked Door encoding detects inconsistency because the closed-world assumption $\neg\textit{has\_key}$ follows directly from the STRIPS specification: no operator produces \textit{has\_key}, and it is not in $I$. For scenarios involving operator-induced conflicts, the encoding faces a more fundamental limitation that persists even when the encoding is enriched.
 
-\paragraph{Example: Mutex Encoding.} Consider a planning problem where a goal requires both \textit{on} and \textit{off} to be true simultaneously, but toggle actions enforce mutual exclusion. Applying the encoding rules yields:
+\paragraph{Example: Precondition-Only Encoding.} Consider the Light Switch scenario (Scenario~3), where the goal requires both \textit{on} and \textit{off} simultaneously, but toggle actions enforce mutual exclusion. Applying the encoding rules yields:
 \begin{align*}
-    K'_{\text{LS}} = \{ & \text{on}, \text{off},           & \text{(goals)}                  \\
-                        & \text{on} \rightarrow \text{off} & \text{(turn\_on precondition)}  \\
-                        & \text{off} \rightarrow \text{on} & \text{(turn\_off precondition)}
+    K_{\text{LS}} = \{ & \text{on}, \text{off},              & \text{(goals)}                  \\
+                       & \text{on} \rightarrow \text{off},   & \text{(turn\_on precondition)}  \\
+                       & \text{off} \rightarrow \text{on} \} & \text{(turn\_off precondition)}
 \end{align*}
+No closed-world negations apply since both propositions are producible. This knowledge base is classically consistent: the interpretation $v(\textit{on}) = v(\textit{off}) = T$ satisfies all formulas. The precondition-only encoding omits delete effects, so the mutual exclusion between \textit{on} and \textit{off} is not represented despite the planning problem being unsolvable.
 
-No closed-world negations apply since both propositions are producible. This knowledge base is classically consistent: the interpretation $v(\textit{on}) = v(\textit{off}) = T$ satisfies all formulas. Yet the planning problem is unsolvable.
+\paragraph{Example: Enriched Encoding with Delete Effects.} A natural response is to extend the encoding with delete-effect implications. For each operator $o$, each $p \in \text{add}(o)$, and each $d \in \text{delete}(o)$, the additional rule $p \rightarrow \neg d$ captures that achieving $p$ via $o$ simultaneously removes $d$. For the Light Switch, this yields:
+\begin{align*}
+    K^+_{\text{LS}} = \{ & \text{on}, \text{off},                  & \text{(goals)}                  \\
+                         & \text{on} \rightarrow \text{off},       & \text{(turn\_on precondition)}  \\
+                         & \text{off} \rightarrow \text{on},       & \text{(turn\_off precondition)} \\
+                         & \text{on} \rightarrow \neg\text{off},   & \text{(turn\_on deletes off)}   \\
+                         & \text{off} \rightarrow \neg\text{on} \} & \text{(turn\_off deletes on)}
+\end{align*}
+The enriched encoding is classically inconsistent: the goal \textit{on} together with $\text{on} \rightarrow \neg\text{off}$ yields $\neg\textit{off}$, contradicting the goal \textit{off}. However, $\mathcal{I}_c(K^+_{\text{LS}}) = 1$: the three-valued interpretation $v(\textit{off}) = B$, $v(\textit{on}) = T$ satisfies all formulas, since implications involving the $B$-valued \textit{off} evaluate to $B$ rather than $F$ under the logic of paradox.
 
-To detect unsolvability, a mutex constraint $\neg(\textit{on} \land \textit{off})$ would be required. But this constraint is not derivable from the STRIPS specification alone. Note that the encoding does not model delete effects: the implication $\text{on} \rightarrow \text{off}$ captures only the precondition relationship of \textit{turn\_on}, not the fact that \textit{turn\_on} deletes \textit{off}. To fully capture operator semantics, one would need to encode delete effects and their state-dependent interactions. However, expressing that two propositions never co-occur in any reachable state requires reasoning about the state space itself, which is precisely the planning analysis the encoding was meant to replace. This is circular: solving the planning analysis problem becomes necessary to construct an encoding that detects unsolvability.
-
-\paragraph{Example: Sequencing Conflict Encoding.} Consider the Trust and Travel scenario (Scenario~5) where an agent must secure a partnership requiring trust and exploit a remote opportunity, but traveling destroys trust irreversibly. The encoding yields:
+\paragraph{Example: Sequencing Conflicts.} The same pattern applies to the Trust and Travel scenario (Scenario~5), where an agent must secure a partnership requiring trust and exploit a remote opportunity, but traveling destroys trust irreversibly. The precondition-only encoding
 \begin{align*}
     K_{\text{TT}} = \{ & \text{partnership}, \text{opportunity},                             & \text{(goals)}                \\
                        & \text{partnership} \rightarrow \text{at\_local} \land \text{trust}, & \text{(secure preconditions)} \\
@@ -65,17 +72,17 @@ To detect unsolvability, a mutex constraint $\neg(\textit{on} \land \textit{off}
                        & \text{at\_remote} \rightarrow \text{at\_local},                     & \text{(travel precondition)}  \\
                        & \text{at\_local} \rightarrow \text{at\_remote} \}                   & \text{(return precondition)}
 \end{align*}
-This knowledge base is classically consistent: setting all propositions to true satisfies every implication. The sequencing conflict, where achieving \textit{opportunity} permanently blocks \textit{partnership} because \textit{travel} deletes \textit{trust} irreversibly, is a path-dependent property requiring trajectory analysis to discover. Propositional logic, being static, cannot express ``from states where $p$ holds, $q$ becomes unreachable.''
+is classically consistent: setting all propositions to true satisfies every implication. Adding delete-effect implications for \textit{travel} ($\text{at\_remote} \rightarrow \neg\text{at\_local} \land \neg\text{trust}$) and \textit{return} ($\text{at\_local} \rightarrow \neg\text{at\_remote}$) makes the encoding classically inconsistent: the goal chain $\textit{opportunity} \rightarrow \textit{at\_remote}$ combined with both $\text{at\_remote} \rightarrow \text{at\_local}$ and $\text{at\_remote} \rightarrow \neg\text{at\_local}$ creates a contradiction whenever \textit{at\_remote} is true. Yet $\mathcal{I}_c = 1$: assigning $v(\textit{at\_remote}) = B$ with all other propositions true satisfies every formula.
+
+Beyond the uninformativeness of $\mathcal{I}_c$, the delete-effect implications are themselves an overapproximation. The rule $p \rightarrow \neg d$ fires whenever $p$ is true, regardless of whether $p$ was achieved by operator $o$ or was already present in the initial state $I$. When multiple operators produce the same proposition with different delete effects, the encoding conflates their consequences. A more precise encoding would require tracking which operator produced each proposition, essentially reconstructing the state transition semantics that planning formalisms are designed to manage. Furthermore, sequencing conflicts are inherently path-dependent: the statement ``achieving \textit{opportunity} permanently blocks \textit{partnership}'' requires reasoning about trajectories through the state space. Propositional logic, being static, cannot express that from states where $p$ holds, $q$ becomes unreachable.
 
 \subsubsection{Why Direct Encoding Fails}
 
-The analysis reveals two distinct failure modes:
+The analysis reveals a consistent pattern: across unreachability, mutex, and sequencing conflicts, $\mathcal{I}_c = 1$ regardless of problem structure. In each case, the three-valued $B$ (``both true and false'') absorbs the conflict at a single proposition, satisfying all downstream implications. The contension measure therefore assigns identical severity to structurally distinct planning problems: a single missing producer (Locked Door), a pair of mutually exclusive goals (Light Switch), and an irreversible sequencing conflict (Trust and Travel) all yield $\mathcal{I}_c = 1$.
 
-\begin{enumerate}
-    \item \textbf{Failure to detect}: For operator-induced conflicts such as mutex and sequencing, the pure STRIPS-derived encoding is consistent despite the planning problem being unsolvable. Detecting these conflicts requires planning-specific analysis that the encoding was meant to replace.
+This uninformativeness stems from a mismatch between the measure and the domain. The contension measure is designed for static knowledge bases where each additional conflicting proposition genuinely indicates greater inconsistency. Planning problems, however, exhibit structured conflicts with internal organization: dependency graphs of varying depth for unreachability, sets of mutex pairs for mutual exclusion, and directed blocking relationships for sequencing. These structures are invisible to any measure that operates on a flat propositional encoding.
 
-    \item \textbf{Uninformative when detected}: For dependency failures from missing producers, the encoding detects inconsistency but $\mathcal{I}_c = 1$ regardless of problem structure. Assigning $B$ to the root proposition satisfies all downstream implications, so dependency graph depth and width are invisible to the measure.
-\end{enumerate}
+These limitations hold regardless of encoding completeness. The precondition-only encoding fails to detect certain operator-induced conflicts entirely, while the enriched encoding with delete effects detects them but produces the same uninformative $\mathcal{I}_c = 1$ value. In neither case does the propositional approach provide actionable diagnostic information about the nature or severity of unsolvability.
 
 These limitations motivate planning-native measures that operate directly on planning structures such as goals, operators, and reachable states, rather than reducing to propositional logic. The measures proposed in this chapter follow the inconsistency measurement methodology of formal definitions, rationality postulates, and complexity analysis, while respecting planning-specific semantics.
 
@@ -87,7 +94,7 @@ A fundamental principle is to ``measure what \emph{is}, not what \emph{should be
 
 The structural taxonomy in Section~\ref{sec:taxonomy} organizes unsolvability causes by their mathematical properties: goal specification conflicts in Category~1, dependency graph failures in Category~2, and resource insufficiency in Category~3. This chapter focuses on Category~1 and Category~2 problems with three measures that exhibit formal relationships between them. The first two measures, Unreachability and Mutex, perform state space analysis: they compute reachability once and analyze properties of the resulting state set. The third measure, Sequencing, performs trajectory analysis: it examines path-dependent properties from goal-achieving states. Sequencing conflicts imply mutex since achieving one goal that blocks another implies they never coexist, so the measures form a containment structure rather than detecting independent phenomena.
 
-Each profile provides two complementary values following a standardized pattern: the scope variant reports goal-level severity, while the structure variant reveals underlying structural detail. Scope values are directly comparable across measures; structure values provide diagnostic depth within each measure. Specifically:
+Each profile (Definition~\ref{defn:diagnostic_profile}) provides two complementary values following a standardized pattern: the scope variant reports goal-level severity, while the structure variant reveals underlying structural detail. Scope values are directly comparable across measures; structure values provide diagnostic depth within each measure. Specifically:
 \begin{itemize}
     \item \textbf{Unreachability}: Structure expands from goal propositions to all propositions in the dependency graph, revealing cascading failure depth
     \item \textbf{Mutex}: Structure counts pairwise conflict relationships among affected goals, revealing conflict density
