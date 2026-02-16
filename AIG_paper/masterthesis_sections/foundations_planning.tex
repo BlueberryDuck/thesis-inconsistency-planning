@@ -63,7 +63,7 @@ A problem file instantiates the domain with concrete elements:
 \begin{equation*}
     \text{Problem} = \langle \text{DomainRef}, \text{Objects}, \text{Init}, \text{Goal} \rangle
 \end{equation*}
-where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification. For instance, a logistics domain file would define predicates like $\textit{at}(x, y)$ and actions like $\textit{drive}$, while a problem file would specify particular trucks, locations, and delivery goals.
+where $\text{DomainRef}$ references the domain name, $\text{Objects}$ enumerates the entities in this instance, $\text{Init}$ specifies the initial state, and $\text{Goal}$ defines the goal specification. For instance, a logistics domain file would define predicates like $\text{at}(x, y)$ and actions like $\text{drive}$, while a problem file would specify particular trucks, locations, and delivery goals.
 
 Predicates define the vocabulary of a planning domain as parameterized Boolean functions. Formally, a predicate declaration has the form:
 \begin{equation*}
@@ -100,19 +100,19 @@ While \ac{PDDL} has evolved through multiple versions, \ac{PDDL} 2.1~\cite{Fox20
 
 \begin{example}[Blocksworld Domain]
     \label{ex:blocksworld}
-    Consider a simplified blocksworld domain with predicates $\textit{on}(x,y)$, $\textit{ontable}(x)$, $\textit{clear}(x)$, and $\textit{handempty}$. The action for stacking block $x$ on block $y$ is defined as:
+    Consider a simplified blocksworld domain with predicates $\text{on}(x,y)$, $\text{ontable}(x)$, $\text{clear}(x)$, and $\text{handempty}$. The action for stacking block $x$ on block $y$ is defined as:
     \begin{align*}
-         & \text{action } \textit{stack}(x, y)                                                 \\
-         & \quad \text{precond}: \textit{holding}(x) \land \textit{clear}(y)                   \\
-         & \quad \text{eff}: \textit{on}(x,y) \land \textit{clear}(x) \land \textit{handempty} \\
-         & \qquad\qquad \land \neg\textit{holding}(x) \land \neg\textit{clear}(y)
+         & \text{action } \text{stack}(x, y)                                             \\
+         & \quad \text{precond}: \text{holding}(x) \land \text{clear}(y)                 \\
+         & \quad \text{eff}: \text{on}(x,y) \land \text{clear}(x) \land \text{handempty} \\
+         & \qquad\qquad \land \neg\text{holding}(x) \land \neg\text{clear}(y)
     \end{align*}
 
     When instantiated with specific blocks $a$ and $b$ from a problem file, this yields the ground operator:
     \begin{align*}
-        \textit{stack}(a,b) = \langle & \{\textit{holding}(a), \textit{clear}(b)\},                  \\
-                                      & \{\textit{on}(a,b), \textit{clear}(a), \textit{handempty}\}, \\
-                                      & \{\textit{holding}(a), \textit{clear}(b)\} \rangle
+        \text{stack}(a,b) = \langle & \{\text{holding}(a), \text{clear}(b)\},                \\
+                                    & \{\text{on}(a,b), \text{clear}(a), \text{handempty}\}, \\
+                                    & \{\text{holding}(a), \text{clear}(b)\} \rangle
     \end{align*}
     demonstrating how \ac{PDDL} action schemas correspond to the set-based operator representation.
 \end{example}

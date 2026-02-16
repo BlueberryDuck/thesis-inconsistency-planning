@@ -43,13 +43,13 @@ An important practical distinction emerges between static and dynamic analysis a
     \label{ex:security_facility}
     To illustrate how multiple structural categories can manifest in a single planning problem, consider a security facility scenario:
     \begin{align*}
-        P & = \{\textit{outside}, \textit{inside}, \textit{has\_badge}, \textit{vault\_accessed}, \textit{lights\_on}, \textit{lights\_off}\}     \\
-        O & = \{ \textit{enter\_facility} = \langle \{\textit{outside}, \textit{has\_badge}\}, \{\textit{inside}\}, \{\textit{outside}\} \rangle, \\
-          & \quad \textit{access\_vault} = \langle \{\textit{inside}\}, \{\textit{vault\_accessed}\}, \{\} \rangle,                               \\
-          & \quad \textit{turn\_on} = \langle \{\textit{lights\_off}\}, \{\textit{lights\_on}\}, \{\textit{lights\_off}\} \rangle,                \\
-          & \quad \textit{turn\_off} = \langle \{\textit{lights\_on}\}, \{\textit{lights\_off}\}, \{\textit{lights\_on}\} \rangle \}              \\
-        I & = \{\textit{outside}, \textit{lights\_off}\}                                                                                          \\
-        G & = \{\textit{vault\_accessed}, \textit{outside}, \textit{lights\_on}, \textit{lights\_off}\}
+        P & = \{\text{outside}, \text{inside}, \text{has\_badge}, \text{vault\_accessed}, \text{lights\_on}, \text{lights\_off}\}       \\
+        O & = \{ \text{enter\_facility} = \langle \{\text{outside}, \text{has\_badge}\}, \{\text{inside}\}, \{\text{outside}\} \rangle, \\
+          & \quad \text{access\_vault} = \langle \{\text{inside}\}, \{\text{vault\_accessed}\}, \{\} \rangle,                           \\
+          & \quad \text{turn\_on} = \langle \{\text{lights\_off}\}, \{\text{lights\_on}\}, \{\text{lights\_off}\} \rangle,              \\
+          & \quad \text{turn\_off} = \langle \{\text{lights\_on}\}, \{\text{lights\_off}\}, \{\text{lights\_on}\} \rangle \}            \\
+        I & = \{\text{outside}, \text{lights\_off}\}                                                                                    \\
+        G & = \{\text{vault\_accessed}, \text{outside}, \text{lights\_on}, \text{lights\_off}\}
     \end{align*}
 
     This problem exhibits three distinct structural sources of unsolvability. First, Category~1 (operator-induced mutex): the goal requires both \textit{lights\_on} and \textit{lights\_off}, but these propositions are mutually exclusive through operator effects, as achieving one necessarily deletes the other. Second, Category~2a (missing producer): the proposition \textit{has\_badge} appears in the precondition of \textit{enter\_facility} but no operator in $O$ has \textit{has\_badge} in its add effects, making facility entry impossible regardless of other constraints. Third, Category~2c (action-based exclusion): even if a badge-producing operator existed, \textit{enter\_facility} deletes \textit{outside} without any operator to restore it, while the goal requires both \textit{vault\_accessed} (achievable only from inside) and \textit{outside}, creating an irreversible conflict. Each category contributes independently to unsolvability, demonstrating how the taxonomy identifies structurally distinct measurement targets within a single problem.

@@ -1,7 +1,7 @@
 \subsection{Test Scenarios}
 \label{sec:test_scenarios}
 
-This section introduces six test scenarios that serve as running examples throughout the theoretical development. Each scenario represents a small, focused planning problem exhibiting a specific structural pattern of unsolvability. The scenarios are organized by the measure designed to detect their failure mode, though some scenarios (particularly sequencing conflicts) trigger multiple measures.
+This section introduces six test scenarios that serve as running examples throughout the theoretical development. Each scenario represents a small, focused planning problem exhibiting a specific structural pattern of unsolvability. The scenarios are organized by the measure designed to detect their failure mode, though some scenarios trigger multiple measures.
 
 All scenarios are expressed as STRIPS planning problems $\langle P, O, I, G \rangle$ following the notation established in Section~\ref{sec:foundations_planning}. For each scenario, the intuitive description, formal specification, and structural pattern are provided, along with forward reachability $S_{\text{reach}}$ (formally defined in Definition~\ref{defn:reachable_states}).
 
@@ -28,17 +28,17 @@ The \textit{unlock} operator requires \textit{has\_key}, which has no producer a
 A more complex variant requires three independent precondition chains (two keys and admin approval) to achieve a single goal. Three independent dependency failures occur in parallel, each blocking a different precondition of the final operator.
 
 \begin{align*}
-  P & = \{\text{at\_facility}, \text{key1}, \text{key2}, \text{admin\_approval},                                                                                                     \\
-    & \quad \text{door1\_open}, \text{door2\_open}, \text{access\_granted}, \text{in\_vault}\}                                                                                       \\
-  O & = \{ \text{open\_door1} = \langle \{\text{at\_facility}, \text{key1}\}, \{\text{door1\_open}\}, \{\} \rangle,                                                                  \\
-    & \quad \text{open\_door2} = \langle \{\text{at\_facility}, \text{key2}\}, \{\text{door2\_open}\}, \{\} \rangle,                                                                 \\
-    & \quad \text{grant\_access} = \langle \{\text{admin\_approval}\}, \{\text{access\_granted}\}, \{\} \rangle,                                                                     \\
-    & \quad \text{enter} = \langle \{\text{at\_facility}, \text{door1\_open}, \text{door2\_open}, \text{access\_granted}\}, \{\text{in\_vault}\}, \{\text{at\_facility}\} \rangle \} \\
-  I & = \{\text{at\_facility}\}                                                                                                                                                      \\
+  P & = \{\text{at\_fac}, \text{key1}, \text{key2}, \text{admin\_appr},                                                                                           \\
+    & \quad \text{d1\_open}, \text{d2\_open}, \text{acc\_granted}, \text{in\_vault}\}                                                                             \\
+  O & = \{ \text{open\_d1} = \langle \{\text{at\_fac}, \text{key1}\}, \{\text{d1\_open}\}, \{\} \rangle,                                                          \\
+    & \quad \text{open\_d2} = \langle \{\text{at\_fac}, \text{key2}\}, \{\text{d2\_open}\}, \{\} \rangle,                                                         \\
+    & \quad \text{grant\_acc} = \langle \{\text{admin\_appr}\}, \{\text{acc\_granted}\}, \{\} \rangle,                                                            \\
+    & \quad \text{enter} = \langle \{\text{at\_fac}, \text{d1\_open}, \text{d2\_open}, \text{acc\_granted}\}, \{\text{in\_vault}\}, \{\text{at\_fac}\} \rangle \} \\
+  I & = \{\text{at\_fac}\}                                                                                                                                        \\
   G & = \{\text{in\_vault}\}
 \end{align*}
 
-Three independent chains fail at their roots (\textit{key1}, \textit{key2}, \textit{admin\_approval} are all missing producers), blocking all downstream propositions. Forward reachability yields $S_{\text{reach}} = \{\{\text{at\_facility}\}\}$.
+Three independent chains fail at their roots (\textit{key1}, \textit{key2}, \textit{admin\_appr} are all missing producers), blocking all downstream propositions. Forward reachability yields $S_{\text{reach}} = \{\{\text{at\_fac}\}\}$.
 
 \subsubsection{Mutex Scenarios}
 
@@ -109,7 +109,11 @@ An agent seeks alliances with two rival factions, but each faction demands exclu
   G & = \{\text{allied\_A}, \text{allied\_B}\}
 \end{align*}
 
-Forward reachability yields $S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}$. Both goals are individually achievable but never coexist (mutex). Unlike Trust and Travel, both directions are sequencing conflicts: allying with either faction alienates the other, deleting the precondition for the remaining alliance.
+Forward reachability yields:
+\begin{equation*}
+  S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}
+\end{equation*}
+Both goals are individually achievable but never coexist (mutex). Unlike Trust and Travel, both directions are sequencing conflicts: allying with either faction alienates the other, deleting the precondition for the remaining alliance.
 
 \subsubsection{Scenario Summary}
 
@@ -120,20 +124,28 @@ Table~\ref{tab:scenario_summary} summarizes the test scenarios and their structu
   \caption{Test scenarios and their structural patterns}
   \label{tab:scenario_summary}
   \small
-  \begin{tabular}{lllll}
+  \begin{tabular}{llll}
     \hline
-    Scenario         & Category & Pattern         & Measure                   & Notes         \\
+    Scenario         & Category & Pattern         & Measure                   \\
     \hline
-    Locked Door      & 2a       & Linear chain    & $\mathcal{I}_{\text{UR}}$ & Depth 2       \\
-    Bank Vault       & 2a       & Parallel chains & $\mathcal{I}_{\text{UR}}$ & Width 3       \\
-    Light Switch     & 2c       & Simple pair     & $\mathcal{I}_{\text{MX}}$ & Reversible    \\
-    Traffic Light    & 2c       & Complete clique & $\mathcal{I}_{\text{MX}}$ & 3 mutex pairs \\
-    Trust and Travel & 2c       & Unidirectional  & $\mathcal{I}_{\text{GS}}$ & One-way block \\
-    Rival Alliances  & 2c       & Symmetric       & $\mathcal{I}_{\text{GS}}$ & Mutual block  \\
+    Locked Door      & 2a       & Linear chain    & $\mathcal{I}_{\text{UR}}$ \\
+    Bank Vault       & 2a       & Parallel chains & $\mathcal{I}_{\text{UR}}$ \\
+    Light Switch     & 2c       & Simple pair     & $\mathcal{I}_{\text{MX}}$ \\
+    Traffic Light    & 2c       & Complete clique & $\mathcal{I}_{\text{MX}}$ \\
+    Trust and Travel & 2c       & Unidirectional  & $\mathcal{I}_{\text{GS}}$ \\
+    Rival Alliances  & 2c       & Symmetric       & $\mathcal{I}_{\text{GS}}$ \\
     \hline
   \end{tabular}
 \end{table}
 
-The structural patterns referenced in Table~\ref{tab:scenario_summary} are characterized as follows. \textbf{Linear chain}: a sequence of dependency edges from precondition to effect forming a single path to the goal. \textbf{Parallel chains}: multiple independent dependency paths converging on a single goal operator. \textbf{Simple pair}: two goals involved in a single mutex relationship. \textbf{Complete clique}: every pair of goals is mutually exclusive. \textbf{Unidirectional}: a sequencing conflict in one direction only (achieving $g_1$ blocks $g_2$ but not vice versa). \textbf{Symmetric}: sequencing conflicts exist in both directions between each goal pair.
+The structural patterns referenced in Table~\ref{tab:scenario_summary} are characterized as follows:
+\begin{itemize}
+  \item \textbf{Linear chain}: a single dependency path from the goal through intermediate propositions to an unproducible root.
+  \item \textbf{Parallel chains}: multiple independent dependency paths converging on a single goal operator.
+  \item \textbf{Simple pair}: exactly one mutex pair among the goal propositions.
+  \item \textbf{Complete clique}: every pair of goal propositions is mutually exclusive.
+  \item \textbf{Unidirectional}: achieving one goal permanently blocks the other, but not vice versa.
+  \item \textbf{Symmetric}: achieving either goal permanently blocks the other.
+\end{itemize}
 
 These scenarios will be referenced throughout the remainder of this chapter to illustrate measure definitions (Section~\ref{sec:proposed_measures}), demonstrate postulate compliance (Section~\ref{sec:postulates}), and provide concrete measure values for comparison (Table~\ref{tab:measure_values}).
