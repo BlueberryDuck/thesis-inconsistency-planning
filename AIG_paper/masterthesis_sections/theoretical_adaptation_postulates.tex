@@ -62,7 +62,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     $\mathcal{I}^{\text{scope}}_{\text{MX}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Counter-example: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no mutex exists and $\mathcal{I}^{\text{scope}}_{\text{MX}} = 0$. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, no reachable state contains both $g_1$ and $g_2$ (both operators delete $a$, which is the only initial proposition), so $g_1$ and $g_2$ become mutex, increasing $\mathcal{I}^{\text{scope}}_{\text{MX}}$ to 2.
+    Counter-example: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no mutex exists and $\mathcal{I}^{\text{scope}}_{\text{MX}} = 0$. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, no reachable state contains both $g_1$ and $g_2$, because both operators delete $a$, which is the only initial proposition. So $g_1$ and $g_2$ become mutex, increasing $\mathcal{I}^{\text{scope}}_{\text{MX}}$ to 2.
 \end{proof}
 
 \begin{prop}
@@ -118,7 +118,7 @@ The structure variants satisfy the same postulates as their scope counterparts:
 
 All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S_{\text{reach}}$ depends only on $I$ and $O$.
 
-Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in answer set programs.
+Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
 
 \begin{table}[ht]
     \centering

@@ -106,13 +106,13 @@ This definition captures operator-induced exclusions: both goals are individuall
 This measure indicates the scope of mutex problems at the goal level: how many goal propositions participate in at least one mutex relationship. The value ranges from $0$ (no mutex) to $|G|$ (all goals involved in mutex).
 
 \begin{defn}[Mutex Pair Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counting unordered mutex goal pairs is defined as:
+    Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counting two-element subsets of $G$ whose elements are mutex is defined as:
     \begin{equation*}
         \mathcal{I}^{\text{struct}}_{\text{MX}}(\langle P, O, I, G \rangle) = |\{\{g_1, g_2\} \mid g_1, g_2 \in G, g_1 \neq g_2, \text{mutex}(g_1, g_2)\}|
     \end{equation*}
 \end{defn}
 
-This measure reveals the structure of mutex relationships by counting unordered pairs. Since mutex is symmetric, unordered pairs $\{g_1, g_2\}$ (where $\{g_1, g_2\}$ denotes the unordered pair, i.e., $\{g_1, g_2\} = \{g_2, g_1\}$) are counted rather than ordered pairs. The value ranges from $0$ to $\binom{|G|}{2}$. The ratio between $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ reveals conflict patterns: a small ratio suggests isolated mutex pairs, while a large ratio (approaching $\binom{|G|}{2}$) indicates dense mutex cliques. Together, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ form the Goal Mutex Profile.
+This measure reveals the structure of mutex relationships by counting two-element subsets rather than ordered pairs, reflecting the symmetry of the mutex relation. The value ranges from $0$ to $\binom{|G|}{2}$. The ratio between $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ reveals conflict patterns: a small ratio suggests isolated mutex pairs, while a large ratio (approaching $\binom{|G|}{2}$) indicates dense mutex cliques. Together, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ form the Goal Mutex Profile.
 
 \paragraph{Example: Light Switch (Scenario~3).} For the Light Switch scenario, forward reachability analysis yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions appear in reachable states, but no state contains both simultaneously. The Goal Mutex Profile yields:
 \begin{align*}
