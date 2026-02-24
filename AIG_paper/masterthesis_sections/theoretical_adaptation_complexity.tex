@@ -1,7 +1,7 @@
 \subsubsection{Computational Complexity}
 \label{sec:complexity}
 
-This section analyzes the computational complexity of the proposed measures in terms of standard complexity classes. Determining plan existence, \textsc{PlanSat}, for propositional \ac{STRIPS} is PSPACE-complete~\cite{Bylander1994}. Standard complexity class definitions and the results cited below can be found in Papadimitriou~\cite{Papadimitriou1994}. All three measures depend on reachability analysis over the planning state space, and this structural connection to \textsc{PlanSat} determines their decision-problem complexity.
+This section analyzes the computational complexity of the proposed measures in terms of standard complexity classes. Determining plan existence, \textsc{PlanSat}, for propositional \ac{STRIPS} is PSPACE-complete~\cite{Bylander1994}; standard complexity class definitions follow Papadimitriou~\cite{Papadimitriou1994}. All three measures depend on reachability analysis over the planning state space, and this structural connection to \textsc{PlanSat} determines their decision-problem complexity.
 
 Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022}, four computational problems are defined for each measure $\mathcal{I} \in \{\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}\}$.
 
@@ -41,12 +41,14 @@ Each completeness result below is established in two parts: \emph{membership} sh
     $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ and $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ are PSPACE-complete. $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
-    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since PSPACE $=$ co-PSPACE~\cite{Papadimitriou1994}, it is also PSPACE-complete. This equality holds because PSPACE is a deterministic class: a deterministic polynomial space machine that decides membership in a language also decides its complement by simply negating the output. In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, the analogous relationship yields coNP-completeness from NP-completeness, a meaningful distinction. At the PSPACE level this distinction collapses.
+    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since PSPACE $=$ co-PSPACE~\cite{Papadimitriou1994}, it is also PSPACE-complete.
 
-    $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. In the propositional setting, this conjunction of an NP problem and a coNP problem yields the class $D^p$, which contains but is believed to be strictly larger than $\text{NP} \cap \text{coNP}$. Here, the conjunction of two PSPACE problems remains in PSPACE. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}: since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
+    $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}: since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
 
-    $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ can be computed via binary search with $O(\log |G|)$ calls to $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$. Polynomially many PSPACE oracle calls remain in FPSPACE.
+    $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ can be computed via binary search with $O(\log |G|)$ calls to $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$. Polynomially many calls to a PSPACE subroutine remain in FPSPACE.
 \end{proof}
+
+In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, $\text{LOWER}$ is coNP-complete rather than NP-complete, and $\text{EXACT}$ lands in $D^p$, the class of problems decidable by the conjunction of an NP and a coNP problem, believed to be strictly larger than $\text{NP} \cap \text{coNP}$. At the PSPACE level, PSPACE $=$ co-PSPACE collapses both distinctions. PSPACE is a deterministic class, so a machine deciding membership also decides the complement by negating its output, and the conjunction of two PSPACE problems remains in PSPACE. The broader consequences for the complexity landscape are discussed after Corollary~\ref{cor:gs_all}.
 
 \begin{thm}
     \label{thm:mx_complexity}
@@ -83,7 +85,7 @@ Each completeness result below is established in two parts: \emph{membership} sh
     $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ is PSPACE-complete.
 \end{thm}
 \begin{proof}
-    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition: for all $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Universally quantifying over $g_1$-states places the check in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
+    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition: for all $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
 
     \emph{Hardness.} The reduction from Theorem~\ref{thm:mx_complexity} also establishes hardness for $\mathcal{I}_{\text{GS}}$. In the constructed instance $\Pi'$, when $\Pi$ is unsolvable, no operator in $O'$ adds $g_1$: the only source of $g_1$ is the initial state, and $o_f$ deletes it irreversibly. Thus from any $g_2$-state, which can only be reached via $o_f \to o_a$, $g_1$ is unreachable, making $(g_2, g_1)$ a sequencing conflict. Conversely, when $\Pi$ is solvable, $o_m$ produces a state where both goals co-occur, so no sequencing conflict exists. Therefore $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ with $k = 0$ decides \textsc{PlanSat}.
 \end{proof}
@@ -100,7 +102,7 @@ Table~\ref{tab:decision_complexity} summarizes these results.
 
 \begin{table}[ht]
     \centering
-    \caption{Complexity of decision and function problems for the proposed planning inconsistency measures. Results hold for both scope and structure variants.}
+    \caption{Complexity of decision and function problems of measures}
     \label{tab:decision_complexity}
     \begin{tabular}{l|l|l|l}
         \hline
@@ -114,9 +116,9 @@ Table~\ref{tab:decision_complexity} summarizes these results.
     \end{tabular}
 \end{table}
 
-The uniform PSPACE tier observed above contrasts with the richer complexity landscape for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016a} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
+The uniform PSPACE tier observed above contrasts with the multi-tier structure for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016a} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
 
-For classical planning, \textsc{PlanSat} is PSPACE-complete, and all three proposed measures reduce to polynomial compositions of reachability queries. Since PSPACE $=$ co-PSPACE, the distinctions between $\text{UPPER}$ and $\text{LOWER}$ and the $D^p$ class for $\text{EXACT}$ all collapse. The polynomial overhead from different measure definitions cannot push the complexity above PSPACE, because PSPACE is closed under polynomial time reductions. The result is a flat complexity landscape: all decision problems for all three measures are PSPACE-complete. This uniformity reflects a general principle: the complexity of inconsistency measures inherits from the base reasoning problem of the target formalism, and when that base problem is already PSPACE-complete, the polynomial differences between measure definitions are subsumed.
+For classical planning, \textsc{PlanSat} is PSPACE-complete, and all three proposed measures reduce to polynomial compositions of reachability queries. The polynomial overhead from different measure definitions cannot push the complexity above PSPACE, because PSPACE is closed under polynomial time reductions. The result is a flat complexity landscape: all decision problems for all three measures are PSPACE-complete. This uniformity reflects a general principle: the complexity of inconsistency measures inherits from the base reasoning problem of the target formalism, and when that base problem is already PSPACE-complete, the polynomial differences between measure definitions are subsumed.
 
 
 The preceding results characterize the inherent complexity of the decision problems. The following propositions complement them with explicit time and space bounds for the enumeration-based implementation.
@@ -157,7 +159,7 @@ Table~\ref{tab:complexity} summarizes these results.
 
 \begin{table}[ht]
     \centering
-    \caption{Computational complexity of proposed measures}
+    \caption{Computational complexity of measures}
     \label{tab:complexity}
     \begin{tabular}{l|l|l}
         \hline
@@ -173,6 +175,6 @@ Table~\ref{tab:complexity} summarizes these results.
 
 The exponential dependence on $|P|$ reflects the inherent complexity of planning. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum. For example, the Locked Door scenario has $|P| = 4$ but $|S_{\text{reach}}| = 1$. Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations. For expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.
 
-The complexity analysis above assumes explicit state space enumeration. \ac{ASP}-based implementations may exhibit different practical performance characteristics due to several factors. First, modern \ac{ASP} solvers employ conflict-driven learning, unit propagation, and backjumping, reducing inferences to nogood propagation and enabling efficient search space traversal~\cite{Gebser2012}. Second, the declarative nature of \ac{ASP} encodings allows solvers to exploit problem structure automatically.
+The complexity analysis above assumes explicit state space enumeration. \ac{ASP}-based implementations may exhibit different practical performance characteristics due to several factors. First, modern \ac{ASP} solvers employ conflict-driven learning, unit propagation, and backjumping, reducing inferences to constraint propagation and enabling efficient search space traversal~\cite{Gebser2012}. Second, the declarative nature of \ac{ASP} encodings allows solvers to exploit problem structure automatically.
 
 Consequently, the theoretical worst-case bounds may significantly overestimate practical computation times. The empirical evaluation (Chapter~\ref{sec:evaluation}) will assess actual scalability on benchmark problems, providing complementary evidence to the theoretical complexity analysis. Kuhlmann et al.~\cite{Kuhlmann2025} demonstrate that \ac{ASP}-based implementations significantly outperform both \ac{SAT}-based and naive baseline approaches for computing propositional inconsistency measures, suggesting that similar advantages may apply to the planning-based measures proposed here.
