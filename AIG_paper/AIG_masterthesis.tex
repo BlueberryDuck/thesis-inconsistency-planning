@@ -22,6 +22,19 @@
 \usepackage{tikz}                           % creating graphs and other structures
 \usetikzlibrary{arrows,positioning,fit,backgrounds}
 \usepackage{forest}                         % tree diagrams (taxonomy figure)
+\usepackage{listings}                       % code listings (ASP encoding)
+\lstset{
+    basicstyle=\small\ttfamily,
+    keywordstyle=\bfseries,
+    commentstyle=\itshape\color{gray},
+    frame=single,
+    breaklines=true,
+    captionpos=b,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    xleftmargin=2em,
+    framexleftmargin=1.5em,
+}
 \tikzset{
     %Define standard arrow tip
     >=stealth',

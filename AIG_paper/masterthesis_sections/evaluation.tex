@@ -3,4 +3,32 @@
 
 This chapter evaluates the implemented measures on unsolvable planning benchmarks.
 
-% TODO: Document evaluation methodology and results
+% TODO: Write full evaluation chapter. Key points to cover:
+%
+% PRIMARY DATASET:
+% - IPC 2016 diagnosis domain: 20 unsolvable problems, 0.08-21s each
+% - Shows all three measure categories (prob10: mutex+sequencing, prob16: 8 mutex goals / 28 pairs)
+% - Also: pegsol-row5, bottleneck (mutex+sequencing), cave-diving, document-transfer
+%
+% INTERESTING FINDING:
+% - cave-diving prob01 returns (0,0,0,0,0,0) despite being unsolvable
+% - Unsolvability is outside our three categories (likely resource constraints = Category 3)
+% - Discuss as "correctly undetected" — measures are honest about what they capture
+%
+% PLANNING CONSISTENCY VERIFICATION:
+% - Solvable instances timeout under brave reasoning (state space too large)
+% - Open problem: need smaller solvable instances or alternative verification strategy
+% - Acknowledge this limitation explicitly
+%
+% SCALABILITY:
+% - 5/15 IPC domains work within 60s timeout
+% - Grounding complexity is the bottleneck (lifted plasp output + timestep encoding)
+% - Document which domains timeout and why (energy levels, predicate-typed parameters)
+%
+% STRUCTURE:
+% - 6.1 Evaluation Methodology (datasets, metrics, setup)
+% - 6.2 Correctness Verification (test scenarios, hierarchy properties)
+% - 6.3 Benchmark Results (diagnosis domain, other domains)
+% - 6.4 Case Studies (prob10, prob16, cave-diving)
+% - 6.5 Performance Analysis (timing, scalability)
+% - 6.6 Discussion (coverage, limitations, comparison to related work)

@@ -26,6 +26,17 @@ A rule with an empty head is a \emph{constraint} (denoted $\leftarrow b_1, \ldot
     Consider the program with rules: $a.$ (fact), $b \leftarrow a.$ (conditional), $\leftarrow a, c.$ (constraint). The unique answer set is $\{a, b\}$: the fact establishes $a$, the conditional rule derives $b$ from $a$, and $c$ is not derived so the constraint is not violated.
 \end{example}
 
+\begin{defn}[Brave and Cautious Consequences~\cite{Eiter1995}]
+    \label{defn:brave_cautious}
+    Let $\Pi$ be a logic program with answer sets $\text{AS}(\Pi) = \{S_1, \ldots, S_n\}$. The \emph{brave consequences} and \emph{cautious consequences} of $\Pi$ are defined as:
+    \begin{align*}
+        \text{BRAVE}(\Pi)    & = \bigcup_{S \in \text{AS}(\Pi)} S &  & \text{(atoms true in at least one answer set)} \\
+        \text{CAUTIOUS}(\Pi) & = \bigcap_{S \in \text{AS}(\Pi)} S &  & \text{(atoms true in every answer set)}
+    \end{align*}
+\end{defn}
+
+Modern \ac{ASP} solvers such as Clingo support both modes natively~\cite{Gebser2012}. In a planning context with non-deterministic operator selection, each answer set corresponds to a different execution trace. Brave consequences capture everything achievable under any choice of operators, making brave reasoning the appropriate mode for reachability analysis.
+
 \ac{ASP} provides a natural framework for encoding planning problems. The modern tool plasp~3 by Dimopoulos et al.~\cite{Dimopoulos2019} translates \ac{PDDL} specifications into \ac{ASP} programs where answer sets correspond to valid plans. The system generates rules encoding operator applicability, effect application, and goal satisfaction.
 
 \begin{defn}[Sequential Planning Encoding~\cite{Dimopoulos2019}]
