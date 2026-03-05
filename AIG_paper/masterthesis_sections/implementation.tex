@@ -9,15 +9,15 @@ This chapter presents the \ac{ASP}-based implementation of the adapted inconsist
 The implementation follows a pipeline architecture with three distinct phases, each handled by a dedicated component.
 
 \paragraph{Phase 1: PDDL Translation.}
-The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains that declare action costs (the \texttt{:functions} requirement), a preprocessing step strips cost-related elements, as these are irrelevant to inconsistency measure computation.
+The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains that declare action costs using the \texttt{:functions} requirement, a preprocessing step strips cost-related elements, as these are irrelevant to inconsistency measure computation.
 
 \paragraph{Phase 2: ASP Brave Reasoning.}
 The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation: different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts.
 
 \paragraph{Phase 3: Measure Extraction.}
-A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified precisely by the absence of the corresponding witness atoms: if brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
+A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified by the absence of the corresponding witness atoms: if brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
 
-The implementation is written in Python~3.12 with Clingo~5.6+ as the sole computational dependency. Docker containerization ensures reproducibility.
+The implementation is written in Python~3.12 with Clingo~5.6+ as the sole computational dependency. Docker containerization enables consistent execution regardless of the environment, and an automated test suite ensures correctness and facilitates regression testing during development. The codebase is structured to allow both library usage and batch processing of benchmark domains, with configurable timeouts to handle grounding complexity in larger problems.
 
 \subsection{PDDL Translation}
 \label{sec:pddl_translation}
@@ -26,37 +26,38 @@ The input to the system is a pair of standard \ac{PDDL} files: a domain specific
 
 \subsubsection{Initial Translator}
 
-An initial implementation used the \texttt{pddl} Python library by Favorito~\cite{Favorito2021} to parse \ac{PDDL} files and ground action schemas through typed Cartesian product enumeration. For each action schema, all possible substitutions of typed objects were generated, and for each valid substitution, the grounded operator was emitted as \ac{ASP} facts. This approach was validated on all ten hand-crafted test scenarios from Section~\ref{sec:test_scenarios}, producing correct measure profiles for every case.
+An initial implementation used the \texttt{pddl} Python library by Favorito~\cite{Favorito2021} to parse \ac{PDDL} files and ground action schemas through typed Cartesian product enumeration. For each action schema, all possible substitutions of typed objects were generated, and for each valid substitution, the grounded operator was emitted as \ac{ASP} facts. This approach was validated on all hand-crafted test scenarios from Section~\ref{sec:test_scenarios}, producing correct measure profiles for every case.
 
-However, testing on the IPC~2016 Unsolvability Competition benchmarks by Muise~\cite{Muise2016} revealed two critical limitations. First, the \texttt{pddl} library does not support the \texttt{:constants} declaration used by several IPC domains (notably \textit{bag-gripper} and \textit{cave-diving}), causing translation failures. Second, the naive Cartesian product grounding strategy produces prohibitively large \ac{ASP} programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain, where the \texttt{in-line} predicate constrains which positions can participate in a move, produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the \texttt{in-line} relationship.
+However, testing on the IPC~2016 Unsolvability Competition benchmarks by Muise~\cite{Muise2016} revealed two critical limitations. First, the \texttt{pddl} library does not support the \texttt{:constants} declaration used by several IPC domains, notably \textit{bag-gripper} and \textit{cave-diving}, causing translation failures. Second, the naive Cartesian product grounding strategy produces prohibitively large \ac{ASP} programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain, where the \texttt{in-line} predicate constrains which positions can participate in a move, produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the \texttt{in-line} relationship.
 
 \subsubsection{Adoption of plasp}
 \label{sec:plasp_adoption}
 
-To address these limitations, the implementation was restructured to use \textit{plasp}~3~\cite{Dimopoulos2019} as the \ac{PDDL} translation backend. The \textit{plasp} tool, developed as part of the Potassco project, translates \ac{PDDL} specifications into a lifted \ac{ASP} representation where Clingo handles the grounding process. This offers two advantages over the initial approach: first, \textit{plasp} correctly handles \ac{PDDL} features including \texttt{:constants} and complex type hierarchies; second, Clingo's grounding algorithm exploits the structure of \ac{ASP} rules to avoid materializing impossible parameter combinations.
+To address these limitations, the implementation was restructured to use \textit{plasp}~3~\cite{Dimopoulos2019} for \ac{PDDL} translation. The \textit{plasp} tool, developed as part of the Potassco project, translates \ac{PDDL} specifications into a lifted \ac{ASP} representation where Clingo handles the grounding process. This offers two advantages over the initial approach: first, \textit{plasp} correctly handles \ac{PDDL} features including \texttt{:constants} and complex type hierarchies; second, Clingo's grounding algorithm exploits the structure of \ac{ASP} rules to avoid generating impossible parameter combinations.
 
 The \textit{plasp} output format represents propositions as boolean-valued variables and operators as parameterized actions with compound terms. Table~\ref{tab:plasp_vocabulary} shows the correspondence between the internal representation used by the reachability encoding and the \textit{plasp} output format.
 
 \begin{table}[ht]
-    \centering
-    \caption{Mapping between internal and \textit{plasp} predicates.}
     \label{tab:plasp_vocabulary}
+    \centering
+    \small
     \begin{tabular}{lll}
         \hline
-        \textbf{Concept} & \textbf{Internal format} & \textbf{plasp format}                              \\
+        \textbf{Concept} & \textbf{plasp format}                              & \textbf{Internal format} \\
         \hline
-        Initial state    & \texttt{init(P)}         & \texttt{initialState(V, value(V, true))}           \\
-        Goal             & \texttt{goal(P)}         & \texttt{goal(V, value(V, true))}                   \\
-        Precondition     & \texttt{precond(O, P)}   & \texttt{precondition(A, V, value(V, true))}        \\
-        Add effect       & \texttt{add(O, P)}       & \texttt{postcondition(A, ..., V, value(V, true))}  \\
-        Delete effect    & \texttt{delete(O, P)}    & \texttt{postcondition(A, ..., V, value(V, false))} \\
+        Initial state    & \texttt{initialState(V, value(V,true))}            & \texttt{init(P)}         \\
+        Goal             & \texttt{goal(V, value(V,true))}                    & \texttt{goal(P)}         \\
+        Precondition     & \texttt{precondition(A, V, value(V,true))}         & \texttt{precond(O, P)}   \\
+        Add effect       & \texttt{postcondition(A,\,..., V, value(V,true))}  & \texttt{add(O, P)}       \\
+        Delete effect    & \texttt{postcondition(A,\,..., V, value(V,false))} & \texttt{delete(O, P)}    \\
         \hline
     \end{tabular}
+    \caption{Mapping between internal and \textit{plasp} predicates.}
 \end{table}
 
-A bridge encoding translates between these representations. Since \ac{ASP} distinguishes predicates by both name and arity, \textit{plasp}'s \texttt{goal/2} and the internal \texttt{goal/1} coexist without conflict:
+A bridge encoding translates between these representations. Since \ac{ASP} distinguishes predicates by both name and arity, \textit{plasp}'s \texttt{goal/2} and the internal \texttt{goal/1} coexist without conflict.
 
-\begin{lstlisting}[caption={Bridge encoding mapping plasp vocabulary to internal format.},label={lst:bridge},language=Prolog]
+\begin{lstlisting}[caption={Bridge encoding mapping plasp to internal format.},label={lst:bridge},style=asp]
 init(V) :- initialState(V, value(V, true)).
 goal(V) :- goal(V, value(V, true)).
 precond(A, V) :- precondition(A, V, value(V, true)).
@@ -73,7 +74,7 @@ The following example illustrates the complete translation for a small planning 
     \label{ex:bridge_translation}
     Consider a planning problem with two operators: \texttt{unlock} requires being at the door and the door being locked, then removes the lock; \texttt{enter} requires being at the door and the door \emph{not} being locked, then adds \texttt{in\_room} and removes \texttt{at\_door}. The \textit{plasp} output for this problem is:
 
-    \begin{lstlisting}[caption={Example \textit{plasp} output for a locked-door problem.},label={lst:plasp_example},language=Prolog]
+    \begin{lstlisting}[caption={Example \textit{plasp} output for a locked-door problem.},label={lst:plasp_example},style=asp]
 initialState(at_door, value(at_door, true)).
 initialState(locked, value(locked, true)).
 goal(in_room, value(in_room, true)).
@@ -93,7 +94,7 @@ postcondition(enter, effect(unconditional),
 
     Applying the bridge encoding from Listing~\ref{lst:bridge} yields the following internal representation:
 
-    \begin{lstlisting}[caption={Internal facts derived by the bridge encoding.},label={lst:bridge_result},language=Prolog]
+    \begin{lstlisting}[caption={Internal facts derived by the bridge encoding.},label={lst:bridge_result},style=asp]
 % From initialState/2 with value(..., true)
 init(at_door).   init(locked).
 % From goal/2 with value(..., true)
@@ -127,7 +128,7 @@ The core of the implementation is a pair of \ac{ASP} encodings that derive propo
 
 The planning encoding derives the proposition and operator sets from the input facts:
 
-\begin{lstlisting}[caption={Proposition and operator derivation.},label={lst:planning},language=Prolog]
+\begin{lstlisting}[caption={Proposition and operator derivation.},label={lst:planning},style=asp]
 prop(P) :- init(P).
 prop(P) :- add(_, P).
 prop(P) :- delete(_, P).
@@ -146,7 +147,7 @@ operator(O) :- add(O, _).
 
 The main computation performs horizon-bounded state-space exploration. The encoding models time-indexed state evolution where \texttt{holds(P, T)} indicates that proposition $P$ is true at time step $T$:
 
-\begin{lstlisting}[caption={State-space exploration encoding.},label={lst:exploration},language=Prolog]
+\begin{lstlisting}[caption={State-space exploration encoding.},label={lst:exploration},style=asp]
 time(0..horizon).
 holds(P, 0) :- init(P).
 
@@ -178,7 +179,7 @@ The choice of brave over cautious reasoning is deliberate. Brave reasoning compu
 
 Three categories of witness atoms are collected:
 
-\begin{lstlisting}[caption={Witness atoms for brave reasoning.},label={lst:witnesses},language=Prolog]
+\begin{lstlisting}[caption={Witness atoms for brave reasoning.},label={lst:witnesses},style=asp]
 % True reachability: P appears in some reachable state
 true_reachable(P) :- holds(P, T), prop(P).
 
