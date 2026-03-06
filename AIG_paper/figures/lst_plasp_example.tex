@@ -1,0 +1,17 @@
+\begin{lstlisting}[caption={Example \textit{plasp} output for a locked-door problem.},label={lst:plasp_example},style=asp]
+initialState(at_door, value(at_door, true)).
+initialState(locked, value(locked, true)).
+goal(in_room, value(in_room, true)).
+
+precondition(unlock, at_door, value(at_door, true)).
+precondition(unlock, locked, value(locked, true)).
+postcondition(unlock, effect(unconditional),
+              locked, value(locked, false)).
+
+precondition(enter, at_door, value(at_door, true)).
+precondition(enter, locked, value(locked, false)).
+postcondition(enter, effect(unconditional),
+              in_room, value(in_room, true)).
+postcondition(enter, effect(unconditional),
+              at_door, value(at_door, false)).
+\end{lstlisting}

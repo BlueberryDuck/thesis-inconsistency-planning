@@ -1,0 +1,20 @@
+\begin{lstlisting}[caption={State-space exploration encoding.},label={lst:exploration},style=asp]
+time(0..horizon).
+holds(P, 0) :- init(P).
+
+% Operator applicability with positive and negative preconditions
+neg_precond_violated(O, T) :-
+    neg_precond(O, P), holds(P, T), time(T).
+applicable(O, T) :- operator(O), time(T), T < horizon,
+    not neg_precond_violated(O, T),
+    holds(P, T) : precond(O, P).
+
+% Non-deterministic operator selection
+{ apply(O, T) : applicable(O, T) } 1 :- time(T), T < horizon.
+
+% State transition with frame axiom
+deleted(P, T) :- apply(O, T), delete(O, P).
+holds(P, T+1) :- apply(O, T), add(O, P).
+holds(P, T+1) :- holds(P, T), time(T), T < horizon,
+    not deleted(P, T).
+\end{lstlisting}

@@ -1,0 +1,15 @@
+\begin{lstlisting}[caption={Internal facts derived by the bridge encoding.},label={lst:bridge_result},style=asp]
+% From initialState/2 with value(..., true)
+init(at_door).   init(locked).
+% From goal/2 with value(..., true)
+goal(in_room).
+% From precondition/3 with value(..., true)
+precond(unlock, at_door).   precond(unlock, locked).
+precond(enter, at_door).
+% From precondition/3 with value(..., false)
+neg_precond(enter, locked).
+% From postcondition/4 with value(..., true)
+add(enter, in_room).
+% From postcondition/4 with value(..., false)
+delete(unlock, locked).   delete(enter, at_door).
+\end{lstlisting}

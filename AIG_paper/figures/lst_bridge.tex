@@ -1,0 +1,10 @@
+\begin{lstlisting}[caption={Bridge encoding mapping plasp to internal format.},label={lst:bridge},style=asp]
+init(V) :- initialState(V, value(V, true)).
+goal(V) :- goal(V, value(V, true)).
+precond(A, V) :- precondition(A, V, value(V, true)).
+neg_precond(A, V) :- precondition(A, V, value(V, false)).
+add(A, V) :- postcondition(A, effect(unconditional),
+                            V, value(V, true)).
+delete(A, V) :- postcondition(A, effect(unconditional),
+                               V, value(V, false)).
+\end{lstlisting}

@@ -1,0 +1,14 @@
+\begin{lstlisting}[caption={Proposition and operator derivation.},label={lst:planning},style=asp]
+prop(P) :- init(P).
+prop(P) :- add(_, P).
+prop(P) :- delete(_, P).
+prop(P) :- precond(_, P).
+prop(P) :- goal(P).
+
+operator(O) :- precond(O, _).
+operator(O) :- add(O, _).
+
+#show goal/1.
+#show prop/1.
+#show operator/1.
+\end{lstlisting}

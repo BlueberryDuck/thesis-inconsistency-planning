@@ -1,0 +1,12 @@
+\begin{lstlisting}[caption={Witness atoms for brave reasoning.},label={lst:witnesses},style=asp]
+% True reachability: P appears in some reachable state
+true_reachable(P) :- holds(P, T), prop(P).
+
+% Coexistence witness: G1 and G2 hold simultaneously
+coexist_witness(G1, G2) :- goal(G1), goal(G2), G1 < G2,
+    holds(G1, T), holds(G2, T), time(T).
+
+% Sequencing witness: G2 is achievable after G1
+g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
+    holds(G1, T1), holds(G2, T2), T2 >= T1.
+\end{lstlisting}
