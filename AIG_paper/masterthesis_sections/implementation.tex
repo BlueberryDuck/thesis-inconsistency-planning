@@ -144,7 +144,9 @@ The implementation provides both a library API and a command-line interface. The
 
 A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs using IPC naming conventions (\texttt{domain.pddl} with \texttt{prob*.pddl}, or numbered \texttt{dom01.pddl} with \texttt{prob01.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-problem timing, and error reporting.
 
-Both the library and batch runner accept a configurable timeout parameter (in seconds) that is forwarded to Clingo's \texttt{--time-limit} option. When the time limit is exceeded, the solver terminates gracefully and the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
+The batch runner and command-line interface accept a configurable timeout parameter (in seconds). When the time limit is exceeded, the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
+
+Implementing reliable timeouts for \ac{ASP} solving proved non-trivial. Clingo's \texttt{--time-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
 
 For reproducibility, the implementation is containerized with Docker, bundling Python~3.12, Clingo~5.6, and \textit{plasp}~3 in a consistent environment. The Dockerfile and build instructions are included in the repository.
 
