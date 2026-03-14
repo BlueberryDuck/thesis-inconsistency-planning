@@ -19,7 +19,14 @@
         \draw[->, thick] (unlocked) -- node[above, font=\footnotesize\itshape] {enter} (inroom);
         \draw[->, thick] (atdoor) -- node[left, font=\footnotesize\itshape] {enter} (inroom);
 
+        % Legend
+        \node[initial, minimum size=0.4cm] (leg1) at (0,-4.5) {};
+        \node[right=2pt, font=\footnotesize] at (leg1.east) {initial state};
+        \node[goal, minimum size=0.4cm] (leg2) at (2.5,-4.5) {};
+        \node[right=2pt, font=\footnotesize] at (leg2.east) {goal};
+        \node[missing, minimum size=0.4cm] (leg3) at (4.2,-4.5) {};
+        \node[right=2pt, font=\footnotesize] at (leg3.east) {no producer};
     \end{tikzpicture}
-    \caption[Precondition-effect dependency graph for the Locked Door scenario.]{Precondition-effect dependency graph for the Locked Door scenario. Dashed nodes have no producer; double-bordered nodes are in initial state; shaded nodes in goal state.}
+    \caption{Precondition-effect dependency graph for the Locked Door scenario.}
     \label{fig:dependency_graph}
 \end{figure}

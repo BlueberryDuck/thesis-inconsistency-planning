@@ -102,8 +102,6 @@ Table~\ref{tab:decision_complexity} summarizes these results.
 
 \begin{table}[ht]
     \centering
-    \caption{Complexity of decision and function problems of measures}
-    \label{tab:decision_complexity}
     \begin{tabular}{l|l|l|l}
         \hline
         Problem        & $\mathcal{I}_{\text{UR}}$ & $\mathcal{I}_{\text{MX}}$ & $\mathcal{I}_{\text{GS}}$ \\
@@ -114,6 +112,8 @@ Table~\ref{tab:decision_complexity} summarizes these results.
         $\text{VALUE}$ & in FPSPACE                & in FPSPACE                & in FPSPACE                \\
         \hline
     \end{tabular}
+    \caption{Complexity of decision and function problems of measures.}
+    \label{tab:decision_complexity}
 \end{table}
 
 The uniform PSPACE tier observed above contrasts with the multi-tier structure for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016a} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
@@ -159,8 +159,6 @@ Table~\ref{tab:complexity} summarizes these results.
 
 \begin{table}[ht]
     \centering
-    \caption{Computational complexity of measures}
-    \label{tab:complexity}
     \begin{tabular}{l|l|l}
         \hline
         Measure                                              & Time Complexity                                 & Space Complexity        \\
@@ -171,6 +169,8 @@ Table~\ref{tab:complexity} summarizes these results.
         $\mathcal{I}_{\text{GS}}$ (given $S_{\text{reach}}$) & $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ & $O(|S_{\text{reach}}|)$ \\
         \hline
     \end{tabular}
+    \caption{Computational complexity of measures.}
+    \label{tab:complexity}
 \end{table}
 
 The exponential dependence on $|P|$ reflects the inherent complexity of planning. However, real planning problems often have much smaller reachable state spaces than the theoretical maximum. For example, the Locked Door scenario has $|P| = 4$ but $|S_{\text{reach}}| = 1$. Additionally, all three measures share the $S_{\text{reach}}$ computation, amortizing this cost when computing multiple profiles. The Goal Sequencing Conflict Profile has higher complexity than the other measures due to requiring multiple local reachability computations. For expensive problems, the Unreachability and Mutex Profiles can be computed independently as partial diagnostics.

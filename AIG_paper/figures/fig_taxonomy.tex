@@ -1,30 +1,30 @@
 \begin{figure}[ht]
-    \centering
-    \begin{forest}
-        for tree={
-        rectangle, draw, rounded corners, thick,
-        align=center, font=\small,
-        minimum height=0.7cm,
-        inner sep=5pt,
-        l sep=10mm, s sep=3mm,
-        edge={thick},
-        },
-        inscope/.style={fill=black!16},
-        [Unsolvable Planning\\Problems, minimum width=3.5cm, calign=child, calign child=2
-                    [{Category 1:\\Goal Specification\\Conflicts}, inscope, tier=category
-                    ]
-                    [{Category 2:\\Dependency Graph\\Structure}, inscope, tier=category, calign=child, calign child=2
-                            [{2a: Missing\\producers}, inscope, thin
-                            ]
-                            [{2b: Circular\\dependencies}, thin
-                            ]
-                            [{2c: Action-based\\exclusions}, inscope, thin
-                            ]
-                    ]
-                    [{Category 3:\\Resource\\Constraints}, tier=category
-                    ]
-            ]
-    \end{forest}
-    \caption[Structural taxonomy for unsolvable planning problems.]{Structural taxonomy for unsolvable planning problems. Shaded nodes indicate categories addressed in this thesis.}
-    \label{fig:taxonomy}
+        \centering
+        \begin{forest}
+                for tree={
+                rectangle, draw, rounded corners, thick,
+                align=center, font=\small,
+                minimum height=0.7cm,
+                inner sep=5pt,
+                l sep=10mm, s sep=3mm,
+                edge={thick},
+                },
+                inscope/.style={fill=black!16},
+                [Unsolvable Planning\\Problems, minimum width=3.5cm, calign=child, calign child=2
+                                        [{Category 1:\\Goal Specification\\Conflicts}, inscope, tier=category
+                                        ]
+                                        [{Category 2:\\Dependency Graph\\Structure}, inscope, tier=category, calign=child, calign child=2
+                                                        [{2a: Missing\\producers}, inscope, thin
+                                                        ]
+                                                        [{2b: Circular\\dependencies}, thin
+                                                        ]
+                                                        [{2c: Action-based\\exclusions}, inscope, thin
+                                                        ]
+                                        ]
+                                        [{Category 3:\\Resource\\Constraints}, tier=category
+                                        ]
+                        ]
+        \end{forest}
+        \caption{Structural taxonomy for unsolvable planning problems.}
+        \label{fig:taxonomy}
 \end{figure}

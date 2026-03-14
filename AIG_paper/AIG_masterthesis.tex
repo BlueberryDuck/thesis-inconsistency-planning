@@ -23,6 +23,7 @@
 \usetikzlibrary{arrows,positioning,fit,backgrounds}
 \usepackage{forest}                         % tree diagrams (taxonomy figure)
 \usepackage{listings}                       % code listings (ASP encoding)
+\usepackage{pgfplots}
 \lstset{
     basicstyle=\small\ttfamily,
     keywordstyle=\bfseries,
@@ -45,6 +46,7 @@
     %Define style for argument
     args/.style={circle, minimum size=0.9cm,draw=black, thick,fill=white},
 }
+\pgfplotsset{compat=1.18}
 
 % === set information ===
 % if meta.tex does not exist, use default values

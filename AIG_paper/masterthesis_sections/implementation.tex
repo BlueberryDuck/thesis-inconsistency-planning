@@ -38,7 +38,6 @@ To address these limitations, the implementation was restructured to use \textit
 The \textit{plasp} output format represents propositions as boolean-valued variables and operators as parameterized actions with compound terms. Table~\ref{tab:plasp_vocabulary} shows the correspondence between the internal representation used by the reachability encoding and the \textit{plasp} output format.
 
 \begin{table}[ht]
-    \label{tab:plasp_vocabulary}
     \centering
     \small
     \begin{tabular}{lll}
@@ -53,6 +52,7 @@ The \textit{plasp} output format represents propositions as boolean-valued varia
         \hline
     \end{tabular}
     \caption{Mapping between internal and \textit{plasp} predicates.}
+    \label{tab:plasp_vocabulary}
 \end{table}
 
 A bridge encoding translates between these representations. Since \ac{ASP} distinguishes predicates by both name and arity, \textit{plasp}'s \texttt{goal/2} and the internal \texttt{goal/1} coexist without conflict.
@@ -160,8 +160,6 @@ Eleven test scenarios are tested against their theoretically derived expected pr
 
 \begin{table}[ht]
     \centering
-    \caption{Computed profiles for the test scenarios.}
-    \label{tab:validation_results}
     \begin{tabular}{llcc}
         \hline
         \textbf{Category} & \textbf{Scenario}     & \textbf{Expected} & \textbf{Computed} \\
@@ -179,6 +177,8 @@ Eleven test scenarios are tested against their theoretically derived expected pr
                           & Negative Precondition & $(1,1,0,0,0,0)$   & $(1,1,0,0,0,0)$   \\
         \hline
     \end{tabular}
+    \caption{Computed profiles for the test scenarios.}
+    \label{tab:validation_results}
 \end{table}
 
 \paragraph{Hierarchy Tests.}

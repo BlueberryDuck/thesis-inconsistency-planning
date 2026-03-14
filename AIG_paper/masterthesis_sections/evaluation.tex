@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-This chapter evaluates the implemented measures on unsolvable planning benchmarks from the IPC~2016 Unsolvability Competition. The evaluation addresses Research Question~3: whether the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems. Section~\ref{sec:eval_methodology} describes the experimental setup and dataset. Section~\ref{sec:eval_results} presents the benchmark results across six compatible domains. Section~\ref{sec:eval_case_studies} examines individual problems that illustrate the diagnostic capabilities and limitations of the measures. Section~\ref{sec:eval_horizon} analyzes the sensitivity of results to the horizon parameter, revealing a precision-recall tradeoff that constitutes a key methodological finding. Section~\ref{sec:eval_performance} discusses computational performance and scalability. Section~\ref{sec:eval_discussion} synthesizes the findings and addresses limitations.
+This chapter evaluates the implemented measures on unsolvable planning benchmarks from the IPC~2016 Unsolvability Competition. The evaluation addresses Research Question~3: whether the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems. Section~\ref{sec:eval_methodology} describes the experimental setup and dataset. Section~\ref{sec:eval_results} presents the benchmark results across seven compatible domains. Section~\ref{sec:eval_case_studies} examines individual problems that illustrate the diagnostic capabilities and limitations of the measures. Section~\ref{sec:eval_horizon} analyzes the sensitivity of results to the horizon parameter, revealing a precision-recall tradeoff that constitutes a key methodological finding. Section~\ref{sec:eval_performance} discusses computational performance and scalability. Section~\ref{sec:eval_discussion} synthesizes the findings and addresses limitations.
 
 \subsection{Evaluation Methodology}
 \label{sec:eval_methodology}
@@ -14,7 +14,6 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
 
 \begin{table}[ht]
     \centering
-    \label{tab:domain_compatibility}
     \begin{tabular}{llrl}
         \hline
         \textbf{Domain}     & \textbf{Status} & \textbf{Problems} & \textbf{Reason for Incompatibility}              \\
@@ -39,47 +38,47 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
         \hline
     \end{tabular}
     \caption{Domain compatibility with the implementation pipeline. ${}^*$From the Eriksson benchmark collection~\cite{Eriksson2019}; all other domains from IPC~2016~\cite{Muise2016}.}
+    \label{tab:domain_compatibility}
 \end{table}
 
 \subsubsection{Experimental Setup}
 
-All experiments run inside a Docker container with Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. The horizon parameter is set to $h = 20$ for all runs, and each problem has a timeout of 120 seconds. The batch runner (Section~\ref{sec:tooling}) processes all domain/problem pairs in each compatible domain, recording the full diagnostic profile, category classification, problem size metadata (goal, proposition, and operator counts), computation time, and status (OK, TIMEOUT, or ERROR) for each instance.
+All experiments run inside a Docker container with Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. The horizon parameter is set to $h = 20$ for all primary runs, and each problem has a timeout of 120 seconds. The batch runner (Section~\ref{sec:tooling}) processes all domain/problem pairs in each compatible domain, recording the full diagnostic profile, category classification, problem size metadata (goal, proposition, and operator counts), computation time, and status (OK, TIMEOUT, or ERROR) for each instance. Additional runs at $h = 10$ and $h = 30$ are performed on selected instances for the horizon sensitivity analysis in Section~\ref{sec:eval_horizon}.
 
 \subsection{Benchmark Results}
 \label{sec:eval_results}
 
 \subsubsection{Overall Coverage}
 
-Of the 158 unsolvable problems across the seven compatible domains, 67 (42\%) complete within the 120-second timeout. Table~\ref{tab:coverage} shows the per-domain breakdown. Coverage varies substantially: \textit{diagnosis} achieves 90\% coverage, while \textit{chessboard-pebbling} covers only 13\%. The primary limiting factor is grounding complexity, as discussed in Section~\ref{sec:eval_performance}. Two solvable instances also complete successfully: \textit{cave-diving}~\texttt{satprob01} and \textit{document-transfer}~\texttt{satprob01}, both correctly classified as consistent.
+Of the 158 unsolvable problems across the seven compatible domains, 68 (43\%) complete within the 120-second timeout. Table~\ref{tab:coverage} shows the per-domain breakdown. Coverage varies substantially: \textit{diagnosis} achieves 90\% coverage, while \textit{chessboard-pebbling} covers only 13\%. The primary limiting factor is grounding complexity, as discussed in Section~\ref{sec:eval_performance}. Two solvable instances also complete successfully: \textit{cave-diving}~\texttt{satprob01} and \textit{document-transfer}~\texttt{satprob01}, both correctly classified as consistent.
 
 \begin{table}[ht]
     \centering
-    \label{tab:coverage}
     \begin{tabular}{lrrrl}
         \hline
         \textbf{Domain}     & \textbf{Total} & \textbf{OK} & \textbf{Timeout} & \textbf{Coverage} \\
         \hline
         diagnosis           & 20             & 18          & 2                & 90\%              \\
         bottleneck          & 25             & 12          & 13               & 48\%              \\
-        cave-diving         & 25             & 8           & 17               & 32\%              \\
+        cave-diving         & 25             & 9           & 16               & 36\%              \\
         document-transfer   & 20             & 3           & 17               & 15\%              \\
         pegsol-row5         & 15             & 3           & 12               & 20\%              \\
         chessboard-pebbling & 23             & 3           & 20               & 13\%              \\
         3unsat              & 30             & 20          & 10               & 67\%              \\
         \hline
-        \textbf{Total}      & \textbf{158}   & \textbf{67} & \textbf{91}      & \textbf{42\%}     \\
+        \textbf{Total}      & \textbf{158}   & \textbf{68} & \textbf{90}      & \textbf{43\%}     \\
         \hline
     \end{tabular}
     \caption{Per-domain coverage at $h = 20$ with 120-second timeout.}
+    \label{tab:coverage}
 \end{table}
 
 \subsubsection{Category Distribution}
 
-Table~\ref{tab:category_distribution} shows the distribution of category classifications among the 67 successfully computed unsolvable instances. Category~2a (unreachability) is the most common classification, appearing in 25 instances across four domains. Category~2c-sequencing appears in 13 instances across two domains. No instance exhibits a pure 2c-mutex classification (mutex without sequencing). Twenty-nine instances are classified as consistent: 9 from the IPC~2016 domains, where Section~\ref{sec:eval_horizon} shows these are horizon-dependent, and 20 from \textit{3unsat}, where the consistent classification is horizon-independent (Section~\ref{sec:3unsat_case_study}).
+Table~\ref{tab:category_distribution} shows the distribution of category classifications among the 68 successfully computed unsolvable instances. Category~2a (unreachability) is the most common classification, appearing in 25 instances across four domains. Category~2c-sequencing appears in 13 instances across two domains. No instance exhibits a pure 2c-mutex classification (mutex without sequencing). Thirty instances are classified as consistent: 10 from the IPC~2016 domains, where Section~\ref{sec:eval_horizon} shows these are horizon-dependent, and 20 from \textit{3unsat}, where the consistent classification is horizon-independent (Section~\ref{sec:3unsat_case_study}).
 
 \begin{table}[ht]
     \centering
-    \label{tab:category_distribution}
     \begin{tabular}{lrl}
         \hline
         \textbf{Category} & \textbf{Count} & \textbf{Domains}                                                        \\
@@ -87,15 +86,16 @@ Table~\ref{tab:category_distribution} shows the distribution of category classif
         2a                & 25             & diagnosis (18), cave-diving (1), document-transfer (3), pegsol-row5 (3) \\
         2c-sequencing     & 13             & bottleneck (10), chessboard-pebbling (3)                                \\
         2c-mutex          & 0              &                                                                         \\
-        consistent        & 29             & 3unsat (20), cave-diving (7), bottleneck (2)                            \\
+        consistent        & 30             & 3unsat (20), cave-diving (8), bottleneck (2)                            \\
         \hline
     \end{tabular}
-    \caption{Category distribution among 67 successfully computed unsolvable instances.}
+    \caption{Category distribution among 68 successfully computed unsolvable instances.}
+    \label{tab:category_distribution}
 \end{table}
 
 The absence of pure 2c-mutex classifications is notable. Every instance with $\mathcal{I}^{\text{scope}}_{\text{MX}} > 0$ also has $\mathcal{I}^{\text{scope}}_{\text{GS}} > 0$, with $\mathcal{I}^{\text{scope}}_{\text{GS}} \geq \mathcal{I}^{\text{scope}}_{\text{MX}}$ in all cases. This is consistent with the theoretical relationship from Proposition~\ref{prop:measure_relationships}, which establishes that sequencing conflicts imply mutex. While the benchmark data does not contain a pure mutex case, the unit test scenarios in Section~\ref{sec:validation} confirm that such cases are correctly handled: the \textit{Light Switch} scenario produces $(0,0,2,1,0,0)$, exhibiting mutex without sequencing.
 
-The 29 consistent classifications warrant separate analysis. For the 9 IPC~2016 instances (cave-diving and bottleneck), the horizon sensitivity analysis in Section~\ref{sec:eval_horizon} shows that conflicts are detectable at shorter horizons, making these horizon-dependent results. For the 20 \textit{3unsat} instances, the consistent classification is horizon-independent, as discussed in Section~\ref{sec:3unsat_case_study}.
+The 30 consistent classifications warrant separate analysis. For the 10 IPC~2016 instances (cave-diving and bottleneck), the horizon sensitivity analysis in Section~\ref{sec:eval_horizon} shows that a shorter horizon produces spurious conflict detections on these instances, but the same spurious detections also appear on a known solvable instance. For the 20 \textit{3unsat} instances, the consistent classification is horizon-independent, as discussed in Section~\ref{sec:3unsat_case_study}.
 
 \subsubsection{Diagnosis Domain}
 
@@ -103,7 +103,6 @@ The \textit{diagnosis} domain provides the richest results, with the highest cov
 
 \begin{table}[ht]
     \centering
-    \label{tab:diagnosis_results}
     \small
     \begin{tabular}{lrrr rr rr rr r}
         \hline
@@ -136,17 +135,48 @@ The \textit{diagnosis} domain provides the richest results, with the highest cov
         \hline
     \end{tabular}
     \caption{Diagnostic profiles for the \textit{diagnosis} domain ($h = 20$, timeout 120s).}
+    \label{tab:diagnosis_results}
 \end{table}
 
 All 18 successfully computed instances are classified as Category~2a, indicating that unreachable goals are present in every case. Unreachability is the dominant source of inconsistency: $\mathcal{I}^{\text{scope}}_{\text{UR}}$ ranges from 1 (prob06) to 49 (prob05), representing between 14\% and 88\% of goals. Among the 18 instances, only prob10 and prob16 exhibit non-zero mutex and sequencing measures, making them the structurally richest problems in the benchmark suite. The scope-structure bounds from Proposition~\ref{prop:scope_structure_bounds} hold across all instances; for example, prob16 has $\mathcal{I}^{\text{struct}}_{\text{MX}} = 28 = \binom{8}{2}$, achieving the maximum for 8 mutex goals, indicating that every pair of mutex goals is in conflict with every other.
 
 \subsubsection{Other Domains}
 
-\paragraph{Bottleneck.} Twelve of 25 instances complete, all exhibiting zero unreachability ($\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$). Ten are classified as 2c-sequencing and two as consistent. The conflict counts decrease as the grid grows: $\mathcal{I}^{\text{scope}}_{\text{MX}}$ drops from 4 (prob01, 4 goals) to 2 (prob10, 6 goals), before reaching 0 in prob11 and prob12. This pattern reflects the interaction between grid size and horizon: larger grids provide more delete-relaxed paths for goals to coexist, resolving apparent conflicts. Section~\ref{sec:eval_horizon} confirms that the two consistent instances exhibit conflicts at a shorter horizon.
+\paragraph{Bottleneck.} Twelve of 25 instances complete, all exhibiting zero unreachability ($\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$). Ten are classified as 2c-sequencing and two as consistent. Table~\ref{tab:bottleneck_results} shows the full results. The instances are grouped by grid dimension, with 4, 5, or 6 goals respectively. Within each group, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ decreases from the full goal count to 2 and then to 0 as the bottleneck position shifts: for the 4-goal group, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ drops from 4 (prob01) to 2 (prob03); for the 5-goal group, from 5 (prob04) to 2 (prob07); for the 6-goal group, from 6 (prob08) to 0 (prob11, prob12). The two consistent instances (prob11, prob12) have no genuine pairwise structural conflicts at $h = 20$. Section~\ref{sec:eval_horizon} shows that a shorter horizon of $h = 10$ produces spurious conflict detections on these instances.
 
-\paragraph{Cave-diving.} Eight of 25 unsolvable instances complete, of which seven are classified as consistent and one (prob05) as Category~2a with a single unreachable goal. The dominance of consistent classifications is striking for a domain of unsolvable problems. Section~\ref{sec:eval_horizon} demonstrates that these classifications are horizon-dependent: all seven instances exhibit sequencing conflicts at $h = 10$.
+\begin{table}[ht]
+    \centering
+    \small
+    \begin{tabular}{lrrr rr rr rr r}
+        \hline
+        \textbf{Problem} & $|G|$                       & $|P|$                       & $|O|$
+                         & $\mathcal{I}^s_{\text{MX}}$ & $\mathcal{I}^t_{\text{MX}}$
+                         & $\mathcal{I}^s_{\text{GS}}$ & $\mathcal{I}^t_{\text{GS}}$
+                         & \textbf{Cat.}               & \textbf{Time}                                                             \\
+        \hline
+        prob01           & 4                           & 629                         & 4{,}913  & 4 & 6  & 4 & 12 & 2c-seq & 2.2s  \\
+        prob02           & 4                           & 702                         & 5{,}832  & 3 & 3  & 3 & 6  & 2c-seq & 2.4s  \\
+        prob03           & 4                           & 779                         & 6{,}859  & 2 & 1  & 2 & 2  & 2c-seq & 2.9s  \\
+        \hline
+        prob04           & 5                           & 1{,}430                     & 17{,}576 & 5 & 10 & 5 & 20 & 2c-seq & 10.5s \\
+        prob05           & 5                           & 1{,}539                     & 19{,}683 & 4 & 6  & 4 & 12 & 2c-seq & 11.0s \\
+        prob06           & 5                           & 1{,}652                     & 21{,}952 & 3 & 3  & 3 & 6  & 2c-seq & 11.8s \\
+        prob07           & 5                           & 1{,}769                     & 24{,}389 & 2 & 1  & 2 & 2  & 2c-seq & 14.9s \\
+        \hline
+        prob08           & 6                           & 2{,}849                     & 50{,}653 & 6 & 15 & 6 & 30 & 2c-seq & 32.7s \\
+        prob09           & 6                           & 3{,}002                     & 54{,}872 & 4 & 4  & 4 & 8  & 2c-seq & 45.9s \\
+        prob10           & 6                           & 3{,}159                     & 59{,}319 & 2 & 1  & 2 & 2  & 2c-seq & 50.9s \\
+        prob11           & 6                           & 3{,}320                     & 64{,}000 & 0 & 0  & 0 & 0  & cons.  & 61.8s \\
+        prob12           & 6                           & 3{,}485                     & 68{,}921 & 0 & 0  & 0 & 0  & cons.  & 68.9s \\
+        \hline
+    \end{tabular}
+    \caption{Diagnostic profiles for the \textit{bottleneck} domain ($h = 20$, $\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$ throughout).}
+    \label{tab:bottleneck_results}
+\end{table}
 
-\paragraph{Document-transfer.} Only 3 of 20 unsolvable instances complete due to large grounding sizes. All three are classified as Category~2a with heavy unreachability: prob01 and prob03 have 19 out of 19 goals unreachable, indicating that no goal proposition is reachable in these instances.
+\paragraph{Cave-diving.} Nine of 25 unsolvable instances complete, of which eight are classified as consistent and one (prob05) as Category~2a with a single unreachable goal. The consistent classifications indicate that no pairwise structural conflicts exist among the goals at $h = 20$. The unsolvability of these instances arises from properties outside the scope of pairwise analysis. Section~\ref{sec:eval_horizon} shows that a shorter horizon of $h = 10$ produces spurious conflict detections on these instances, but the same spurious detections also appear on the solvable \texttt{satprob01}, confirming that they are artifacts of insufficient exploration depth.
+
+\paragraph{Document-transfer.} Only 3 of 20 unsolvable instances complete due to large grounding sizes. All three are classified as Category~2a with heavy unreachability: prob01 and prob03 have 19 out of 19 goals unreachable, indicating that no goal proposition is reachable in these instances, while prob06 has 1 of 4 goals unreachable. The domain also contains 9 instances with unknown solvability status (\texttt{unknownprob} files), all of which exceed the timeout.
 
 \paragraph{Pegsol-row5.} Three of 15 instances complete, all classified as Category~2a with exactly one unreachable goal. The domain exhibits extreme exponential growth in problem size: prob01 has 228 propositions and 216 operators, prob02 has 2{,}772 and 2{,}744, and prob03 has 13{,}872 and 13{,}824, creating a sharp computational wall after prob03.
 
@@ -167,11 +197,11 @@ Instance prob16 exhibits the densest conflict structure in the benchmark suite: 
 
 \subsubsection{Chessboard-pebbling: Structural Invariance}
 
-The three solvable instances of \textit{chessboard-pebbling} (prob03, prob04, prob05) produce identical conflict profiles despite substantially different problem sizes. All three have 3 goals, all 3 participate in mutex and sequencing conflicts, and the structure counts are constant ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 2$, $\mathcal{I}^{\text{struct}}_{\text{GS}} = 2$). The grid sizes grow from 1{,}300 to 4{,}900 propositions and from 15{,}625 to 117{,}649 operators, yet the conflict structure remains invariant. This confirms that the measures capture structural properties of the goal specification rather than artifacts of problem scale.
+The three successfully computed instances of \textit{chessboard-pebbling} (prob03, prob04, prob05) produce identical conflict profiles despite substantially different problem sizes. All three have 3 goals, all 3 participate in mutex and sequencing conflicts, and the structure counts are constant ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 2$, $\mathcal{I}^{\text{struct}}_{\text{GS}} = 2$). The grid sizes grow from 1{,}300 to 4{,}900 propositions and from 15{,}625 to 117{,}649 operators, yet the conflict structure remains invariant. This confirms that the measures capture structural properties of the goal specification rather than artifacts of problem scale.
 
 \subsubsection{Cave-diving prob05: Unreachability in a Resource Domain}
 
-Among the eight completed \textit{cave-diving} instances, prob05 is the only one classified as Category~2a, with profile $(1, 49, 0, 0, 0, 0)$. One of the three goals is unreachable, in contrast to the other seven completed instances where all goals are reachable at $h = 20$. This suggests that prob05 contains a genuinely missing producer (Category~2a), while the other instances have different structural properties that the measures interact with differently depending on the horizon, as analyzed in Section~\ref{sec:eval_horizon}.
+Among the nine completed \textit{cave-diving} instances, prob05 is the only one classified as Category~2a, with profile $(1, 49, 0, 0, 0, 0)$. One of the three goals is unreachable, in contrast to the other eight completed instances where all goals are reachable at $h = 20$. This suggests that prob05 contains a genuinely missing producer (Category~2a), while the other instances have no detectable pairwise structural conflicts, placing their unsolvability outside the scope of the proposed measures.
 
 \subsubsection{3unsat: Genuine Measure Blind Spot}
 \label{sec:3unsat_case_study}
@@ -189,7 +219,7 @@ The horizon parameter $h$ bounds the number of time steps explored during brave 
 
 \subsubsection{Mechanism}
 
-Under delete-relaxed state-space exploration, longer horizons allow more propositions to become reachable through longer operator chains. Since delete effects are still applied in the encoding (the relaxation applies to reachability derivation, not state transitions), the interaction between horizon length and conflict detection is non-trivial. Three effects are observed:
+Under the horizon-bounded brave reasoning approach, longer horizons allow more propositions to become reachable through longer operator chains. Since the encoding explores delete-relaxed reachability up to the given horizon bound, the interaction between horizon length and conflict detection is non-trivial. Three effects are observed:
 
 \begin{enumerate}
     \item \textbf{Monotonically decreasing unreachability}: As $h$ increases, more propositions become reachable through longer execution traces, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ decreases monotonically.
@@ -199,11 +229,10 @@ Under delete-relaxed state-space exploration, longer horizons allow more proposi
 
 \subsubsection{Evidence: Diagnosis prob10}
 
-Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10 at three horizon values. At $h = 10$, 19 of 24 goals are unreachable and no mutex or sequencing conflicts are detected (the potentially conflicting goals are not yet reachable). At $h = 20$, five additional goals become reachable, two of which are in mutex and sequencing conflict. At $h = 30$, four more goals become reachable and the mutex and sequencing conflicts disappear, as longer traces provide witnesses for goal co-existence.
+Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10 at three horizon values. At $h = 10$, 19 of 24 goals are unreachable and no mutex or sequencing conflicts are detected (the potentially conflicting goals are not yet reachable). At $h = 20$, five additional goals become reachable, two of which are in mutex and sequencing conflict. At $h = 30$, three more goals become reachable and the mutex and sequencing conflicts disappear, as longer traces provide witnesses for goal co-existence.
 
 \begin{table}[ht]
     \centering
-    \label{tab:horizon_diagnosis}
     \begin{tabular}{r rr rr rr}
         \hline
         $h$ & $\mathcal{I}^s_{\text{UR}}$ & $\mathcal{I}^t_{\text{UR}}$
@@ -216,15 +245,15 @@ Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10
         \hline
     \end{tabular}
     \caption{Horizon sensitivity for \textit{diagnosis}~prob10.}
+    \label{tab:horizon_diagnosis}
 \end{table}
 
 \subsubsection{Evidence: Cave-diving and Bottleneck}
 
-The nine instances classified as consistent at $h = 20$ (seven from \textit{cave-diving}, two from \textit{bottleneck}) all exhibit sequencing conflicts when the horizon is reduced to $h = 10$. Table~\ref{tab:horizon_cavediving} shows the \textit{cave-diving} results. At $h = 10$, every unsolvable instance shows all goals in mutex and sequencing conflict. At $h = 20$, these conflicts disappear as longer delete-relaxed traces find co-existence witnesses.
+The ten instances classified as consistent at $h = 20$ (eight from \textit{cave-diving}, two from \textit{bottleneck}) are all spuriously classified as 2c-sequencing when the horizon is reduced to $h = 10$. Table~\ref{tab:horizon_cavediving} shows the \textit{cave-diving} results. At $h = 10$, every instance, including the solvable \texttt{satprob01}, shows all goals in apparent mutex and sequencing conflict. At $h = 20$, the horizon is sufficient for delete-relaxed traces to establish goal co-existence, and all instances are correctly classified as consistent. The identical conflict profiles between solvable and unsolvable instances at $h = 10$ confirm that these detections are artifacts of insufficient exploration depth, not genuine structural pairwise conflicts.
 
 \begin{table}[ht]
     \centering
-    \label{tab:horizon_cavediving}
     \small
     \begin{tabular}{llr rrrr l}
         \hline
@@ -247,7 +276,8 @@ The nine instances classified as consistent at $h = 20$ (seven from \textit{cave
         \multicolumn{8}{l}{\textit{At $h = 20$: all of the above classified as consistent}}                           \\
         \hline
     \end{tabular}
-    \caption{Cave-diving instances at $h = 10$ vs.\ $h = 20$. All unsolvable instances classified as consistent at $h = 20$ show 2c-sequencing conflicts at $h = 10$.}
+    \caption{Cave-diving at $h = 10$ vs.\ $h = 20$ (all consistent at $h = 20$, spuriously 2c-sequencing at $h = 10$).}
+    \label{tab:horizon_cavediving}
 \end{table}
 
 \subsubsection{False Positive at $h = 10$}
@@ -258,18 +288,17 @@ This false positive provides empirical justification for the choice of $h = 20$ 
 
 \subsubsection{Interpretation}
 
-The horizon sensitivity analysis yields three conclusions. First, the classification ``consistent'' at a given horizon means that no structural conflicts are detectable at that exploration depth; it does not constitute a claim of solvability. Second, $h = 20$ represents a practical balance: it avoids false positives on the available solvable instances while detecting genuine unreachability in 25 of 67 unsolvable instances and mutex/sequencing conflicts in 13 additional instances. Third, the nine consistent IPC~2016 classifications at $h = 20$ are not evidence of Category~3 resource constraints. The conflicts exist but are resolved by longer delete-relaxed traces. By contrast, the 20 \textit{3unsat} consistent classifications are horizon-independent (Section~\ref{sec:3unsat_case_study}), representing a different class of undetectable unsolvability.
+The horizon sensitivity analysis yields three conclusions. First, the classification ``consistent'' at a given horizon means that no pairwise structural conflicts are detectable at that exploration depth; it does not constitute a claim of solvability. Second, $h = 20$ represents a practical balance: it avoids false positives on the available solvable instances while detecting genuine unreachability in 25 of 68 unsolvable instances and mutex/sequencing conflicts in 13 additional instances. Third, the ten consistent IPC~2016 classifications at $h = 20$ are not evidence of missed pairwise conflicts. A shorter horizon of $h = 10$ produces apparent conflict detections on these instances, but the identical spurious detections on the solvable \texttt{satprob01} demonstrate that these are artifacts of insufficient exploration depth rather than genuine structural limitations. The unsolvability of these instances, like that of the 20 horizon-independent \textit{3unsat} instances (Section~\ref{sec:3unsat_case_study}), lies outside the scope of pairwise analysis.
 
 \subsection{Performance and Scalability}
 \label{sec:eval_performance}
 
 \subsubsection{Computation Time}
 
-Among the 67 successfully computed instances, computation times range from 0.1 seconds (\textit{diagnosis}~prob06: 49 propositions, 25 operators) to 84.3 seconds (\textit{chessboard-pebbling}~prob05: 4{,}900 propositions, 117{,}649 operators). Table~\ref{tab:timing} summarizes the timing distribution per domain. The majority of \textit{diagnosis} instances complete in under 3 seconds, with the notable exception of prob09 (41.1 seconds), which has a grounding structure that \textit{clingo} processes less efficiently despite a moderate problem size (241 propositions, 156 operators).
+Among the 68 successfully computed instances, computation times range from 0.1 seconds (\textit{diagnosis}~prob06: 49 propositions, 25 operators) to 84.3 seconds (\textit{chessboard-pebbling}~prob05: 4{,}900 propositions, 117{,}649 operators). Table~\ref{tab:timing} summarizes the timing distribution per domain. The majority of \textit{diagnosis} instances complete in under 3 seconds, with the notable exception of prob09 (41.1 seconds despite a moderate problem size of 241 propositions and 156 operators); the cause of this outlier is not investigated further.
 
 \begin{table}[ht]
     \centering
-    \label{tab:timing}
     \begin{tabular}{lrrr}
         \hline
         \textbf{Domain}     & \textbf{Min (s)} & \textbf{Max (s)} & \textbf{Median (s)} \\
@@ -284,11 +313,16 @@ Among the 67 successfully computed instances, computation times range from 0.1 s
         \hline
     \end{tabular}
     \caption{Computation time ranges for successfully computed instances.}
+    \label{tab:timing}
 \end{table}
+
+Figure~\ref{fig:time_vs_ops} shows the relationship between operator count and computation time across all successfully computed instances, revealing a clear positive trend on a log-log scale. The 120-second timeout boundary acts as a ceiling that prevents larger instances from completing.
+
+\input{figures/fig_time_vs_ops}
 
 \subsubsection{Grounding Bottleneck}
 
-The 58\% of instances that exceed the timeout are limited by grounding, not by solving. The timestep-indexed encoding creates ground rules proportional to $|O| \times h$, and Clingo must instantiate choice rules and frame axioms across all time steps before solving begins. This is visible in two domains with extreme grounding growth:
+The 57\% of instances that exceed the timeout are limited by grounding, not by solving. The timestep-indexed encoding creates ground rules proportional to $|O| \times h$, and Clingo must instantiate choice rules and frame axioms across all time steps before solving begins. This is visible in two domains with extreme grounding growth:
 
 \begin{itemize}
     \item \textbf{Pegsol-row5}: proposition counts grow as 228, 2{,}772, 13{,}872 across prob01--prob03, with operator counts following a similar exponential trajectory (216, 2{,}744, 13{,}824). After prob03, all instances exceed the timeout.
@@ -302,34 +336,22 @@ This grounding bottleneck is inherent to the ground-and-solve approach used by \
 
 \subsubsection{Empirical Verification of Theoretical Properties}
 
-The benchmark results empirically verify the measure relationships established in Proposition~\ref{prop:measure_relationships}. Across all 67 instances:
-
-\begin{enumerate}
-    \item Unreachable goals never participate in mutex or sequencing conflicts: in every instance where $\mathcal{I}^{\text{scope}}_{\text{UR}} > 0$, the mutex and sequencing measures operate exclusively on the achievable subset of goals.
-    \item Every instance with $\mathcal{I}^{\text{scope}}_{\text{GS}} > 0$ also has $\mathcal{I}^{\text{scope}}_{\text{MX}} > 0$, confirming that sequencing implies mutex. In the benchmark data, $\mathcal{I}^{\text{scope}}_{\text{GS}} = \mathcal{I}^{\text{scope}}_{\text{MX}}$ in all cases, indicating that the benchmark domains do not contain examples of mutex without sequencing.
-    \item The scope-structure bounds from Proposition~\ref{prop:scope_structure_bounds} hold in every instance. The bound $\mathcal{I}^{\text{struct}}_{\text{MX}} \leq \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$ is tight for \textit{diagnosis}~prob16, where $28 = \binom{8}{2}$.
-\end{enumerate}
+The benchmark results empirically verify the measure relationships established in Proposition~\ref{prop:measure_relationships}, which states that unreachable goals are excluded from mutex and sequencing analysis, and that sequencing conflicts imply mutex. Across all 68 computed instances, unreachable goals never participate in mutex or sequencing: in every instance where $\mathcal{I}^{\text{scope}}_{\text{UR}} > 0$, the mutex and sequencing measures operate exclusively on the achievable subset of goals. Furthermore, every instance with $\mathcal{I}^{\text{scope}}_{\text{GS}} > 0$ also has $\mathcal{I}^{\text{scope}}_{\text{MX}} > 0$, confirming that sequencing implies mutex. As noted in Section~\ref{sec:eval_results}, $\mathcal{I}^{\text{scope}}_{\text{GS}} = \mathcal{I}^{\text{scope}}_{\text{MX}}$ in all benchmark instances, meaning the data does not contain examples of mutex without sequencing (though unit tests in Section~\ref{sec:validation} confirm correct handling of such cases). The scope-structure bounds from Proposition~\ref{prop:scope_structure_bounds} hold in every instance, with the bound $\mathcal{I}^{\text{struct}}_{\text{MX}} \leq \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$ achieved tightly for \textit{diagnosis}~prob16, where $28 = \binom{8}{2}$.
 
 \subsubsection{Diagnostic Utility}
 
-The measures address Research Question~3c by providing three levels of diagnostic information for unsolvable planning problems:
-
-\begin{enumerate}
-    \item \textbf{Category classification} distinguishes between unreachability (missing operators or broken dependency chains), mutex conflicts (individually achievable goals that cannot coexist), and sequencing conflicts (irreversible exclusions). This distinction is visible across domains: \textit{diagnosis} exhibits primarily unreachability, \textit{bottleneck} and \textit{chessboard-pebbling} exhibit primarily sequencing.
-    \item \textbf{Scope measures} quantify how many goals are affected. For instance, \textit{diagnosis}~prob06 has only 1 unreachable goal out of 7 (14\%), while prob05 has 49 out of 56 (88\%), indicating fundamentally different repair difficulties.
-    \item \textbf{Structure measures} quantify the density of conflicts. The contrast between \textit{diagnosis}~prob10 ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$, a single conflicting pair) and prob16 ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 28$, a complete conflict graph) illustrates how structure measures distinguish isolated conflicts from systemic ones.
-\end{enumerate}
+The measures address Research Question~3c by providing three levels of diagnostic information for unsolvable planning problems. At the coarsest level, category classification distinguishes between unreachability (missing operators or broken dependency chains), mutex conflicts (individually achievable goals that cannot coexist), and sequencing conflicts (irreversible exclusions). This distinction is visible across domains: \textit{diagnosis} exhibits primarily unreachability, while \textit{bottleneck} and \textit{chessboard-pebbling} exhibit primarily sequencing. At a finer level, scope measures quantify how many goals are affected by each conflict type. For instance, \textit{diagnosis}~prob06 has only 1 unreachable goal out of 7 (14\%), while prob05 has 49 out of 56 (88\%), indicating fundamentally different repair difficulties. At the finest level, structure measures quantify the density of conflicts among affected goals. The contrast between \textit{diagnosis}~prob10 ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$, a single conflicting pair) and prob16 ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 28$, a complete conflict graph) illustrates how structure measures distinguish isolated conflicts from systemic ones.
 
 \subsubsection{Limitations}
 
 Several limitations must be noted.
 
-\paragraph{Domain Coverage.} The measures are computable for 6 of 15 IPC~2016 domains and 1 additional Eriksson domain, with 67 of 158 instances (42\%) completing within the timeout. The grounding bottleneck restricts applicability to problems of moderate size.
+\paragraph{Domain Coverage.} The measures are computable for 6 of 15 IPC~2016 domains and 1 additional Eriksson domain, with 68 of 158 instances (43\%) completing within the timeout. The grounding bottleneck restricts applicability to problems of moderate size.
 
-\paragraph{Solvable Instance Validation.} Only two solvable instances complete successfully (\textit{cave-diving}~\texttt{satprob01} and \textit{document-transfer}~\texttt{satprob01}), both correctly classified as consistent at $h = 20$. The \textit{diagnosis} solvable instances fail at the \textit{plasp} translation level due to predicate mismatches, and solvable instances in other domains exceed the timeout. A larger sample of solvable instances would strengthen the validation of the false-positive rate.
+\paragraph{Solvable Instance Validation.} Only two solvable instances complete successfully (\textit{cave-diving}~\texttt{satprob01} and \textit{document-transfer}~\texttt{satprob01}), both correctly classified as consistent at $h = 20$. The remaining solvable instances fail for two distinct reasons: the \textit{diagnosis} solvable instances and several \textit{cave-diving} solvable instances fail at the \textit{plasp} translation level due to predicate mismatches (a pipeline incompatibility rather than a scalability limitation), while solvable instances in other domains exceed the 120-second timeout. A larger sample of solvable instances would strengthen the validation of the false-positive rate.
 
 \paragraph{Horizon Dependence.} As demonstrated in Section~\ref{sec:eval_horizon}, results depend on the horizon parameter. No theoretically optimal horizon exists: the appropriate value depends on the maximum meaningful plan length for a given domain. The default of $h = 20$ is empirically justified by the absence of false positives, but different domains may benefit from different horizon values.
 
-\paragraph{Consistent Classifications.} Twenty-nine unsolvable instances are classified as consistent at $h = 20$, falling into two distinct categories. The 9 IPC~2016 instances (cave-diving and bottleneck) are horizon-dependent: shorter horizons detect conflicts, but at the cost of false positives. The 20 \textit{3unsat} instances are horizon-independent: the measures return $(0, 0, 0, 0, 0, 0)$ at every horizon, including $h = 3$. This confirms that undetectable unsolvable problems exist, as predicted by the pairwise limitation discussed in Section~\ref{sec:conclusion}. The \textit{3unsat} domain demonstrates that combinatorial unsatisfiability arising from the interaction of more than two goals lies outside the scope of the proposed measures.
+\paragraph{Consistent Classifications.} Thirty unsolvable instances are classified as consistent at $h = 20$, falling into two categories. The 10 IPC~2016 instances (cave-diving and bottleneck) show no genuine pairwise structural conflicts at $h = 20$; a shorter horizon of $h = 10$ produces apparent conflict detections, but the same spurious detections appear on the solvable \textit{cave-diving}~\texttt{satprob01}, demonstrating that these are artifacts of insufficient exploration depth. The 20 \textit{3unsat} instances are horizon-independent: the measures return $(0, 0, 0, 0, 0, 0)$ at every horizon, including $h = 3$. Both groups confirm that unsolvable problems exist whose unsolvability lies outside the scope of pairwise analysis, as predicted by the limitation discussed in Section~\ref{sec:conclusion}. The \textit{3unsat} domain demonstrates that combinatorial unsatisfiability arising from the interaction of more than two goals is undetectable by the proposed measures.
 
 \paragraph{Pairwise Limitation.} The \textit{3unsat} results provide the first empirical evidence for the theoretical limitation identified in Section~\ref{sec:conclusion}: pairwise goal analysis cannot detect unsolvability that arises only from the joint interaction of three or more goals. Extending the measures to $k$-tuple analysis would address this gap but at significantly higher computational cost.
