@@ -1,7 +1,7 @@
 \subsubsection{Computational Complexity}
 \label{sec:complexity}
 
-This section analyzes the computational complexity of the proposed measures in terms of standard complexity classes. Determining plan existence, \textsc{PlanSat}, for propositional \ac{STRIPS} is PSPACE-complete~\cite{Bylander1994}; standard complexity class definitions follow Papadimitriou~\cite{Papadimitriou1994}. All three measures depend on reachability analysis over the planning state space, and this structural connection to \textsc{PlanSat} determines their decision-problem complexity.
+This section analyzes the computational complexity of the proposed measures in terms of the complexity classes introduced in Section~\ref{sec:foundations_complexity}. Determining plan existence, \textsc{PlanSat}, for propositional \ac{STRIPS} is PSPACE-complete~\cite{Bylander1994}. All three measures depend on reachability analysis over the planning state space, and this structural connection to \textsc{PlanSat} determines their decision-problem complexity.
 
 Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022}, four computational problems are defined for each measure $\mathcal{I} \in \{\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}\}$.
 
@@ -18,14 +18,14 @@ Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022},
 
 Analogous problems are defined for $\mathcal{I}^{\text{struct}}$. The scope variants iterate over $G$ or $G \times G$, while the structure variants iterate over $P$, unordered pairs from $G$, or ordered pairs from $G$, respectively. Since $|G| \leq |P|$ and all iteration domains are polynomial in the input size, scope and structure variants have identical decision-problem complexity. The following proofs are stated for the scope variants. The structure variants follow by the same membership arguments with the respective iteration domain, and hardness transfers since the scope problem reduces to any variant by the same polynomial composition.
 
-Each completeness result below is established in two parts: \emph{membership} shows that the problem can be solved within the resource bounds of the complexity class, here polynomial space, while \emph{hardness} shows that the problem is at least as difficult as every other problem in that class, via reduction from a known complete problem. Together, these establish that the problem is exactly as hard as the hardest problems in the class.
+Each completeness result below establishes membership and hardness as defined in Section~\ref{sec:foundations_complexity}.
 
 \begin{thm}
     \label{thm:ur_complexity}
     $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ is PSPACE-complete.
 \end{thm}
 \begin{proof}
-    \emph{Membership.} Checking whether $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ is equivalent to verifying that at least $|G| - k$ goal propositions are reachable. For each $g \in G$, the question ``does there exist a reachable state $s$ with $g \in s$?'' can be decided in NPSPACE: nondeterministically guess a sequence of operator applications starting from $I$, maintaining only the current state in polynomial space memory, and accept if a state containing $g$ is reached within $2^{|P|}$ steps. By Savitch's theorem~\cite{Papadimitriou1994}, NPSPACE $=$ PSPACE. Intuitively, space is reusable: nondeterministic branches can be explored sequentially in the same memory, incurring only a quadratic blowup that remains polynomial. Since $|G| \leq |P|$, iterating this check over all goals adds only polynomial overhead, and PSPACE is closed under polynomial time composition. Therefore $\text{UPPER}_{\mathcal{I}_{\text{UR}}} \in \text{PSPACE}$.
+    \emph{Membership.} Checking whether $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ is equivalent to verifying that at least $|G| - k$ goal propositions are reachable. For each $g \in G$, the question ``does there exist a reachable state $s$ with $g \in s$?'' can be decided in NPSPACE as follows. A nondeterministic machine guesses a sequence of operator applications starting from $I$, storing only the current state and a step counter in polynomial space. Since the state space contains at most $2^{|P|}$ distinct states, any reachable state can be reached via a path that never revisits a state: if a path visits the same state twice, the cycle between the two visits can be removed, yielding a shorter path that still reaches the target. Therefore, the machine can accept if a state containing $g$ is reached within $2^{|P|}$ steps, and reject otherwise. By Savitch's theorem (Section~\ref{sec:foundations_complexity}), NPSPACE $=$ PSPACE. Since $|G| \leq |P|$, iterating this check over all goals adds only polynomial overhead, and PSPACE is closed under polynomial-time composition. Therefore $\text{UPPER}_{\mathcal{I}_{\text{UR}}} \in \text{PSPACE}$.
 
     \emph{Hardness.} We reduce from \textsc{PlanSat}. Given a \textsc{PlanSat} instance $\Pi = \langle P, O, I, G \rangle$, construct $\Pi' = \langle P', O', I, G' \rangle$ where:
     \begin{itemize}
@@ -41,9 +41,9 @@ Each completeness result below is established in two parts: \emph{membership} sh
     $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ and $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ are PSPACE-complete. $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
-    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since PSPACE $=$ co-PSPACE~\cite{Papadimitriou1994}, it is also PSPACE-complete.
+    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since PSPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}), it is also PSPACE-complete.
 
-    $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}: since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
+    $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}, since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, and deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
 
     $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ can be computed via binary search with $O(\log |G|)$ calls to $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$. Polynomially many calls to a PSPACE subroutine remain in FPSPACE.
 \end{proof}
@@ -85,9 +85,9 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, $\text{LOWE
     $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ is PSPACE-complete.
 \end{thm}
 \begin{proof}
-    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition: for all $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
+    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition, namely that for all $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
 
-    \emph{Hardness.} The reduction from Theorem~\ref{thm:mx_complexity} also establishes hardness for $\mathcal{I}_{\text{GS}}$. In the constructed instance $\Pi'$, when $\Pi$ is unsolvable, no operator in $O'$ adds $g_1$: the only source of $g_1$ is the initial state, and $o_f$ deletes it irreversibly. Thus from any $g_2$-state, which can only be reached via $o_f \to o_a$, $g_1$ is unreachable, making $(g_2, g_1)$ a sequencing conflict. Conversely, when $\Pi$ is solvable, $o_m$ produces a state where both goals co-occur, so no sequencing conflict exists. Therefore $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ with $k = 0$ decides \textsc{PlanSat}.
+    \emph{Hardness.} The reduction from Theorem~\ref{thm:mx_complexity} also establishes hardness for $\mathcal{I}_{\text{GS}}$. In the constructed instance $\Pi'$, when $\Pi$ is unsolvable, no operator in $O'$ adds $g_1$ because the only source of $g_1$ is the initial state, and $o_f$ deletes it irreversibly. Thus from any $g_2$-state, which can only be reached via $o_f \to o_a$, $g_1$ is unreachable, making $(g_2, g_1)$ a sequencing conflict. Conversely, when $\Pi$ is solvable, $o_m$ produces a state where both goals co-occur, so no sequencing conflict exists. Therefore $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ with $k = 0$ decides \textsc{PlanSat}.
 \end{proof}
 
 \begin{cor}
@@ -118,7 +118,7 @@ Table~\ref{tab:decision_complexity} summarizes these results.
 
 The uniform PSPACE tier observed above contrasts with the multi-tier structure for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016a} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
 
-For classical planning, \textsc{PlanSat} is PSPACE-complete, and all three proposed measures reduce to polynomial compositions of reachability queries. The polynomial overhead from different measure definitions cannot push the complexity above PSPACE, because PSPACE is closed under polynomial time reductions. The result is a flat complexity landscape: all decision problems for all three measures are PSPACE-complete. This uniformity reflects a general principle: the complexity of inconsistency measures inherits from the base reasoning problem of the target formalism, and when that base problem is already PSPACE-complete, the polynomial differences between measure definitions are subsumed.
+For classical planning, \textsc{PlanSat} is PSPACE-complete, and all three proposed measures reduce to polynomial compositions of reachability queries. The polynomial overhead from different measure definitions cannot push the complexity above PSPACE, because PSPACE is closed under polynomial time reductions. The result is a flat complexity landscape where all decision problems for all three measures are PSPACE-complete. This uniformity reflects a general principle. The complexity of inconsistency measures inherits from the base reasoning problem of the target formalism, and when that base problem is already PSPACE-complete, the polynomial differences between measure definitions are subsumed.
 
 
 The preceding results characterize the inherent complexity of the decision problems. The following propositions complement them with explicit time and space bounds for the enumeration-based implementation.
@@ -128,7 +128,7 @@ The preceding results characterize the inherent complexity of the decision probl
     Computing the reachable state set $S_{\text{reach}}$ for a planning problem $\langle P, O, I, G \rangle$ requires $O(2^{|P|} \cdot |O| \cdot |P|)$ time and $O(2^{|P|} \cdot |P|)$ space.
 \end{prop}
 \begin{proof}
-    The reachable state set has at most $2^{|P|}$ elements. Each iteration of the fixpoint computation applies up to $|O|$ operators, where each operator application requires $O(|P|)$ for precondition checking and effect computation. Each state requires $O(|P|)$ space.
+    The reachable state set has at most $2^{|P|}$ elements. The fixpoint computation maintains the set of discovered states and processes each state at most once. For each discovered state, up to $|O|$ operators are tested for applicability, and each such test requires $O(|P|)$ for precondition checking and effect computation. Since at most $2^{|P|}$ states are ever discovered, the total time is $O(2^{|P|} \cdot |O| \cdot |P|)$. Each state requires $O(|P|)$ space for its representation, giving $O(2^{|P|} \cdot |P|)$ total space.
 \end{proof}
 
 \begin{prop}[Unreachability Profile Complexity]

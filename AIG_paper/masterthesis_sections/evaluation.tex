@@ -215,11 +215,11 @@ This represents a genuine limitation of the proposed measures, corresponding to 
 \subsection{Horizon Sensitivity Analysis}
 \label{sec:eval_horizon}
 
-The horizon parameter $h$ bounds the number of time steps explored during brave reasoning. This section presents evidence that the choice of horizon significantly affects the computed profiles, revealing a precision-recall tradeoff inherent to horizon-bounded delete-relaxed analysis.
+The horizon parameter $h$ bounds the number of time steps explored during brave reasoning. This section presents evidence that the choice of horizon significantly affects the computed profiles, revealing a precision-recall tradeoff inherent to horizon-bounded brave reasoning.
 
 \subsubsection{Mechanism}
 
-Under the horizon-bounded brave reasoning approach, longer horizons allow more propositions to become reachable through longer operator chains. Since the encoding explores delete-relaxed reachability up to the given horizon bound, the interaction between horizon length and conflict detection is non-trivial. Three effects are observed:
+Under the horizon-bounded brave reasoning approach, longer horizons allow more propositions to become reachable through longer operator chains. Since the encoding explores nondeterministic execution traces up to the given horizon bound, the interaction between horizon length and conflict detection is non-trivial. Three effects are observed:
 
 \begin{enumerate}
     \item \textbf{Monotonically decreasing unreachability}: As $h$ increases, more propositions become reachable through longer execution traces, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ decreases monotonically.
@@ -229,7 +229,7 @@ Under the horizon-bounded brave reasoning approach, longer horizons allow more p
 
 \subsubsection{Evidence: Diagnosis prob10}
 
-Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10 at three horizon values. At $h = 10$, 19 of 24 goals are unreachable and no mutex or sequencing conflicts are detected (the potentially conflicting goals are not yet reachable). At $h = 20$, five additional goals become reachable, two of which are in mutex and sequencing conflict. At $h = 30$, three more goals become reachable and the mutex and sequencing conflicts disappear, as longer traces provide witnesses for goal co-existence.
+Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10 at three horizon values. At $h = 10$, 19 of 24 goals are unreachable and no mutex or sequencing conflicts are detected because the potentially conflicting goals are not yet reachable. At $h = 20$, five additional goals become reachable, two of which appear in mutex and sequencing conflict. At $h = 30$, three more goals become reachable and the mutex and sequencing conflicts disappear, because longer traces provide witnesses for goal co-existence. This means that the conflicts reported at $h = 20$ are themselves horizon artifacts rather than genuine structural limitations: the two goals can in fact coexist, but only through execution traces longer than 20 steps. The prob10 case therefore illustrates that the horizon sensitivity is not limited to the distinction between ``consistent'' and ``conflicting'' classifications; even non-zero conflict detections can be false positives at an intermediate horizon.
 
 \begin{table}[ht]
     \centering
@@ -250,7 +250,7 @@ Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10
 
 \subsubsection{Evidence: Cave-diving and Bottleneck}
 
-The ten instances classified as consistent at $h = 20$ (eight from \textit{cave-diving}, two from \textit{bottleneck}) are all spuriously classified as 2c-sequencing when the horizon is reduced to $h = 10$. Table~\ref{tab:horizon_cavediving} shows the \textit{cave-diving} results. At $h = 10$, every instance, including the solvable \texttt{satprob01}, shows all goals in apparent mutex and sequencing conflict. At $h = 20$, the horizon is sufficient for delete-relaxed traces to establish goal co-existence, and all instances are correctly classified as consistent. The identical conflict profiles between solvable and unsolvable instances at $h = 10$ confirm that these detections are artifacts of insufficient exploration depth, not genuine structural pairwise conflicts.
+The ten instances classified as consistent at $h = 20$ (eight from \textit{cave-diving}, two from \textit{bottleneck}) are all spuriously classified as 2c-sequencing when the horizon is reduced to $h = 10$. Table~\ref{tab:horizon_cavediving} shows the \textit{cave-diving} results. At $h = 10$, every instance, including the solvable \texttt{satprob01}, shows all goals in apparent mutex and sequencing conflict. At $h = 20$, the horizon is sufficient for brave reasoning traces to establish goal co-existence, and all instances are correctly classified as consistent. The identical conflict profiles between solvable and unsolvable instances at $h = 10$ confirm that these detections are artifacts of insufficient exploration depth, not genuine structural pairwise conflicts.
 
 \begin{table}[ht]
     \centering

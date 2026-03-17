@@ -1,0 +1,48 @@
+\subsection{Computational Complexity}
+\label{sec:foundations_complexity}
+
+This section introduces the complexity-theoretic concepts used in the analysis of the proposed measures. All definitions and results follow Papadimitriou~\cite{Papadimitriou1994}.
+
+A \emph{complexity class} groups decision problems by the computational resources required to solve them. The two fundamental resources are time, measured in computation steps, and space, measured in memory cells used. Each can be bounded under deterministic or nondeterministic computation. A complexity class is therefore specified by a mode of computation, a resource, and a bounding function $f(n)$ on the resource usage as a function of input size $n$.
+
+\begin{defn}[Space Complexity Classes~\cite{Papadimitriou1994}]
+    \label{defn:space_classes}
+    Let $f : \mathbb{N} \to \mathbb{N}$ be a function.
+    \begin{itemize}
+        \item $\text{SPACE}(f(n))$ is the class of languages decidable by a deterministic Turing machine using at most $f(n)$ cells of working memory on inputs of size $n$.
+        \item $\text{NSPACE}(f(n))$ is the class of languages decidable by a nondeterministic Turing machine using at most $f(n)$ cells of working memory on inputs of size $n$.
+    \end{itemize}
+    The parametrized classes that collect all problems solvable in polynomial space are defined as:
+    \begin{align*}
+        \text{PSPACE}  & = \bigcup_{k \geq 0} \text{SPACE}(n^k)  &
+        \text{NPSPACE} & = \bigcup_{k \geq 0} \text{NSPACE}(n^k)
+    \end{align*}
+    for deterministic and nondeterministic computation, respectively.
+\end{defn}
+
+A key distinction between time and space complexity is that space can be reused. A computation may visit the same memory cells repeatedly across different stages of execution, whereas time steps, once spent, cannot be recovered.
+
+\begin{thm}[Savitch's Theorem~\cite{Papadimitriou1994}]
+    \label{thm:savitch}
+    For any function $f(n) \geq \log n$, $\text{NSPACE}(f(n)) \subseteq \text{SPACE}(f(n)^2)$.
+\end{thm}
+
+The central idea behind Savitch's theorem is a ``middle-first search'' strategy. To determine whether a configuration $C_1$ can reach another configuration $C_2$ within $2^i$ steps, the algorithm guesses a midpoint configuration $C_m$ and recursively checks whether $C_1$ reaches $C_m$ within $2^{i-1}$ steps and $C_m$ reaches $C_2$ within $2^{i-1}$ steps. Since the recursion depth is at most $O(f(n))$ and each recursive call stores only a constant number of configurations of size $O(f(n))$, the total space used is $O(f(n)^2)$.
+
+An immediate consequence of Savitch's theorem is that PSPACE $=$ NPSPACE, meaning nondeterminism does not increase the power of polynomial-space computation. This stands in contrast to the relationship between P and NP, where nondeterminism is widely considered to provide additional power.
+
+\begin{defn}[Complement and co-PSPACE~\cite{Papadimitriou1994}]
+    \label{defn:co_pspace}
+    For a complexity class $C$, the complement class $\text{co-}C$ is the class $\{L : \bar{L} \in C\}$, where $\bar{L}$ denotes the complement of language $L$. Deterministic complexity classes are closed under complement, since a deterministic machine deciding $L$ can be converted to one deciding $\bar{L}$ by swapping acceptance and rejection. In particular, $\text{PSPACE} = \text{co-PSPACE}$.
+\end{defn}
+
+The closure under complement has an important structural consequence. For problems in PSPACE, the distinctions between a problem and its complement, between NP-type and coNP-type formulations, collapse. The same machine that decides membership also decides non-membership, and the Boolean combination of polynomially many PSPACE problems remains in PSPACE.
+
+\begin{defn}[PSPACE-completeness~\cite{Papadimitriou1994}]
+    \label{defn:pspace_complete}
+    A language $L$ is \emph{PSPACE-hard} if every language $L' \in \text{PSPACE}$ is polynomial-time reducible to $L$, written $L' \leq_p L$. A language $L$ is \emph{PSPACE-complete} if $L \in \text{PSPACE}$ and $L$ is PSPACE-hard. A completeness proof consists of two parts: \emph{membership} shows $L \in \text{PSPACE}$, and \emph{hardness} shows $L' \leq_p L$ for some known PSPACE-hard language $L'$.
+\end{defn}
+
+PSPACE-complete problems represent the hardest problems in PSPACE, and solving any one of them in polynomial time would imply P $=$ PSPACE. The canonical PSPACE-complete problem is quantified Boolean satisfiability (QSAT), which asks whether a fully quantified Boolean formula with alternating universal and existential quantifiers evaluates to true~\cite{Papadimitriou1994}.
+
+For function problems that ask for a computed value rather than a yes-or-no answer, the corresponding complexity class is FPSPACE, the class of functions computable by a deterministic Turing machine using polynomial working space. Binary search with polynomially many calls to a PSPACE decision oracle yields an FPSPACE computation, since PSPACE is closed under polynomial composition.
