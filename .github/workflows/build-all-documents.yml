@@ -2,7 +2,7 @@ name: Build AIG Documents
 
 on:
   push:
-    branches: [inconsistency-planning]
+    branches: [main]
   workflow_dispatch:
     inputs:
       documents:
