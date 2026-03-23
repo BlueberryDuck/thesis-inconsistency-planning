@@ -8,6 +8,7 @@
 \usepackage{amsmath}					    % overall enhancements to math environment
 \usepackage{amsthm}                         % theorem environments
 \usepackage{acronym}                        % for acronym management
+\usepackage{url}                            % URLs in bibliography
 
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}
@@ -36,9 +37,12 @@
     xleftmargin=2em,
     framexleftmargin=1.5em,
 }
-\lstdefinestyle{asp}{%
-    language=Prolog,
-    morekeywords={false},
+\lstdefinestyle{asp}{
+    language={},
+    alsoletter={\#},
+    morekeywords={not, true, false, \#show, \#const, \#minimize, \#maximize},
+    keywordstyle=\bfseries,
+    morecomment=[l]{\%},
 }
 \tikzset{
     %Define standard arrow tip

@@ -17,7 +17,7 @@ The translated \ac{ASP} program is loaded alongside a custom reachability encodi
 \paragraph{Phase 3: Measure Extraction.}
 A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified by the absence of the corresponding witness atoms: if brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
 
-The implementation is written in Python~3.12 with Clingo~5.6+ as the sole computational dependency. Docker containerization enables consistent execution regardless of the environment, and an automated test suite ensures correctness and facilitates regression testing during development. The codebase is structured to allow both library usage and batch processing of benchmark domains, with configurable timeouts to handle grounding complexity in larger problems.
+The implementation is written in Python~3.12 with Clingo~5.6+ as the sole computational dependency. Docker containerization enables consistent execution regardless of the environment, and an automated test suite ensures correctness and facilitates regression testing during development. The codebase is structured to allow both library usage and batch processing of benchmark domains, with configurable timeouts to handle grounding complexity in larger problems. The complete source code, including all \ac{ASP} encodings, the Python measure extraction module, and the benchmark runner, is publicly available~\cite{Bunge2026}.
 
 \subsection{PDDL Translation}
 \label{sec:pddl_translation}
@@ -83,7 +83,7 @@ Two IPC domains (\textit{bag-barman} and \textit{tetris}) use the \texttt{:equal
 \subsection{ASP Encoding for Measure Computation}
 \label{sec:asp_encoding}
 
-The core of the implementation is a pair of \ac{ASP} encodings that derive proposition and operator sets from the translated facts and perform horizon-bounded state-space exploration with brave reasoning.
+The core of the implementation is a pair of \ac{ASP} encodings that derive proposition and operator sets from the translated facts and perform horizon-bounded state-space exploration with brave reasoning. Following standard practice in the \ac{ASP} literature~\cite{Lifschitz2019,Gebser2012}, the encodings are presented directly, as the declarative nature of \ac{ASP} rules makes them serve simultaneously as formal specification and executable program.
 
 \subsubsection{Planning Representation}
 
@@ -138,9 +138,7 @@ The resulting six values are packaged into a diagnostic profile data structure t
 \subsection{Tooling and Reproducibility}
 \label{sec:tooling}
 
-The implementation provides both a library API and a command-line interface. The library exposes a single entry point, \texttt{compute\_measures}, that accepts either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files:
-
-\input{figures/lst_api}
+The implementation provides both a library API and a command-line interface. The library exposes a single entry point, \texttt{compute\_measures}, that accepts either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a configurable horizon parameter.
 
 A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs using IPC naming conventions (\texttt{domain.pddl} with \texttt{prob*.pddl}, or numbered \texttt{dom01.pddl} with \texttt{prob01.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-problem timing, and error reporting.
 
