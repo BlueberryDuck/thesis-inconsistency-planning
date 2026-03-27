@@ -35,6 +35,41 @@ The set $S_{\text{reach}}$ can be computed via forward reachability analysis: st
 
 Note that $S_{\text{reach}} = \text{REACH}(I)$, and for any $s \in S_{\text{reach}}$, $\text{REACH}(s) \subseteq S_{\text{reach}}$.
 
+\subsubsection{Horizon-Bounded Reachability}
+\label{sec:horizon_bounded}
+
+The set $S_{\text{reach}}$ as defined above is the complete set of reachable states under unbounded exploration. In practice, computing $S_{\text{reach}}$ requires enumerating the full reachable state space, which can contain up to $2^{|P|}$ states. For computational purposes, the exploration depth is bounded by a horizon parameter $h \in \mathbb{N}$.
+
+\begin{defn}[Horizon-Bounded Reachable States]
+    \label{defn:bounded_reachable_states}
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The set of \emph{horizon-bounded reachable states} $S^h_{\text{reach}} \subseteq 2^P$ is the set of all states reachable from $I$ by applying at most $h$ operators in sequence. Formally, $S^h_{\text{reach}}$ is the intersection of all sets of states satisfying:
+    \begin{enumerate}
+        \item $I \in S^h_{\text{reach}}$
+        \item If $s \in S^h_{\text{reach}}$, $o \in O$ with $\text{precond}(o) \subseteq s$, and $s$ is reachable from $I$ in fewer than $h$ steps, then $\text{RESULT}(s,o) \in S^h_{\text{reach}}$
+    \end{enumerate}
+\end{defn}
+
+This parameter plays an analogous role to the trace length parameter $m$ in linear temporal logic on fixed traces ($\text{LTL}_{\text{ff}}$). In that setting, Corea et al.~\cite{Corea2024} define inconsistency measures as functions $\mathcal{I} \colon \mathbb{K} \times \mathbb{N}_0 \to \mathbb{R}^{\infty}_{\geq 0}$ where the second argument is the trace length, and Kuhlmann~\cite{Kuhlmann2025b} follows the same convention. The measures defined below adopt this approach and take the planning problem and the horizon as joint input.
+
+The following properties relate bounded and unbounded reachability.
+
+\begin{prop}[Monotonicity and Convergence of Bounded Reachability]
+    \label{prop:horizon_convergence}
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem. Then:
+    \begin{enumerate}
+        \item \emph{(Monotonicity)} $S^h_{\text{reach}} \subseteq S^{h+1}_{\text{reach}}$ for all $h \in \mathbb{N}$.
+        \item \emph{(Convergence)} There exists a finite $h^* \leq 2^{|P|}$ such that $S^h_{\text{reach}} = S_{\text{reach}}$ for all $h \geq h^*$.
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Monotonicity follows directly from the definition: every state reachable in at most $h$ steps is also reachable in at most $h+1$ steps. For convergence, $S^h_{\text{reach}}$ is a non-decreasing sequence of subsets of~$2^P$, which is finite. Hence the sequence stabilizes at some $h^* \leq 2^{|P|}$, at which point $S^{h^*}_{\text{reach}} = S_{\text{reach}}$.
+\end{proof}
+
+In $\text{LTL}_{\text{ff}}$, a sufficient trace length is computable from the syntactic depth of the formulas. Corea et al.~\cite{Corea2024} show that setting $m \geq d(\mathcal{K})$ guarantees that a three-valued interpretation exists. No analogous efficient bound exists for $h^*$ in the planning setting. Computing the state space diameter, which provides an upper bound on $h^*$, is PSPACE-hard for factored transition systems, as shown by Abdulaziz et al.~\cite{Abdulaziz2018}. This intractability motivates the explicit parameterization of the measures by $h$. Since no efficiently computable sufficient horizon is available in general, the dependence on $h$ is made part of the formal measure definition rather than treated as a purely implementational concern.
+
+An important consequence of the horizon bound is that the mutex and sequencing measures exhibit non-monotone behavior in $h$. Increasing $h$ simultaneously makes new goal propositions reachable, which may introduce apparent conflicts among newly achievable goals, and provides new execution traces, which may resolve previously reported conflicts through longer witness paths. This contrasts with the unreachability measure, where $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is monotonically non-increasing in $h$ as a direct consequence of the monotonicity of $S^h_{\text{reach}}$. The non-monotone behavior of the mutex and sequencing measures is demonstrated empirically in Section~\ref{sec:eval_horizon}.
+
 \subsubsection{Unreachability Profile}
 \label{sec:unreachability_profile}
 
@@ -43,18 +78,18 @@ The Unreachability Profile provides a unified approach to Category~2 unsolvabili
 The profile employs forward reachability analysis to compute: (1) the number of goal propositions not appearing in any reachable state, and (2) the total number of propositions not appearing in any reachable state. The first value identifies which goal propositions are blocked, while the second reveals the scope of broken dependencies. The difference between these values indicates cascading unreachability depth.
 
 \begin{defn}[Unreachable Goal Propositions Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. The measure $\mathcal{I}^{\text{scope}}_{\text{UR}}$ counting goal propositions that are unreachable is defined as:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$, with horizon-bounded reachable states $S^h_{\text{reach}}$. The measure $\mathcal{I}^{\text{scope}}_{\text{UR}}$ counting goal propositions that are unreachable is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{scope}}_{\text{UR}}(\langle P, O, I, G \rangle) = |\{g \in G \mid \nexists s \in S_{\text{reach}} : g \in s\}|
+        \mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h) = |\{g \in G \mid \nexists s \in S^h_{\text{reach}} : g \in s\}|
     \end{equation*}
 \end{defn}
 
 This measure indicates the scope of unreachability problems at the goal level: how many goal propositions cannot be achieved. The value ranges from $0$ (all goals reachable) to $|G|$ (no goals reachable).
 
 \begin{defn}[Total Unreachable Propositions Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. The measure $\mathcal{I}^{\text{struct}}_{\text{UR}}$ counting all unreachable propositions is defined as:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$, with horizon-bounded reachable states $S^h_{\text{reach}}$. The measure $\mathcal{I}^{\text{struct}}_{\text{UR}}$ counting all unreachable propositions is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{struct}}_{\text{UR}}(\langle P, O, I, G \rangle) = |\{p \in P \mid \nexists s \in S_{\text{reach}} : p \in s\}|
+        \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h) = |\{p \in P \mid \nexists s \in S^h_{\text{reach}} : p \in s\}|
     \end{equation*}
 \end{defn}
 
@@ -86,29 +121,29 @@ The Goal Mutex Profile addresses unsolvability where goal propositions are each 
 
 \begin{defn}[Mutex Goal Pair]
     \label{defn:mutex_goal_pair}
-    Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. Goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$ are \emph{mutex} if:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$, with horizon-bounded reachable states $S^h_{\text{reach}}$. Goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$ are \emph{mutex at horizon $h$} if:
     \begin{enumerate}
-        \item $\exists s_1 \in S_{\text{reach}} : g_1 \in s_1$ (goal $g_1$ is achievable)
-        \item $\exists s_2 \in S_{\text{reach}} : g_2 \in s_2$ (goal $g_2$ is achievable)
-        \item $\nexists s \in S_{\text{reach}} : \{g_1, g_2\} \subseteq s$ (goals never co-occur)
+        \item $\exists s_1 \in S^h_{\text{reach}} : g_1 \in s_1$ (goal $g_1$ is achievable)
+        \item $\exists s_2 \in S^h_{\text{reach}} : g_2 \in s_2$ (goal $g_2$ is achievable)
+        \item $\nexists s \in S^h_{\text{reach}} : \{g_1, g_2\} \subseteq s$ (goals never co-occur)
     \end{enumerate}
 \end{defn}
 
 This definition captures operator-induced exclusions: both goals are individually reachable, but action effects prevent their simultaneous satisfaction. Note that mutex is a symmetric relation: if $(g_1, g_2)$ is mutex, then $(g_2, g_1)$ is also mutex.
 
 \begin{defn}[Mutex Goals Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $\mathcal{I}^{\text{scope}}_{\text{MX}}$ counting goal propositions involved in mutex relationships is defined as:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{scope}}_{\text{MX}}$ counting goal propositions involved in mutex relationships is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{scope}}_{\text{MX}}(\langle P, O, I, G \rangle) = |\{g \in G \mid \exists g' \in G, g \neq g' : \text{mutex}(g, g')\}|
+        \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h) = |\{g \in G \mid \exists g' \in G, g \neq g' : \text{mutex}_h(g, g')\}|
     \end{equation*}
 \end{defn}
 
 This measure indicates the scope of mutex problems at the goal level: how many goal propositions participate in at least one mutex relationship. The value ranges from $0$ (no mutex) to $|G|$ (all goals involved in mutex).
 
 \begin{defn}[Mutex Pair Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counting two-element subsets of $G$ whose elements are mutex is defined as:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counting two-element subsets of $G$ whose elements are mutex is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{struct}}_{\text{MX}}(\langle P, O, I, G \rangle) = |\{\{g_1, g_2\} \mid g_1, g_2 \in G, g_1 \neq g_2, \text{mutex}(g_1, g_2)\}|
+        \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h) = |\{\{g_1, g_2\} \mid g_1, g_2 \in G, g_1 \neq g_2, \text{mutex}_h(g_1, g_2)\}|
     \end{equation*}
 \end{defn}
 
@@ -135,33 +170,31 @@ The Goal Sequencing Conflict Profile addresses Category~2c unsolvability: sequen
 
 \begin{defn}[Sequencing Conflict]
     \label{defn:sequencing_conflict}
-    Let $\langle P, O, I, G \rangle$ be a planning problem with reachable states $S_{\text{reach}}$. For goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$, a \emph{sequencing conflict} $(g_1, g_2)$ exists if:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$, with horizon-bounded reachable states $S^h_{\text{reach}}$. For goal propositions $g_1, g_2 \in G$ with $g_1 \neq g_2$, a \emph{sequencing conflict at horizon $h$}, denoted $(g_1, g_2)$, exists if:
     \begin{enumerate}
-        \item $\exists s_1 \in S_{\text{reach}} : g_1 \in s_1$ (goal $g_1$ is achievable)
-        \item $\exists s_2 \in S_{\text{reach}} : g_2 \in s_2$ (goal $g_2$ is achievable)
-        \item $\forall s \in S_{\text{reach}}$ with $g_1 \in s$:
-              $\nexists s' \in \text{REACH}(s) : g_2 \in s'$ (from every $g_1$-state,
-              $g_2$ is unreachable)
+        \item $\exists s \in S^h_{\text{reach}} : g_1 \in s$ (goal $g_1$ is achievable)
+        \item $\exists s \in S^h_{\text{reach}} : g_2 \in s$ (goal $g_2$ is achievable)
+        \item There is no execution trace $\sigma_0, \sigma_1, \ldots, \sigma_k$ from $I$ with $k \leq h$ such that $g_1 \in \sigma_i$ and $g_2 \in \sigma_j$ for some $0 \leq i \leq j \leq k$
     \end{enumerate}
 \end{defn}
 
-Informally, $(g_1, g_2)$ is a sequencing conflict when both goals are individually achievable, but achieving $g_1$ creates a permanent dead-end from which $g_2$ can never be satisfied. Note that sequencing conflict is directional: $(g_1, g_2)$ being a sequencing conflict does not imply $(g_2, g_1)$ is. Each ordered pair is checked independently. The requirement that $g_2$ be achievable (condition 2) ensures the conflict is meaningful: it distinguishes ``$g_1$ blocks $g_2$'' from ``$g_2$ was never achievable anyway.''
+Informally, $(g_1, g_2)$ is a sequencing conflict at horizon $h$ when both goals are individually achievable, but no single execution trace of length at most $h$ achieves $g_1$ and subsequently $g_2$. Note that sequencing conflict is directional: $(g_1, g_2)$ being a sequencing conflict does not imply $(g_2, g_1)$ is. Each ordered pair is checked independently. The requirement that $g_2$ be achievable (condition 2) ensures the conflict is meaningful, distinguishing ``$g_1$ blocks $g_2$'' from ``$g_2$ was never achievable anyway.''
 
-The definition captures permanent blocking: once any $g_1$-satisfying state is reached, $g_2$ becomes unreachable. The key semantic property is irreversibility: achieving $g_1$ creates a ``point of no return'' from which $g_2$ can never be satisfied. This contrasts with mutex relationships (Definition~\ref{defn:mutex_goal_pair}), where goals may alternate between states via reversible actions but simply cannot co-occur.
+At sufficient horizon, condition 3 is equivalent to requiring that for every reachable state containing $g_1$, no state containing $g_2$ is forward-reachable from it. The definition thus captures permanent blocking at convergence, where achieving $g_1$ creates an irreversible dead-end from which $g_2$ can never be satisfied. This contrasts with mutex relationships (Definition~\ref{defn:mutex_goal_pair}), where goals may alternate between states via reversible actions but cannot co-occur.
 
 \begin{defn}[Conflicting Goal Propositions Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $\mathcal{I}^{\text{scope}}_{\text{GS}}$ counting goal propositions involved in sequencing conflicts is defined as:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{scope}}_{\text{GS}}$ counting goal propositions involved in sequencing conflicts is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{scope}}_{\text{GS}}(\langle P, O, I, G \rangle) = |\{g \in G \mid \exists g' \in G : (g, g') \text{ or } (g', g) \text{ is a sequencing conflict}\}|
+        \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h) = |\{g \in G \mid \exists g' \in G : (g, g') \text{ or } (g', g) \text{ is a sequencing conflict at horizon } h\}|
     \end{equation*}
 \end{defn}
 
 This measure indicates the scope of sequencing conflicts: how many goal propositions participate in at least one action-based exclusion. The value ranges from $0$ (no sequencing conflicts) to $|G|$ (all goals involved).
 
 \begin{defn}[Sequencing Conflict Pair Count]
-    Let $\langle P, O, I, G \rangle$ be a planning problem. The measure $\mathcal{I}^{\text{struct}}_{\text{GS}}$ counting ordered sequencing conflict pairs is defined as:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{struct}}_{\text{GS}}$ counting ordered sequencing conflict pairs is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{struct}}_{\text{GS}}(\langle P, O, I, G \rangle) = |\{(g_1, g_2) \mid g_1, g_2 \in G, g_1 \neq g_2, (g_1, g_2) \text{ is a sequencing conflict}\}|
+        \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h) = |\{(g_1, g_2) \mid g_1, g_2 \in G, g_1 \neq g_2, (g_1, g_2) \text{ is a sequencing conflict at horizon } h\}|
     \end{equation*}
 \end{defn}
 

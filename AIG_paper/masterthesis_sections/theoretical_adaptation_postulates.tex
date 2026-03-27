@@ -4,27 +4,27 @@
 A core component of inconsistency measurement research is analyzing which rationality postulates measures satisfy~\cite{Hunter2008,Thimm2019}. As demonstrated by Ulbricht et al.~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas; second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths.
 
 \begin{defn}[Planning Consistency]
-    An inconsistency measure $\mathcal{I}$ for planning problems satisfies \emph{Planning Consistency} if:
+    An inconsistency measure $\mathcal{I}$ for planning problems satisfies \emph{Planning Consistency} if for all $\Pi$ and all sufficiently large $h$:
     \begin{equation*}
-        \mathcal{I}(\langle P, O, I, G \rangle) = 0 \text{ iff } \langle P, O, I, G \rangle \text{ is solvable}
+        \mathcal{I}(\Pi, h) = 0 \text{ iff } \Pi \text{ is solvable}
     \end{equation*}
 \end{defn}
 
-This adapts the classical Consistency postulate ($\mathcal{I}(K) = 0$ iff $K$ is consistent) to the planning domain, where solvability replaces logical consistency.
+This adapts the classical Consistency postulate ($\mathcal{I}(K) = 0$ iff $K$ is consistent) to the planning domain, where solvability replaces logical consistency. The requirement of ``sufficiently large $h$'' ensures the horizon is at or beyond the convergence point $h^*$ (Proposition~\ref{prop:horizon_convergence}), so that the measure reflects the true reachable state space rather than an approximation.
 
 \begin{defn}[Operator Monotonicity]
-    An inconsistency measure $\mathcal{I}$ satisfies \emph{Operator Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and operators $o$:
+    An inconsistency measure $\mathcal{I}$ satisfies \emph{Operator Monotonicity} if for all planning problems $\Pi = \langle P, O, I, G \rangle$, operators $o$, and horizons $h$:
     \begin{equation*}
-        \mathcal{I}(\langle P, O \cup \{o\}, I, G \rangle) \leq \mathcal{I}(\langle P, O, I, G \rangle)
+        \mathcal{I}(\langle P, O \cup \{o\}, I, G \rangle, h) \leq \mathcal{I}(\Pi, h)
     \end{equation*}
 \end{defn}
 
 Note that Operator Monotonicity reverses classical monotonicity because adding operators can only enable new paths, potentially reducing inconsistency. This parallels the observation by Ulbricht et al.~\cite{Ulbricht2016} that non-monotonic logics require inverted monotonicity postulates.
 
 \begin{defn}[Goal Monotonicity]
-    An inconsistency measure $\mathcal{I}$ satisfies \emph{Goal Monotonicity} if for all planning problems $\langle P, O, I, G \rangle$ and goals $g$:
+    An inconsistency measure $\mathcal{I}$ satisfies \emph{Goal Monotonicity} if for all planning problems $\Pi = \langle P, O, I, G \rangle$, goals $g$, and horizons $h$:
     \begin{equation*}
-        \mathcal{I}(\langle P, O, I, G \cup \{g\} \rangle) \geq \mathcal{I}(\langle P, O, I, G \rangle)
+        \mathcal{I}(\langle P, O, I, G \cup \{g\} \rangle, h) \geq \mathcal{I}(\Pi, h)
     \end{equation*}
 \end{defn}
 
@@ -34,21 +34,21 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     $\mathcal{I}^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$ (both goals \textit{on} and \textit{off} appear in reachable states) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $\mathcal{I} = 0$ only for solvable problems.
+    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$ (both goals \textit{on} and \textit{off} appear in reachable states at any $h \geq 1$) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $\mathcal{I} = 0$ only for solvable problems.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{UR}}$ satisfies Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding an operator $o$ can only expand $S_{\text{reach}}$ or leave it unchanged. If goal $g$ was unreachable (not appearing in any state in $S_{\text{reach}}$), adding $o$ may make it reachable by enabling new state transitions. This can only reduce or maintain $\mathcal{I}^{\text{scope}}_{\text{UR}}$, never increase it.
+    Adding an operator $o$ can only expand $S^h_{\text{reach}}$ or leave it unchanged, since every execution trace available with $O$ remains available with $O \cup \{o\}$. If goal $g$ was unreachable (not appearing in any state in $S^h_{\text{reach}}$), adding $o$ may make it reachable by enabling new state transitions. This can only reduce or maintain $\mathcal{I}^{\text{scope}}_{\text{UR}}$, never increase it.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{UR}}$ satisfies Goal Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S_{\text{reach}}$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S_{\text{reach}}$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
+    Adding goal $g$ to $G$ results in exactly one of two cases: (a) $g$ appears in some state in $S^h_{\text{reach}}$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is unchanged, or (b) $g$ does not appear in any state in $S^h_{\text{reach}}$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}$ increases by exactly 1.
 \end{proof}
 
 \begin{prop}
@@ -99,7 +99,7 @@ The structure variants satisfy the same postulates as their scope counterparts:
     $\mathcal{I}^{\text{struct}}_{\text{UR}}$ satisfies Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding an operator can only expand $S_{\text{reach}}$, potentially making previously unreachable propositions reachable. This can only decrease or maintain the count of unreachable propositions in $P$.
+    Adding an operator can only expand $S^h_{\text{reach}}$, potentially making previously unreachable propositions reachable. This can only decrease or maintain the count of unreachable propositions in $P$.
 \end{proof}
 
 \begin{prop}
@@ -116,7 +116,7 @@ The structure variants satisfy the same postulates as their scope counterparts:
     The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{GS}}$ applies: adding $\text{reach\_g2}$ creates sequencing conflicts $(g_1, g_2)$ and $(g_2, g_1)$, increasing $\mathcal{I}^{\text{struct}}_{\text{GS}}$ from 0 to 2.
 \end{proof}
 
-All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S_{\text{reach}}$ depends only on $I$ and $O$.
+All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S^h_{\text{reach}}$ depends only on $I$, $O$, and $h$.
 
 Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
 

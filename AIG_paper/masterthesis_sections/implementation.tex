@@ -1,7 +1,11 @@
 \section{Implementation}
 \label{sec:implementation}
 
-This chapter presents the \ac{ASP}-based implementation of the adapted inconsistency measures from Section~\ref{sec:proposed_measures}. The system accepts \ac{PDDL} planning problems as input and computes the full diagnostic profile $(\mathcal{I}^{\text{scope}}_{\text{UR}}, \mathcal{I}^{\text{struct}}_{\text{UR}}, \mathcal{I}^{\text{scope}}_{\text{MX}}, \mathcal{I}^{\text{struct}}_{\text{MX}}, \mathcal{I}^{\text{scope}}_{\text{GS}}, \mathcal{I}^{\text{struct}}_{\text{GS}})$ through a three-phase pipeline: \ac{PDDL} translation, \ac{ASP} state-space exploration via brave reasoning, and Python-based measure extraction.
+This chapter presents the \ac{ASP}-based implementation of the adapted inconsistency measures from Section~\ref{sec:proposed_measures}. The system accepts \ac{PDDL} planning problems as input and, given a horizon parameter $h$, computes the full diagnostic profile
+\begin{equation*}
+    (\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h))
+\end{equation*}
+through a three-phase pipeline: \ac{PDDL} translation, \ac{ASP} state-space exploration via brave reasoning, and Python-based measure extraction. The horizon parameter $h$ directly corresponds to the formal parameter in the measure definitions (Section~\ref{sec:horizon_bounded}).
 
 \subsection{System Architecture}
 \label{sec:architecture}
@@ -123,9 +127,9 @@ After the brave reasoning pass completes, a Python module collects the shown ato
 
 \paragraph{Unreachability Profile.}
 Let $G_{\text{reach}} = G \cap \{\, p \mid \texttt{true\_reachable}(p) \,\}$ denote the set of reachable goal propositions and $P_{\text{reach}} = \{\, p \mid \texttt{true\_reachable}(p) \,\}$ the set of all reachable propositions. The unreachability profile is:
-\begin{equation}
-    \mathcal{I}^{\text{scope}}_{\text{UR}} = |G \setminus G_{\text{reach}}| \qquad \mathcal{I}^{\text{struct}}_{\text{UR}} = |P \setminus P_{\text{reach}}|
-\end{equation}
+\begin{equation*}
+    \mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h) = |G \setminus G_{\text{reach}}| \qquad \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h) = |P \setminus P_{\text{reach}}|
+\end{equation*}
 
 \paragraph{Goal Mutex Profile.}
 For each unordered pair of achievable goals $(g_1, g_2) \in \binom{G_{\text{reach}}}{2}$, the pair is mutex if $\texttt{coexist\_witness}(g_1, g_2)$ was not derived under brave reasoning. The mutex profile counts the number of goals participating in at least one mutex pair and the total number of mutex pairs.
@@ -138,7 +142,7 @@ The resulting six values are packaged into a diagnostic profile data structure t
 \subsection{Tooling and Reproducibility}
 \label{sec:tooling}
 
-The implementation provides both a library API and a command-line interface. The library exposes a single entry point, \texttt{compute\_measures}, that accepts either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a configurable horizon parameter.
+The implementation provides both a library API and a command-line interface. The library exposes a single entry point, \texttt{compute\_measures}, that accepts either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a horizon parameter $h$. This function directly implements the parameterized measures $\mathcal{I}(\Pi, h)$ from Section~\ref{sec:proposed_measures}.
 
 A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs using IPC naming conventions (\texttt{domain.pddl} with \texttt{prob*.pddl}, or numbered \texttt{dom01.pddl} with \texttt{prob01.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-problem timing, and error reporting.
 

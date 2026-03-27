@@ -7,13 +7,14 @@ Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022},
 
 \begin{defn}[Decision and Function Problems]
     \label{defn:decision_problems}
-    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and let $k \in \mathbb{N}_0$. The following problems are defined for each measure $\mathcal{I}$:
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and let $k \in \mathbb{N}_0$. The following problems are defined for each measure $\mathcal{I}$, evaluated at the converged horizon (i.\,e., for the unbounded measures $\mathcal{I}(\Pi) = \lim_{h \to \infty} \mathcal{I}(\Pi, h)$):
     \begin{enumerate}
         \item $\text{UPPER}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) \leq k$?
         \item $\text{LOWER}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) \geq k$?
         \item $\text{EXACT}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) = k$?
         \item $\text{VALUE}_{\mathcal{I}}$: compute $\mathcal{I}^{\text{scope}}(\Pi)$.
     \end{enumerate}
+    The horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input are at most as hard, since the nondeterministic search is bounded by $h$ rather than $2^{|P|}$ steps.
 \end{defn}
 
 Analogous problems are defined for $\mathcal{I}^{\text{struct}}$. The scope variants iterate over $G$ or $G \times G$, while the structure variants iterate over $P$, unordered pairs from $G$, or ordered pairs from $G$, respectively. Since $|G| \leq |P|$ and all iteration domains are polynomial in the input size, scope and structure variants have identical decision-problem complexity. The following proofs are stated for the scope variants. The structure variants follow by the same membership arguments with the respective iteration domain, and hardness transfers since the scope problem reduces to any variant by the same polynomial composition.
@@ -85,7 +86,7 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, $\text{LOWE
     $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ is PSPACE-complete.
 \end{thm}
 \begin{proof}
-    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition, namely that for all $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
+    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition, namely that no execution trace from $I$ achieves $g_1$ and subsequently $g_2$. At the converged horizon, this is equivalent to verifying that for all reachable $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
 
     \emph{Hardness.} The reduction from Theorem~\ref{thm:mx_complexity} also establishes hardness for $\mathcal{I}_{\text{GS}}$. In the constructed instance $\Pi'$, when $\Pi$ is unsolvable, no operator in $O'$ adds $g_1$ because the only source of $g_1$ is the initial state, and $o_f$ deletes it irreversibly. Thus from any $g_2$-state, which can only be reached via $o_f \to o_a$, $g_1$ is unreachable, making $(g_2, g_1)$ a sequencing conflict. Conversely, when $\Pi$ is solvable, $o_m$ produces a state where both goals co-occur, so no sequencing conflict exists. Therefore $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ with $k = 0$ decides \textsc{PlanSat}.
 \end{proof}
