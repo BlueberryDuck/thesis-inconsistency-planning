@@ -1,17 +1,59 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-This section will summarize the findings, contributions, and limitations of the research, along with directions for future work. The conclusion will provide a comprehensive assessment of how effectively inconsistency measures from propositional logic have been adapted to classical planning problems, highlighting both the theoretical insights gained and the practical value demonstrated through implementation and evaluation.
+This thesis investigated the adaptation of inconsistency measures from propositional logic to classical planning problems, motivated by the observation that existing planning systems provide minimal diagnostic information when encountering unsolvable instances. The central research question asked how inconsistency measures can be meaningfully adapted to provide diagnostic value for unsolvable planning problems. The following subsections address the three constituent research questions and summarize the contributions and limitations of this work.
+
+\subsection{Summary of Contributions}
+
+\subsubsection{Theoretical Adaptation (Research Question~1)}
+
+The theoretical investigation began with the observation that naive propositional encodings of planning problems yield uninformative measure values. The contension measure $\mathcal{I}_c$ returns 1 regardless of problem structure, failing to distinguish between a single missing operator, a pair of mutually exclusive goals, and an irreversible sequencing conflict (Section~\ref{sec:naive_encoding}). This finding motivated the development of planning-native measures that operate directly on planning structures rather than reducing to propositional logic.
+
+Three complementary measures were proposed, organized by the structural phenomena they detect. The Unreachability Profile ($\mathcal{I}_{\text{UR}}$) characterizes dependency structure failures by counting goal propositions absent from all reachable states and the total number of unreachable propositions, revealing cascading failure depth. The Goal Mutex Profile ($\mathcal{I}_{\text{MX}}$) identifies operator-induced mutual exclusions where goals are individually achievable but never simultaneously satisfiable, counting both the number of affected goals and the number of conflicting pairs. The Goal Sequencing Conflict Profile ($\mathcal{I}_{\text{GS}}$) detects irreversible exclusions where achieving certain goals permanently blocks others, using ordered pairs to capture directional blocking relationships.
+
+The measures were analyzed against rationality postulates adapted for the planning domain (Section~\ref{sec:postulates}). Classical monotonicity was reversed for Operator Monotonicity, reflecting that adding operators can only reduce inconsistency. All six measure components satisfy Goal Monotonicity but none satisfies Planning Consistency individually, confirming the necessity of the multi-faceted diagnostic approach. Formal relationships between the measures were also established. Sequencing conflicts imply mutex, unreachable goals are excluded from both conflict analyses, and the scope-structure bounds constrain the relationship between the two components of each profile (Section~\ref{sec:measure_relationships}).
+
+Computational complexity analysis revealed a uniform PSPACE-complete landscape. The decision problems $\text{UPPER}$, $\text{LOWER}$, and $\text{EXACT}$ for all three measures are PSPACE-complete, and the function problems $\text{VALUE}$ are in FPSPACE (Section~\ref{sec:complexity}). This uniformity contrasts with the multi-tier structures observed for propositional measures by Thimm and Wallner~\cite{Thimm2016a} and for temporal logic measures by Corea et al.~\cite{Corea2022}. The flat landscape reflects the fact that \textsc{PlanSat} is already PSPACE-complete, subsuming the polynomial differences between measure definitions.
+
+\subsubsection{Computational Implementation (Research Question~2)}
+
+The measures were implemented using \ac{ASP}, building on findings by Kuhlmann et al.~\cite{Kuhlmann2025} that \ac{ASP}-based approaches show promise for inconsistency computation. The implementation follows a three-phase pipeline. \ac{PDDL} files are first translated into \ac{ASP} facts via \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, then subjected to horizon-bounded state-space exploration via Clingo's brave reasoning mode, and finally processed by a Python module that extracts measure values through set operations on the collected atoms (Section~\ref{sec:architecture}).
+
+The key implementation insight is that brave reasoning computes the union of atoms true in any answer set without enumerating individual answer sets. Different answer sets correspond to different execution traces, and three categories of witness atoms capture the reachability and co-occurrence properties required by the measure definitions. The absence of a witness atom under brave reasoning constitutes a universal proof that the corresponding condition is unsatisfiable across all execution traces, providing the detection mechanism for mutex and sequencing conflicts (Section~\ref{sec:witness_collection}).
+
+Correctness was verified through 36 automated tests covering scenario-level validation, hierarchy relationship tests, API contract tests, and end-to-end \ac{PDDL} pipeline tests. All eleven test scenarios produced exact matches with their theoretically derived expected profiles (Section~\ref{sec:validation}).
+
+\subsubsection{Practical Evaluation (Research Question~3)}
+
+Experimental evaluation on the IPC~2016 Unsolvability Competition benchmarks by Muise~\cite{Muise2016} and the Eriksson benchmark collection~\cite{Eriksson2019} demonstrated that the measures provide practical diagnostic value across seven compatible domains. Of 158 unsolvable instances, 68 (43\%) completed within the 120-second timeout, yielding diagnostic profiles that distinguish between structurally different categories of unsolvable planning problems (Section~\ref{sec:eval_results}).
+
+The measures provide diagnostic information at three levels of granularity. Category classification distinguishes unreachability from mutex and sequencing conflicts. The \textit{diagnosis} domain exhibits primarily unreachability, while \textit{bottleneck} and \textit{chessboard-pebbling} exhibit primarily sequencing. Scope measures quantify severity, ranging from a single unreachable goal in \textit{diagnosis}~prob06, where 14\% of goals are affected, to near-total unreachability in prob05, where 88\% are affected. Structure measures reveal conflict density, distinguishing isolated pairwise conflicts in \textit{diagnosis}~prob10 from complete conflict graphs in prob16, where every pair of affected goals is in conflict.
+
+The horizon sensitivity analysis (Section~\ref{sec:eval_horizon}) revealed a precision-recall tradeoff inherent to horizon-bounded brave reasoning. Shorter horizons risk false positives, as demonstrated by the solvable \textit{cave-diving}~\texttt{satprob01} being spuriously classified as 2c-sequencing at $h = 10$. The default of $h = 20$ avoids all observed false positives while detecting genuine conflicts in 38 of 68 unsolvable instances.
+
+The \textit{3unsat} domain from the Eriksson benchmarks~\cite{Eriksson2019} provided the first empirical evidence for a fundamental limitation of pairwise analysis. All 20 completed instances return zero profiles at every horizon because their unsolvability arises from the joint interaction of more than two goals (Section~\ref{sec:3unsat_case_study}).
+
+\subsection{Limitations}
+
+The principal limitation is scalability. The grounding bottleneck restricts applicability to problems of moderate size, with 57\% of benchmark instances exceeding the 120-second timeout. Only 6 of 15 IPC~2016 domains are compatible with the pipeline, with two excluded due to unsupported \ac{PDDL} features and seven due to grounding complexity. The dependence on the horizon parameter $h$ introduces a further practical concern. No efficiently computable sufficient horizon exists, and different domains may require different values.
+
+The pairwise nature of the mutex and sequencing measures constitutes a theoretical limitation. For problems where all goal pairs are jointly achievable but the full goal set is not, the measures return zero profiles regardless of horizon. The \textit{3unsat} benchmark results confirm that such problems exist in practice.
+
+Finally, only two solvable instances completed successfully, limiting the empirical validation of the false-positive rate. A larger sample of solvable instances would strengthen confidence in the measures' specificity.
+
+\subsection{Closing Assessment}
+
+This thesis demonstrates that inconsistency measures from propositional logic can be meaningfully adapted to classical planning when the adaptation respects planning specific semantics. The key methodological insight is that planning conflicts manifest as reachability and achievability failures rather than as direct logical contradictions, and that meaningful diagnostics require operating directly on planning structures rather than reducing to propositional encodings. The resulting measures provide a quantitative vocabulary for describing unsolvable planning problems, capturing how many goals are affected, what type of conflict prevents their satisfaction, and how densely the conflicts are interconnected. This vocabulary addresses a methodological gap in automated planning tools, where unsolvable instances have traditionally been met with binary failure reports rather than structured diagnostic information.
 
 \subsection{Future Work}
 
 Several directions merit further investigation.
 
 \paragraph{Higher-Order Goal Analysis.}
-The proposed measures detect pairwise conflicts: mutex relationships between goal pairs and sequencing conflicts between ordered goal pairs. For problems with two or fewer goals ($|G| \leq 2$), the conjunction of all measures equaling zero implies solvability. However, for problems with three or more goals, pairwise achievability does not guarantee joint achievability. Consider goals $G = \{g_1, g_2, g_3\}$ with reachable states $\{g_1, g_2\}$, $\{g_2, g_3\}$, and $\{g_1, g_3\}$: every pair coexists in some state, yet no state satisfies all three goals simultaneously. Extending the mutex definition to $k$-tuples would address this limitation, analogous to the distinction between 2-SAT and $k$-SAT in satisfiability theory.
+The proposed measures detect pairwise conflicts, specifically mutex relationships between goal pairs and sequencing conflicts between ordered goal pairs. For problems with two or fewer goals ($|G| \leq 2$), the conjunction of all measures equaling zero implies solvability. However, for problems with three or more goals, pairwise achievability does not guarantee joint achievability. Consider goals $G = \{g_1, g_2, g_3\}$ with reachable states $\{g_1, g_2\}$, $\{g_2, g_3\}$, and $\{g_1, g_3\}$. Every pair coexists in some state, yet no state satisfies all three goals simultaneously. Extending the mutex definition to $k$-tuples would address this limitation, analogous to the distinction between 2-SAT and $k$-SAT in satisfiability theory.
 
 \paragraph{Complexity of Function Problems.}
-The decision problems $\text{UPPER}$, $\text{LOWER}$, and $\text{EXACT}$ for all three measures are shown to be PSPACE-complete (Section~\ref{sec:complexity}), while the function problems $\text{VALUE}$ are shown to be in FPSPACE. Establishing whether the function problems are FPSPACE-complete under appropriate reductions remains open.
+Section~\ref{sec:complexity} shows that the decision problems $\text{UPPER}$, $\text{LOWER}$, and $\text{EXACT}$ for all three measures are PSPACE-complete, while the function problems $\text{VALUE}$ are in FPSPACE. Establishing whether the function problems are FPSPACE-complete under appropriate reductions remains open.
 
 \paragraph{Restricted Planning Fragments.}
 Bylander~\cite{Bylander1994} identifies planning restrictions where \textsc{PlanSat} drops from PSPACE-complete to NP-complete or polynomial. Analyzing how such restrictions affect the complexity of the proposed inconsistency measures could produce a multi-tier structure where different measures exhibit different complexity, as observed for propositional measures by Thimm and Wallner~\cite{Thimm2016a}.

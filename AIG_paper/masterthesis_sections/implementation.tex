@@ -5,7 +5,7 @@ This chapter presents the \ac{ASP}-based implementation of the adapted inconsist
 \begin{equation*}
     (\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h))
 \end{equation*}
-through a three-phase pipeline: \ac{PDDL} translation, \ac{ASP} state-space exploration via brave reasoning, and Python-based measure extraction. The horizon parameter $h$ directly corresponds to the formal parameter in the measure definitions (Section~\ref{sec:horizon_bounded}).
+through a three-phase pipeline of \ac{PDDL} translation, \ac{ASP} state-space exploration via brave reasoning, and Python-based measure extraction. The horizon parameter $h$ directly corresponds to the formal parameter in the measure definitions (Section~\ref{sec:horizon_bounded}).
 
 \subsection{System Architecture}
 \label{sec:architecture}
@@ -19,25 +19,21 @@ The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using 
 The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation: different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts.
 
 \paragraph{Phase 3: Measure Extraction.}
-A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified by the absence of the corresponding witness atoms: if brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
+A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified by the absence of the corresponding witness atoms. If brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
 
 The implementation is written in Python~3.12 with Clingo~5.6+ as the sole computational dependency. Docker containerization enables consistent execution regardless of the environment, and an automated test suite ensures correctness and facilitates regression testing during development. The codebase is structured to allow both library usage and batch processing of benchmark domains, with configurable timeouts to handle grounding complexity in larger problems. The complete source code, including all \ac{ASP} encodings, the Python measure extraction module, and the benchmark runner, is publicly available~\cite{Bunge2026}.
 
 \subsection{PDDL Translation}
 \label{sec:pddl_translation}
 
-The input to the system is a pair of standard \ac{PDDL} files: a domain specification defining predicates and action schemas, and a problem specification defining objects, the initial state, and goal conditions.
-
-\subsubsection{Initial Translator}
-
-An initial implementation used the \texttt{pddl} Python library by Favorito~\cite{Favorito2021} to parse \ac{PDDL} files and ground action schemas through typed Cartesian product enumeration. For each action schema, all possible substitutions of typed objects were generated, and for each valid substitution, the grounded operator was emitted as \ac{ASP} facts. This approach was validated on all hand-crafted test scenarios from Section~\ref{sec:test_scenarios}, producing correct measure profiles for every case.
-
-However, testing on the IPC~2016 Unsolvability Competition benchmarks by Muise~\cite{Muise2016} revealed two critical limitations. First, the \texttt{pddl} library does not support the \texttt{:constants} declaration used by several IPC domains, notably \textit{bag-gripper} and \textit{cave-diving}, causing translation failures. Second, the naive Cartesian product grounding strategy produces prohibitively large \ac{ASP} programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain, where the \texttt{in-line} predicate constrains which positions can participate in a move, produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the \texttt{in-line} relationship.
+The input to the system is a pair of standard \ac{PDDL} files, a domain specification defining predicates and action schemas and a problem specification defining objects, the initial state, and goal conditions.
 
 \subsubsection{Adoption of plasp}
 \label{sec:plasp_adoption}
 
-To address these limitations, the implementation was restructured to use \textit{plasp}~3~\cite{Dimopoulos2019} for \ac{PDDL} translation. The \textit{plasp} tool, developed as part of the Potassco project, translates \ac{PDDL} specifications into a lifted \ac{ASP} representation where Clingo handles the grounding process. This offers two advantages over the initial approach: first, \textit{plasp} correctly handles \ac{PDDL} features including \texttt{:constants} and complex type hierarchies; second, Clingo's grounding algorithm exploits the structure of \ac{ASP} rules to avoid generating impossible parameter combinations.
+An initial prototype grounded \ac{PDDL} action schemas via typed Cartesian product enumeration using the \texttt{pddl} Python library by Favorito~\cite{Favorito2021}. Testing on the IPC~2016 benchmarks by Muise~\cite{Muise2016} revealed two limitations of this approach. The library does not support the \texttt{:constants} declaration used by several IPC domains, and naive Cartesian product grounding produces prohibitively large programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the constraining \texttt{in-line} predicate.
+
+The implementation was therefore restructured to use \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019} for \ac{PDDL} translation. The \textit{plasp} tool, developed as part of the Potassco project, translates \ac{PDDL} specifications into a lifted \ac{ASP} representation where Clingo handles the grounding process. This offers two advantages. First, \textit{plasp} correctly handles \ac{PDDL} features including \texttt{:constants} and complex type hierarchies. Second, Clingo's grounding algorithm exploits the structure of \ac{ASP} rules to avoid generating impossible parameter combinations.
 
 The \textit{plasp} output format represents propositions as boolean-valued variables and operators as parameterized actions with compound terms. Table~\ref{tab:plasp_vocabulary} shows the correspondence between the internal representation used by the reachability encoding and the \textit{plasp} output format.
 
@@ -67,15 +63,11 @@ The following example illustrates the complete translation for a small planning 
 
 \begin{example}[Bridge Translation]
     \label{ex:bridge_translation}
-    Consider a planning problem with two operators: \texttt{unlock} requires being at the door and the door being locked, then removes the lock; \texttt{enter} requires being at the door and the door \emph{not} being locked, then adds \texttt{in\_room} and removes \texttt{at\_door}. The \textit{plasp} output for this problem is:
-
-    \input{figures/lst_plasp_example}
-
-    Applying the bridge encoding from Listing~\ref{lst:bridge} yields the following internal representation:
+    Consider a planning problem with two operators. The \texttt{unlock} operator requires being at the door and the door being locked, then removes the lock. The \texttt{enter} operator requires being at the door and the door \emph{not} being locked, then adds \texttt{in\_room} and removes \texttt{at\_door}. Applying the bridge encoding from Listing~\ref{lst:bridge} to the \textit{plasp} output, following the mapping in Table~\ref{tab:plasp_vocabulary}, yields the following internal representation:
 
     \input{figures/lst_bridge_result}
 
-    Note how the \texttt{value(\ldots, false)} terms produce two semantically distinct internal predicates: \texttt{neg\_precond(enter, locked)} encodes that \texttt{enter} requires \texttt{locked} to be false before application, while \texttt{delete(unlock, locked)} encodes that \texttt{unlock} makes \texttt{locked} false as an effect. This distinction is central to the reachability encoding: negative preconditions restrict operator applicability (Section~\ref{sec:asp_encoding}), while delete effects drive state change and are the root cause of mutex and sequencing conflicts.
+    Note how \textit{plasp}'s \texttt{value(\ldots, false)} terms produce two semantically distinct internal predicates: \texttt{neg\_precond(enter, locked)} encodes that \texttt{enter} requires \texttt{locked} to be false before application, while \texttt{delete(unlock, locked)} encodes that \texttt{unlock} makes \texttt{locked} false as an effect. This distinction is central to the reachability encoding: negative preconditions restrict operator applicability (Section~\ref{sec:asp_encoding}), while delete effects drive state change and are the root cause of mutex and sequencing conflicts.
 \end{example}
 
 \subsubsection{PDDL Preprocessing}
@@ -184,7 +176,7 @@ Eleven test scenarios are tested against their theoretically derived expected pr
 \end{table}
 
 \paragraph{Hierarchy Tests.}
-Four tests verify the measure relationships established in Section~\ref{sec:measure_relationships}: unreachable goals do not participate in mutex or sequencing conflicts, sequencing conflicts imply mutex, mutex without sequencing indicates reversible conflicts, and delete effects correctly prevent false reachability claims.
+Four tests verify the measure relationships established in Section~\ref{sec:measure_relationships}. These tests confirm that unreachable goals do not participate in mutex or sequencing conflicts, that sequencing conflicts imply mutex, that mutex without sequencing indicates reversible conflicts, and that delete effects correctly prevent false reachability claims.
 
 \paragraph{API Contract Tests.}
 Eight tests verify the public interface: five tests confirm that the \texttt{MeasureProfile} dataclass correctly classifies categories and formats output, and three tests verify that \texttt{compute\_measures} raises appropriate errors for missing files and unsatisfiable programs, and that insufficient horizon values correctly surface as false unreachability.
