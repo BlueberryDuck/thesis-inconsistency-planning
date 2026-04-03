@@ -16,7 +16,7 @@ The implementation follows a pipeline architecture with three distinct phases, e
 The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains that declare action costs using the \texttt{:functions} requirement, a preprocessing step strips cost-related elements, as these are irrelevant to inconsistency measure computation.
 
 \paragraph{Phase 2: ASP Brave Reasoning.}
-The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation: different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts.
+The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation: different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts. The grounding and solving phases are timed separately, enabling per-phase performance analysis (Section~\ref{sec:phase_analysis}).
 
 \paragraph{Phase 3: Measure Extraction.}
 A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified by the absence of the corresponding witness atoms. If brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
@@ -136,7 +136,7 @@ The resulting six values are packaged into a diagnostic profile data structure t
 
 The implementation provides both a library API and a command-line interface. The library exposes a single entry point, \texttt{compute\_measures}, that accepts either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a horizon parameter $h$. This function directly implements the parameterized measures $\mathcal{I}(\Pi, h)$ from Section~\ref{sec:proposed_measures}.
 
-A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs using IPC naming conventions (\texttt{domain.pddl} with \texttt{prob*.pddl}, or numbered \texttt{dom01.pddl} with \texttt{prob01.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-problem timing, and error reporting.
+A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs using IPC naming conventions (\texttt{domain.pddl} with \texttt{prob*.pddl}, or numbered \texttt{dom01.pddl} with \texttt{prob01.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-phase timing (translation, grounding, solving, extraction, and total), and error reporting.
 
 The batch runner and command-line interface accept a configurable timeout parameter (in seconds). When the time limit is exceeded, the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
 
@@ -147,7 +147,7 @@ For reproducibility, the implementation is containerized with Docker, bundling P
 \subsection{Validation}
 \label{sec:validation}
 
-Correctness is verified through an automated test suite comprising 36 tests across four categories.
+Correctness is verified through an automated test suite comprising 38 tests across five categories. All 38 tests execute in under one second, enabling rapid regression testing during development.
 
 \paragraph{Scenario Tests.}
 Eleven test scenarios are tested against their theoretically derived expected profiles. Table~\ref{tab:validation_results} shows the computed profiles alongside the expected values. All eleven scenarios produce exact matches, including the \textit{Negative Precondition} scenario that exercises the \texttt{neg\_precond} encoding path.
@@ -184,4 +184,5 @@ Eight tests verify the public interface: five tests confirm that the \texttt{Mea
 \paragraph{PDDL Pipeline Tests.}
 Thirteen tests verify the end-to-end \ac{PDDL} pipeline: four tests confirm that the \textit{plasp} translation and bridge encoding produce correct measure profiles, three tests verify that the batch file discovery correctly identifies domain/problem pairs using IPC naming conventions, and six tests verify the cost-stripping preprocessor.
 
-All 36 tests execute in under one second, enabling rapid regression testing during development.
+\paragraph{Timing Tests.}
+Two tests verify the per-phase timing instrumentation: one confirms that \texttt{compute\_measures} returns a timing profile with positive grounding and solving times for \texttt{.lp} input (and zero translation time), and one verifies the dictionary serialization used for CSV output.
