@@ -42,14 +42,15 @@ The set $S_{\text{reach}}$ as defined above is the complete set of reachable sta
 
 \begin{defn}[Horizon-Bounded Reachable States]
     \label{defn:bounded_reachable_states}
-    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The set of \emph{horizon-bounded reachable states} $S^h_{\text{reach}} \subseteq 2^P$ is the set of all states reachable from $I$ by applying at most $h$ operators in sequence. Formally, $S^h_{\text{reach}}$ is the intersection of all sets of states satisfying:
-    \begin{enumerate}
-        \item $I \in S^h_{\text{reach}}$
-        \item If $s \in S^h_{\text{reach}}$, $o \in O$ with $\text{precond}(o) \subseteq s$, and $s$ is reachable from $I$ in fewer than $h$ steps, then $\text{RESULT}(s,o) \in S^h_{\text{reach}}$
-    \end{enumerate}
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The set of \emph{horizon-bounded reachable states} $S^h_{\text{reach}} \subseteq 2^P$ is defined by the step-indexed construction:
+    \begin{align*}
+        S^0_{\text{reach}}     & = \{I\}                                                                                                                    \\
+        S^{i+1}_{\text{reach}} & = S^i_{\text{reach}} \cup \{\text{RESULT}(s,o) \mid s \in S^i_{\text{reach}},\ o \in O,\ \text{precond}(o) \subseteq s\}\,.
+    \end{align*}
+    Equivalently, $S^h_{\text{reach}}$ is the set of all states reachable from $I$ by applying at most $h$ operators in sequence.
 \end{defn}
 
-This parameter plays an analogous role to the trace length parameter $m$ in linear temporal logic on fixed traces ($\text{LTL}_{\text{ff}}$). In that setting, Corea et al.~\cite{Corea2024} define inconsistency measures as functions $\mathcal{I} \colon \mathbb{K} \times \mathbb{N}_0 \to \mathbb{R}^{\infty}_{\geq 0}$ where the second argument is the trace length, and Kuhlmann~\cite{Kuhlmann2025b} follows the same convention. The measures defined below adopt this approach and take the planning problem and the horizon as joint input.
+This parameter plays an analogous role to the trace length parameter $m$ in linear temporal logic on fixed traces ($\text{LTL}_{\text{ff}}$), a temporal formalism in which formulas are evaluated over traces of a fixed length $m$ rather than infinite models, so $m$ enters the semantics as an explicit parameter. In that setting, Corea et al.~\cite{Corea2024} define inconsistency measures as functions $\mathcal{I} \colon \mathbb{K} \times \mathbb{N}_0 \to \mathbb{R}^{\infty}_{\geq 0}$ where $\mathbb{K}$ denotes the set of $\text{LTL}_{\text{ff}}$ knowledge bases and the second argument is the trace length, and Kuhlmann~\cite{Kuhlmann2025b} follows the same convention. The measures defined below adopt this approach and take the planning problem and the horizon as joint input.
 
 The following properties relate bounded and unbounded reachability.
 
@@ -63,7 +64,9 @@ The following properties relate bounded and unbounded reachability.
 \end{prop}
 
 \begin{proof}
-    Monotonicity follows directly from the definition: every state reachable in at most $h$ steps is also reachable in at most $h+1$ steps. For convergence, $S^h_{\text{reach}}$ is a non-decreasing sequence of subsets of~$2^P$, which is finite. Hence the sequence stabilizes at some $h^* \leq 2^{|P|}$, at which point $S^{h^*}_{\text{reach}} = S_{\text{reach}}$.
+    \emph{Monotonicity.} By construction, $S^{i+1}_{\text{reach}} = S^i_{\text{reach}} \cup X$ for some set $X$, so $S^i_{\text{reach}} \subseteq S^{i+1}_{\text{reach}}$ for every $i \in \mathbb{N}$. In particular, $S^h_{\text{reach}} \subseteq S^{h+1}_{\text{reach}}$.
+
+    \emph{Convergence.} The sequence $(S^i_{\text{reach}})_{i \in \mathbb{N}}$ is a non-decreasing family of subsets of the finite set $2^P$, which contains at most $2^{|P|}$ states. A strictly increasing chain can grow at most $2^{|P|}$ times before it saturates, so there exists $h^* \leq 2^{|P|}$ with $S^{h^*+1}_{\text{reach}} = S^{h^*}_{\text{reach}}$. Once the sequence stabilizes, the recurrence coincides with the inductive definition of $\text{REACH}(I)$, so $S^{h^*}_{\text{reach}} = \text{REACH}(I) = S_{\text{reach}}$. By monotonicity, $S^h_{\text{reach}} = S_{\text{reach}}$ for all $h \geq h^*$.
 \end{proof}
 
 In $\text{LTL}_{\text{ff}}$, a sufficient trace length is computable from the syntactic depth of the formulas. Corea et al.~\cite{Corea2024} show that setting $m \geq d(\mathcal{K})$ guarantees that a three-valued interpretation exists. No analogous efficient bound exists for $h^*$ in the planning setting. Computing the state space diameter, which provides an upper bound on $h^*$, is PSPACE-hard for factored transition systems, as shown by Abdulaziz et al.~\cite{Abdulaziz2018}. This intractability motivates the explicit parameterization of the measures by $h$. Since no efficiently computable sufficient horizon is available in general, the dependence on $h$ is made part of the formal measure definition rather than treated as a purely implementational concern.

@@ -14,7 +14,7 @@ Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022},
         \item $\text{EXACT}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) = k$?
         \item $\text{VALUE}_{\mathcal{I}}$: compute $\mathcal{I}^{\text{scope}}(\Pi)$.
     \end{enumerate}
-    The horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input are at most as hard, since the nondeterministic search is bounded by $h$ rather than $2^{|P|}$ steps.
+    The horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input are at most as hard, because any reachable state admits an acyclic witness path of length at most $2^{|P|}$. The effective search depth is therefore bounded by $\min(h, 2^{|P|})$, and the PSPACE membership arguments below apply unchanged.
 \end{defn}
 
 Analogous problems are defined for $\mathcal{I}^{\text{struct}}$. The scope variants iterate over $G$ or $G \times G$, while the structure variants iterate over $P$, unordered pairs from $G$, or ordered pairs from $G$, respectively. Since $|G| \leq |P|$ and all iteration domains are polynomial in the input size, scope and structure variants have identical decision-problem complexity. The following proofs are stated for the scope variants. The structure variants follow by the same membership arguments with the respective iteration domain, and hardness transfers since the scope problem reduces to any variant by the same polynomial composition.
