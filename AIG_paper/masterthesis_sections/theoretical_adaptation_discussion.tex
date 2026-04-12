@@ -18,14 +18,14 @@ The measure relationships established in Proposition~\ref{prop:measure_relations
           reversal operators.
 \end{itemize}
 
-State space analysis (P1, P2) determines what states exist, while trajectory analysis (P3) determines what paths exist between states. For irreversible problems, all three measures report non-zero values, with P3 providing directional information about which goal achievements cause the blockage.
+State space analysis (unreachability, mutex) determines what states exist, while trajectory analysis (sequencing) determines what paths exist between states. For irreversible problems, all three measures report non-zero values, with sequencing providing directional information about which goal achievements cause the blockage.
 
 From a computational perspective, all three measures have identical decision-problem complexity (Theorems~\ref{thm:ur_complexity}--\ref{thm:gs_complexity}), so the choice of which profiles to compute should be driven by diagnostic needs rather than computational cost. The practical time-complexity differences documented in Table~\ref{tab:complexity} remain relevant for explicit enumeration approaches, where the Goal Sequencing Conflict Profile requires additional local reachability computations.
 
 The scope-structure bounds (Proposition~\ref{prop:scope_structure_bounds}) enable further diagnostic interpretation through ratio analysis:
 
 \begin{itemize}
-    \item \textbf{Unreachability depth}: The ratio $(\mathcal{I}^{\text{struct}}_{\text{UR}} - \mathcal{I}^{\text{scope}}_{\text{UR}}) / \mathcal{I}^{\text{scope}}_{\text{UR}}$ indicates cascading dependency depth. A ratio of 0 means goals are directly unreachable (no intermediate propositions blocked); larger ratios indicate deeper precondition chains.
+    \item \textbf{Unreachability depth}: When $\mathcal{I}^{\text{scope}}_{\text{UR}} > 0$, the ratio $(\mathcal{I}^{\text{struct}}_{\text{UR}} - \mathcal{I}^{\text{scope}}_{\text{UR}}) / \mathcal{I}^{\text{scope}}_{\text{UR}}$ indicates cascading dependency depth. A ratio of 0 means goals are directly unreachable (no intermediate propositions blocked); larger ratios indicate deeper precondition chains.
 
     \item \textbf{Mutex density}: If $\mathcal{I}^{\text{struct}}_{\text{MX}} = \binom{\mathcal{I}^{\text{scope}}_{\text{MX}}}{2}$, the mutex goals form a complete clique where every pair is mutually exclusive, as in Traffic Light. Ratios below 1 indicate sparser conflict structures with isolated mutex pairs.
 
@@ -55,8 +55,9 @@ Table~\ref{tab:measure_values} demonstrates these relationships across the test 
 
 The complete diagnostic profile for a planning problem is the 6-tuple:
 \begin{equation*}
-    \text{Profile} = (\mathcal{I}^{\text{scope}}_{\text{UR}}, \mathcal{I}^{\text{struct}}_{\text{UR}}, \mathcal{I}^{\text{scope}}_{\text{MX}}, \mathcal{I}^{\text{struct}}_{\text{MX}}, \mathcal{I}^{\text{scope}}_{\text{GS}}, \mathcal{I}^{\text{struct}}_{\text{GS}})
+    \text{Profile}(\Pi, h) = (\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h))
 \end{equation*}
+Table~\ref{tab:measure_values} lists the converged profiles $\text{Profile}(\Pi)$ for all test scenarios.
 
 Each scenario in Table~\ref{tab:measure_values} exhibits a characteristic profile signature:
 \begin{itemize}
@@ -65,7 +66,7 @@ Each scenario in Table~\ref{tab:measure_values} exhibits a characteristic profil
     \item \textbf{Irreversible mutex}: $(0, 0, 2, 1, 2, 1)$ for Trust and Travel shows both mutex and unidirectional sequencing; $(0, 0, 2, 1, 2, 2)$ for Rival Alliances shows mutex with bidirectional sequencing
 \end{itemize}
 
-The sequencing structure value distinguishes unidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}} = 1$ for Trust and Travel) from bidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}} = 2$ for Rival Alliances), while the mutex structure value is identical ($\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$) for both. This illustrates how trajectory analysis (P3) provides finer-grained diagnostic information beyond state space analysis (P1, P2).
+The sequencing structure value distinguishes unidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) = 1$ for Trust and Travel) from bidirectional conflicts ($\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) = 2$ for Rival Alliances), while the mutex structure value is identical ($\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) = 1$) for both. This illustrates how trajectory analysis (sequencing) provides finer-grained diagnostic information beyond state space analysis (unreachability, mutex).
 
 \subsubsection{Normalization Considerations}
 

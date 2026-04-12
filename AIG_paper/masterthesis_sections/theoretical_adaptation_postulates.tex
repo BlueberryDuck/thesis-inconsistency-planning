@@ -28,13 +28,13 @@ Note that Operator Monotonicity reverses classical monotonicity because adding o
     \end{equation*}
 \end{defn}
 
-Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure.
+Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure. Counter-examples use the converged test scenarios from Section~\ref{sec:test_scenarios}, so the proofs write $\mathcal{I}(\Pi)$ for the converged measure values.
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$ (both goals \textit{on} and \textit{off} appear in reachable states at any $h \geq 1$) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $\mathcal{I} = 0$ only for solvable problems.
+    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi) = 0$ (both goals \textit{on} and \textit{off} appear in reachable states at any $h \geq 1$) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $\mathcal{I} = 0$ only for solvable problems.
 \end{proof}
 
 \begin{prop}
@@ -55,7 +55,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     $\mathcal{I}^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Locked Door problem has $\mathcal{I}^{\text{scope}}_{\text{MX}} = 0$ (no mutex relationships exist since the goal \textit{in\_room} is not even achievable) but is unsolvable.
+    Counter-example: The Locked Door problem has $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi) = 0$ (no mutex relationships exist since the goal \textit{in\_room} is not even achievable) but is unsolvable.
 \end{proof}
 
 \begin{prop}
@@ -76,7 +76,7 @@ Goal Monotonicity preserves the direction of classical monotonicity: adding requ
     $\mathcal{I}^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{GS}} = 0$ (no sequencing conflicts since actions are reversible) but is unsolvable (goals are mutex).
+    Counter-example: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi) = 0$ (no sequencing conflicts since actions are reversible) but is unsolvable (goals are mutex).
 \end{proof}
 
 \begin{prop}
@@ -106,19 +106,19 @@ The structure variants satisfy the same postulates as their scope counterparts:
     $\mathcal{I}^{\text{struct}}_{\text{MX}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{MX}}$ applies: adding $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ creates a new mutex pair $\{g_1, g_2\}$, increasing $\mathcal{I}^{\text{struct}}_{\text{MX}}$ from 0 to 1.
+    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{MX}}$ applies: adding $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ creates a new mutex pair $\{g_1, g_2\}$, increasing $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi)$ from 0 to 1.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{struct}}_{\text{GS}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{GS}}$ applies: adding $\text{reach\_g2}$ creates sequencing conflicts $(g_1, g_2)$ and $(g_2, g_1)$, increasing $\mathcal{I}^{\text{struct}}_{\text{GS}}$ from 0 to 2.
+    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{GS}}$ applies: adding $\text{reach\_g2}$ creates sequencing conflicts $(g_1, g_2)$ and $(g_2, g_1)$, increasing $\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi)$ from 0 to 2.
 \end{proof}
 
 All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S^h_{\text{reach}}$ depends only on $I$, $O$, and $h$.
 
-Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this work, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
+Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this thesis, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
 
 \begin{table}[ht]
     \centering

@@ -68,7 +68,7 @@ The following properties relate bounded and unbounded reachability.
 
 In $\text{LTL}_{\text{ff}}$, a sufficient trace length is computable from the syntactic depth of the formulas. Corea et al.~\cite{Corea2024} show that setting $m \geq d(\mathcal{K})$ guarantees that a three-valued interpretation exists. No analogous efficient bound exists for $h^*$ in the planning setting. Computing the state space diameter, which provides an upper bound on $h^*$, is PSPACE-hard for factored transition systems, as shown by Abdulaziz et al.~\cite{Abdulaziz2018}. This intractability motivates the explicit parameterization of the measures by $h$. Since no efficiently computable sufficient horizon is available in general, the dependence on $h$ is made part of the formal measure definition rather than treated as a purely implementational concern.
 
-An important consequence of the horizon bound is that the mutex and sequencing measures exhibit non-monotone behavior in $h$. Increasing $h$ simultaneously makes new goal propositions reachable, which may introduce apparent conflicts among newly achievable goals, and provides new execution traces, which may resolve previously reported conflicts through longer witness paths. This contrasts with the unreachability measure, where $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is monotonically non-increasing in $h$ as a direct consequence of the monotonicity of $S^h_{\text{reach}}$. The non-monotone behavior of the mutex and sequencing measures is demonstrated empirically in Section~\ref{sec:eval_horizon}.
+An important consequence of the horizon bound is that the mutex and sequencing measures exhibit non-monotonic behavior in $h$. Increasing $h$ simultaneously makes new goal propositions reachable, which may introduce apparent conflicts among newly achievable goals, and provides new execution traces, which may resolve previously reported conflicts through longer witness paths. This contrasts with the unreachability measure, where $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is monotonically non-increasing in $h$ as a direct consequence of the monotonicity of $S^h_{\text{reach}}$. The non-monotonic behavior of the mutex and sequencing measures is demonstrated empirically in Section~\ref{sec:eval_horizon}.
 
 \subsubsection{Unreachability Profile}
 \label{sec:unreachability_profile}
@@ -97,19 +97,21 @@ This measure reveals the structure of dependency problems by counting all unreac
 
 Note that $\mathcal{I}^{\text{struct}}_{\text{UR}}$ counts all unreachable propositions including those not on any dependency path to a goal. Propositions that are unreachable but irrelevant to goal achievement contribute to the count. This provides a conservative upper bound on dependency-relevant unreachability; filtering to goal-relevant propositions is left as a possible refinement.
 
+As established in Section~\ref{sec:test_scenarios}, the test scenarios use converged measures $\mathcal{I}(\Pi)$.
+
 \paragraph{Example: Locked Door (Scenario~1).} For the Locked Door scenario, forward reachability analysis yields $S_{\text{reach}} = \{\{\text{at\_door}\}\}$ since \textit{unlock} requires \textit{has\_key}, which has no producer. The Unreachability Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_room}\}| = 1                                         \\
-    \mathcal{I}^{\text{struct}}_{\text{UR}} & = |\{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}| = 3
+    \mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi)  & = |\{\text{in\_room}\}| = 1                                         \\
+    \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi) & = |\{\text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}| = 3
 \end{align*}
 The difference of 2 indicates two intermediate propositions in the dependency structure that are unreachable due to the missing \textit{has\_key}. Note that \textit{at\_door} is reachable (it is in $I$) and thus not counted.
 
 \paragraph{Example: Bank Vault (Scenario~2).} For the Bank Vault scenario, reachability analysis yields $S_{\text{reach}} = \{\{\text{at\_fac}\}\}$ since none of the root preconditions (\textit{key1}, \textit{key2}, \textit{admin\_appr}) are initially true or produced by any operator. The Unreachability Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{UR}}  & = |\{\text{in\_vault}\}| = 1                                 \\
-    \mathcal{I}^{\text{struct}}_{\text{UR}} & = |\{\text{key1}, \text{key2}, \text{admin\_appr},           \\
-                                            & \quad \text{d1\_open}, \text{d2\_open}, \text{acc\_granted}, \\
-                                            & \quad \text{in\_vault}\}| = 7
+    \mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi)  & = |\{\text{in\_vault}\}| = 1                                 \\
+    \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi) & = |\{\text{key1}, \text{key2}, \text{admin\_appr},           \\
+                                                 & \quad \text{d1\_open}, \text{d2\_open}, \text{acc\_granted}, \\
+                                                 & \quad \text{in\_vault}\}| = 7
 \end{align*}
 
 This demonstrates how $\mathcal{I}^{\text{struct}}_{\text{UR}}$ distinguishes shallow dependency problems (difference of 2 in Locked Door) from deep cascading failures (difference of 6 in Bank Vault), revealing three independent missing precondition chains converging on a single goal. A small difference between scope and structure indicates shallow failures; a large difference reveals deep cascading dependencies.
@@ -151,17 +153,17 @@ This measure reveals the structure of mutex relationships by counting two-elemen
 
 \paragraph{Example: Light Switch (Scenario~3).} For the Light Switch scenario, forward reachability analysis yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions appear in reachable states, but no state contains both simultaneously. The Goal Mutex Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{MX}}  & = |\{\text{on}, \text{off}\}| = 2     \\
-    \mathcal{I}^{\text{struct}}_{\text{MX}} & = |\{\{\text{on}, \text{off}\}\}| = 1
+    \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)  & = |\{\text{on}, \text{off}\}| = 2     \\
+    \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) & = |\{\{\text{on}, \text{off}\}\}| = 1
 \end{align*}
 The profile detects operator-induced mutual exclusion despite reversibility: actions allow transitions between states, but effects structurally prevent co-occurrence.
 
 \paragraph{Example: Traffic Light (Scenario~4).} For the Traffic Light scenario, reachability analysis yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goal propositions are individually achievable (the system is cyclic), but no state contains more than one color. The Goal Mutex Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{MX}}  & = |\{\text{red}, \text{yellow}, \text{green}\}| = 3                                                      \\
-    \mathcal{I}^{\text{struct}}_{\text{MX}} & = |\{\{\text{red}, \text{yellow}\}, \{\text{red}, \text{green}\}, \{\text{yellow}, \text{green}\}\}| = 3
+    \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)  & = |\{\text{red}, \text{yellow}, \text{green}\}| = 3                                                      \\
+    \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) & = |\{\{\text{red}, \text{yellow}\}, \{\text{red}, \text{green}\}, \{\text{yellow}, \text{green}\}\}| = 3
 \end{align*}
-This demonstrates a complete mutex clique: all goal pairs are mutually exclusive, yielding $\mathcal{I}^{\text{struct}}_{\text{MX}} = \binom{3}{2} = 3$. The profile distinguishes this dense conflict structure from isolated mutex pairs.
+This demonstrates a complete mutex clique: all goal pairs are mutually exclusive, yielding $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) = \binom{3}{2} = 3$. The profile distinguishes this dense conflict structure from isolated mutex pairs.
 
 \subsubsection{Goal Sequencing Conflict Profile}
 \label{sec:sequencing_conflict_profile}
@@ -206,14 +208,14 @@ Both goals are individually achievable but never coexist, satisfying the mutex d
 
 The Goal Mutex Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{MX}}  & = |\{\text{partnership}, \text{opportunity}\}| = 2     \\
-    \mathcal{I}^{\text{struct}}_{\text{MX}} & = |\{\{\text{partnership}, \text{opportunity}\}\}| = 1
+    \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)  & = |\{\text{partnership}, \text{opportunity}\}| = 2     \\
+    \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) & = |\{\{\text{partnership}, \text{opportunity}\}\}| = 1
 \end{align*}
 
 The Goal Sequencing Conflict Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{GS}}  & = |\{\text{partnership}, \text{opportunity}\}| = 2   \\
-    \mathcal{I}^{\text{struct}}_{\text{GS}} & = |\{(\text{opportunity}, \text{partnership})\}| = 1
+    \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi)  & = |\{\text{partnership}, \text{opportunity}\}| = 2   \\
+    \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) & = |\{(\text{opportunity}, \text{partnership})\}| = 1
 \end{align*}
 
 This demonstrates that irreversible problems exhibit both mutex and sequencing: the goals cannot coexist (mutex), and the sequencing measure additionally identifies the direction of the conflict.
@@ -222,17 +224,17 @@ This demonstrates that irreversible problems exhibit both mutex and sequencing: 
 
 The Goal Mutex Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{MX}}  & = |\{\text{allied\_A}, \text{allied\_B}\}| = 2     \\
-    \mathcal{I}^{\text{struct}}_{\text{MX}} & = |\{\{\text{allied\_A}, \text{allied\_B}\}\}| = 1
+    \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)  & = |\{\text{allied\_A}, \text{allied\_B}\}| = 2     \\
+    \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) & = |\{\{\text{allied\_A}, \text{allied\_B}\}\}| = 1
 \end{align*}
 
 The Goal Sequencing Conflict Profile yields:
 \begin{align*}
-    \mathcal{I}^{\text{scope}}_{\text{GS}}  & = |\{\text{allied\_A}, \text{allied\_B}\}| = 2                                         \\
-    \mathcal{I}^{\text{struct}}_{\text{GS}} & = |\{(\text{allied\_A}, \text{allied\_B}), (\text{allied\_B}, \text{allied\_A})\}| = 2
+    \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi)  & = |\{\text{allied\_A}, \text{allied\_B}\}| = 2                                         \\
+    \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) & = |\{(\text{allied\_A}, \text{allied\_B}), (\text{allied\_B}, \text{allied\_A})\}| = 2
 \end{align*}
 
-This demonstrates symmetric exclusions where both alliances block each other. Like Trust and Travel, it exhibits both mutex and sequencing, but with $\mathcal{I}^{\text{struct}}_{\text{GS}} = 2$ (bidirectional) rather than $1$ (unidirectional). The sequencing structure value thus distinguishes symmetric from asymmetric irreversibility.
+This demonstrates symmetric exclusions where both alliances block each other. Like Trust and Travel, it exhibits both mutex and sequencing, but with $\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) = 2$ (bidirectional) rather than $1$ (unidirectional). The sequencing structure value thus distinguishes symmetric from asymmetric irreversibility.
 
 This measure provides directional information beyond mutex. Sequencing conflicts are a subset of mutex relationships (blocking implies non-coexistence), but the ordered pair count reveals which goal achievement causes the dead-end. Reversible mutex problems (Light Switch, Scenario~3) exhibit mutex without sequencing; irreversible problems (Trust and Travel, Scenario~5) exhibit both.
 
