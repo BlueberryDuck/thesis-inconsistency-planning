@@ -93,7 +93,7 @@ Table~\ref{tab:category_distribution} shows the distribution of category classif
     \label{tab:category_distribution}
 \end{table}
 
-The absence of pure 2c-mutex classifications is consistent with the theoretical relationship from Proposition~\ref{prop:measure_relationships}. Every instance with $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, 20) > 0$ also has $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, 20) > 0$, confirming that sequencing conflicts imply mutex. The unit test scenarios in Section~\ref{sec:validation} confirm that pure mutex cases are correctly handled.
+The absence of pure 2c-mutex classifications is consistent with the theoretical relationship from Proposition~\ref{prop:measure_relationships}. Every instance with $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, 20) > 0$ also has $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, 20) > 0$, which is consistent with the proposition that sequencing conflicts imply mutex. The unit test scenarios in Section~\ref{sec:validation} confirm that pure mutex cases are correctly handled.
 
 The 30 consistent classifications fall into two groups. Ten IPC~2016 instances exhibit horizon-dependent behavior (Section~\ref{sec:eval_horizon}), while the 20 \textit{3unsat} instances are horizon-independent (Section~\ref{sec:3unsat_case_study}).
 
@@ -106,32 +106,32 @@ The \textit{diagnosis} domain provides the richest results, with the highest cov
     \small
     \begin{tabular}{lrrr rr rr rr r}
         \hline
-        \textbf{Problem} & $|G|$                                & $|P|$                       & $|O|$
-                         & $\mathcal{I}^s_{\text{UR}}$          & $\mathcal{I}^t_{\text{UR}}$
-                         & $\mathcal{I}^s_{\text{MX}}$          & $\mathcal{I}^t_{\text{MX}}$
-                         & $\mathcal{I}^s_{\text{GS}}$          & $\mathcal{I}^t_{\text{GS}}$
-                         & \textbf{Time}                                                                                                  \\
+        \textbf{Problem} & $|G|$                        & $|P|$                       & $|O|$
+                         & $\mathcal{I}^s_{\text{UR}}$  & $\mathcal{I}^t_{\text{UR}}$
+                         & $\mathcal{I}^s_{\text{MX}}$  & $\mathcal{I}^t_{\text{MX}}$
+                         & $\mathcal{I}^s_{\text{GS}}$  & $\mathcal{I}^t_{\text{GS}}$
+                         & \textbf{Time}                                                                                          \\
         \hline
-        prob01           & 16                                   & 190                         & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob02           & 16                                   & 190                         & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob03           & 16                                   & 155                         & 125   & 10 & 20 & 0 & 0  & 0 & 0  & 0.2s  \\
-        prob04           & 38                                   & 389                         & 568   & 31 & 59 & 0 & 0  & 0 & 0  & 1.6s  \\
-        prob05           & 56                                   & 542                         & 957   & 49 & 97 & 0 & 0  & 0 & 0  & 2.9s  \\
-        prob06           & 7                                    & 49                          & 25    & 1  & 1  & 0 & 0  & 0 & 0  & 0.04s \\
-        prob07           & 22                                   & 154                         & 81    & 12 & 31 & 0 & 0  & 0 & 0  & 0.1s  \\
-        prob08           & 24                                   & 170                         & 96    & 14 & 41 & 0 & 0  & 0 & 0  & 0.2s  \\
-        prob09           & 24                                   & 241                         & 156   & 14 & 33 & 0 & 0  & 0 & 0  & 43.2s \\
-        prob10           & 24                                   & 187                         & 99    & 14 & 25 & 2 & 1  & 2 & 2  & 0.3s  \\
-        prob11           & 22                                   & 204                         & 139   & 14 & 33 & 0 & 0  & 0 & 0  & 2.8s  \\
-        prob12           & 24                                   & 199                         & 99    & 15 & 26 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob13           & 36                                   & 399                         & 232   & 27 & 67 & 0 & 0  & 0 & 0  & 0.9s  \\
-        prob14           & 28                                   & 314                         & 152   & 19 & 38 & 0 & 0  & 0 & 0  & 1.4s  \\
-        prob15           & 24                                   & 240                         & 155   & 14 & 35 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob16           & 36                                   & 457                         & 257   & 20 & 32 & 8 & 28 & 8 & 56 & 2.5s  \\
-        prob17           & 24                                   & 214                         & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob18           & \multicolumn{10}{c}{---~TIMEOUT~---}                                                                           \\
-        prob19           & 24                                   & 214                         & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob20           & \multicolumn{10}{c}{---~TIMEOUT~---}                                                                           \\
+        prob01           & 16                           & 190                         & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob02           & 16                           & 190                         & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob03           & 16                           & 155                         & 125   & 10 & 20 & 0 & 0  & 0 & 0  & 0.2s  \\
+        prob04           & 38                           & 389                         & 568   & 31 & 59 & 0 & 0  & 0 & 0  & 1.6s  \\
+        prob05           & 56                           & 542                         & 957   & 49 & 97 & 0 & 0  & 0 & 0  & 2.9s  \\
+        prob06           & 7                            & 49                          & 25    & 1  & 1  & 0 & 0  & 0 & 0  & 0.04s \\
+        prob07           & 22                           & 154                         & 81    & 12 & 31 & 0 & 0  & 0 & 0  & 0.1s  \\
+        prob08           & 24                           & 170                         & 96    & 14 & 41 & 0 & 0  & 0 & 0  & 0.2s  \\
+        prob09           & 24                           & 241                         & 156   & 14 & 33 & 0 & 0  & 0 & 0  & 43.2s \\
+        prob10           & 24                           & 187                         & 99    & 14 & 25 & 2 & 1  & 2 & 2  & 0.3s  \\
+        prob11           & 22                           & 204                         & 139   & 14 & 33 & 0 & 0  & 0 & 0  & 2.8s  \\
+        prob12           & 24                           & 199                         & 99    & 15 & 26 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob13           & 36                           & 399                         & 232   & 27 & 67 & 0 & 0  & 0 & 0  & 0.9s  \\
+        prob14           & 28                           & 314                         & 152   & 19 & 38 & 0 & 0  & 0 & 0  & 1.4s  \\
+        prob15           & 24                           & 240                         & 155   & 14 & 35 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob16           & 36                           & 457                         & 257   & 20 & 32 & 8 & 28 & 8 & 56 & 2.5s  \\
+        prob17           & 24                           & 214                         & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob18           & \multicolumn{10}{c}{TIMEOUT}                                                                           \\
+        prob19           & 24                           & 214                         & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob20           & \multicolumn{10}{c}{TIMEOUT}                                                                           \\
         \hline
     \end{tabular}
     \caption{Diagnostic profiles for the \textit{diagnosis} domain ($h = 20$, time limit 120s).}
