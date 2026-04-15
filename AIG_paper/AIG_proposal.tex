@@ -71,7 +71,7 @@ Classical planning operates on factored representations, meaning the world state
 
 Actions are described by ground operators, which are fully instantiated actions with all variables replaced by specific objects, denoted as $o \in O$ and defined by the triple
 \begin{equation*}
-    \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle\,,
+  \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle\,,
 \end{equation*}
 where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects~\cite{Bylander1994}. An operator $o$ is applicable in state $s$ if and only if $s \models \text{precond}(o)$. The result of executing action $o$ in state $s$ is defined as $\text{RESULT}(s,o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$~\cite{Russell2016}. A plan is a sequence of operators $\langle o_1, o_2, \ldots, o_k \rangle$ such that applying this sequence from the initial state $I$ results in a state $s$ where $G \subseteq s$~\cite{Bylander1994}.
 
@@ -104,7 +104,7 @@ Current planning systems provide minimal diagnostic information when encounterin
 The central research question of this thesis is:
 
 \begin{quote}
-    How can inconsistency measures from propositional logic be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
+  How can inconsistency measures from propositional logic be meaningfully adapted to classical planning to provide diagnostic value for unsolvable planning problems?
 \end{quote}
 
 This central question is addressed through the following research questions and their corresponding objectives:
@@ -112,57 +112,57 @@ This central question is addressed through the following research questions and 
 \subsection{Research Question 1: Theoretical Adaptation}
 
 \begin{quote}
-    Which inconsistency measures from propositional logic can be adapted to classical planning, and what postulates do they retain?
+  Which inconsistency measures from propositional logic can be adapted to classical planning, and what postulates do they retain?
 \end{quote}
 
 \begin{enumerate}
-    \item[(1a)] Survey existing inconsistency measures from propositional logic.
-    \item[(1b)] Analyze the structural differences between knowledge bases and planning problems, identifying adaptation challenges.
-    \item[(1c)] Develop formal adaptations of 2-3 selected inconsistency measures to \ac{STRIPS}-based planning formulations.
-    \item[(1d)] Examine which postulates are preserved or modified in the planning context.
-    \item[(1e)] Provide formal definitions and examples of the adapted measures.
+  \item[(1a)] Survey existing inconsistency measures from propositional logic.
+  \item[(1b)] Analyze the structural differences between knowledge bases and planning problems, identifying adaptation challenges.
+  \item[(1c)] Develop formal adaptations of 2-3 selected inconsistency measures to \ac{STRIPS}-based planning formulations.
+  \item[(1d)] Examine which postulates are preserved or modified in the planning context.
+  \item[(1e)] Provide formal definitions and examples of the adapted measures.
 \end{enumerate}
 
 \subsection{Research Question 2: Computational Implementation}
 
 \begin{quote}
-    How can the adapted measures be efficiently computed for planning problems using Answer Set Programming?
+  How can the adapted measures be efficiently computed for planning problems using Answer Set Programming?
 \end{quote}
 
 \begin{enumerate}
-    \item[(2a)] Analyze computational complexity of the adapted measures to ensure compatibility with \ac{ASP}.
-    \item[(2b)] Design an \ac{ASP}-based encoding for at least one adapted inconsistency measure.
-    \item[(2c)] Develop parsing algorithms that handle standard planning problem formats, including \ac{STRIPS} and optionally basic \ac{PDDL} representations.
-    \item[(2d)] Implement a prototype system for at least one measure that can parse planning problems and compute the adapted measures.
+  \item[(2a)] Analyze computational complexity of the adapted measures to ensure compatibility with \ac{ASP}.
+  \item[(2b)] Design an \ac{ASP}-based encoding for at least one adapted inconsistency measure.
+  \item[(2c)] Develop parsing algorithms that handle standard planning problem formats, including \ac{STRIPS} and optionally basic \ac{PDDL} representations.
+  \item[(2d)] Implement a prototype system for at least one measure that can parse planning problems and compute the adapted measures.
 \end{enumerate}
 
 \subsection{Research Question 3: Practical Evaluation}
 
 \begin{quote}
-    Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
+  Do the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems?
 \end{quote}
 
 \begin{enumerate}
-    \item[(3a)] Establish an experimental framework using benchmark planning problems from established collections.
-    \item[(3b)] Evaluate computational feasibility and scalability of at least one implemented measure on problems of varying complexity.
-    \item[(3c)] Analyze the diagnostic utility of the implemented measure(s) for distinguishing different types of unsolvable planning problems.
-    \item[(3d)] Assess whether the measures provide actionable insights for problem repair and modification strategies (optional).
+  \item[(3a)] Establish an experimental framework using benchmark planning problems from established collections.
+  \item[(3b)] Evaluate computational feasibility and scalability of at least one implemented measure on problems of varying complexity.
+  \item[(3c)] Analyze the diagnostic utility of the implemented measure(s) for distinguishing different types of unsolvable planning problems.
+  \item[(3d)] Assess whether the measures provide actionable insights for problem repair and modification strategies (optional).
 \end{enumerate}
 
 \textbf{Note:} To maintain feasibility within the thesis scope, the implementation and evaluation will focus on at least one measure, with extensions to additional measures marked as optional.
 
 \section{Planned Structure}
 
-The thesis will be organized into seven chapters:
+The thesis will be organized into seven sections:
 
 \begin{description}
-    \item[Chapter 1: Introduction] Overview of the problem domain, motivation, and summary of contributions.
-    \item[Chapter 2: Foundations] Background on inconsistency measurement, \ac{ASP}, and classical planning formalisms.
-    \item[Chapter 3: Related Work] Survey of existing work on inconsistency measures and unsolvable planning problems.
-    \item[Chapter 4: Theoretical Adaptation] Formal adaptation of selected inconsistency measures to planning, with definitions and examples.
-    \item[Chapter 5: Implementation] Computational complexity analysis and \ac{ASP}-based prototype development.
-    \item[Chapter 6: Evaluation] Experimental setup, benchmarking results, and analysis.
-    \item[Chapter 7: Conclusion] Summary of findings, limitations, and future work.
+  \item[section 1: Introduction] Overview of the problem domain, motivation, and summary of contributions.
+  \item[section 2: Foundations] Background on inconsistency measurement, \ac{ASP}, and classical planning formalisms.
+  \item[section 3: Related Work] Survey of existing work on inconsistency measures and unsolvable planning problems.
+  \item[section 4: Theoretical Adaptation] Formal adaptation of selected inconsistency measures to planning, with definitions and examples.
+  \item[section 5: Implementation] Computational complexity analysis and \ac{ASP}-based prototype development.
+  \item[section 6: Evaluation] Experimental setup, benchmarking results, and analysis.
+  \item[section 7: Conclusion] Summary of findings, limitations, and future work.
 \end{description}
 
 \section{Timeline}
@@ -170,10 +170,10 @@ The thesis will be organized into seven chapters:
 The project is planned over approximately six months, with overlapping phases:
 
 \begin{description}
-    \item[Months 1-2:] Literature review and theoretical foundations (Chapters 2-3).
-    \item[Months 2-4:] Theoretical development and formal adaptation of measures (Chapter 4).
-    \item[Months 3-5:] Implementation of \ac{ASP}-based algorithms and prototype development (Chapter 5).
-    \item[Months 4-6:] Experimental evaluation and thesis write-up (Chapters 1, 5-6).
+  \item[Months 1-2:] Literature review and theoretical foundations (sections 2-3).
+  \item[Months 2-4:] Theoretical development and formal adaptation of measures (section 4).
+  \item[Months 3-5:] Implementation of \ac{ASP}-based algorithms and prototype development (section 5).
+  \item[Months 4-6:] Experimental evaluation and thesis write-up (sections 1, 5-6).
 \end{description}
 
 \newpage

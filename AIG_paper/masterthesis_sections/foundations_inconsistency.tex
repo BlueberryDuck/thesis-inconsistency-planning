@@ -1,4 +1,5 @@
 \subsection{Inconsistency Measurement}
+\label{sec:foundations_inconsistency}
 
 Thimm~\cite{Thimm2019} presents inconsistency measurement as a formal method for quantifying the degree of inconsistency within logical knowledge bases. Rather than treating inconsistency as a binary property, these measures assign numerical values that reflect the severity or extent of conflicts, enabling comparative analysis and systematic approaches to conflict resolution.
 
@@ -50,14 +51,4 @@ where $\upsilon : \text{At}(K) \to \{T, F, B\}$ is a three-valued truth assignme
 
 The contension measure counts atoms, not formulas or conflicts. This means that multiple formula conflicts may be resolved by assigning $B$ to a single shared atom. For instance, the knowledge base $K = \{a \land b, \neg a \land b, \neg a \land c, a \land c\}$ contains multiple pairwise conflicts but can be satisfied by setting only $a$ to $B$, yielding $\mathcal{I}_c(K) = 1$. This atom-level granularity distinguishes contension from formula-counting measures.
 
-Section~\ref{sec:naive_encoding} demonstrates that despite this granularity, $\mathcal{I}_c$ yields uninformative results when applied to naive propositional encodings of planning problems.
-
-\subsubsection{Domain Adaptation Precedents}
-
-Inconsistency measurement techniques have been successfully adapted to diverse logical domains, establishing methodological precedent for this thesis.
-
-Ulbricht et al.~\cite{Ulbricht2016} adapted inconsistency measures to \ac{ASP}, addressing the fundamental challenge that non-monotonic reasoning violates classical monotonicity postulates. Their key observation, that adding information to a non-monotonic knowledge base can reduce inconsistency, directly parallels the planning context, where adding operators can enable new solution paths. This motivates the Operator Monotonicity postulate developed in Section~\ref{sec:postulates}.
-
-Corea et al.~\cite{Corea2022} developed inconsistency measures for temporal logic applied to declarative process specifications. Their work demonstrates that traditional measures fail to adequately capture temporal operators, requiring domain-specific semantics for meaningful conflict quantification. This parallels the finding in this thesis that naive propositional encodings of planning problems yield uninformative measure values, motivating planning-native measures.
-
-These adaptations establish that inconsistency measures can be meaningfully extended to diverse formalisms when domain-specific conflict semantics are carefully considered.
+Section~\ref{sec:naive_encoding} demonstrates that despite this granularity, $\mathcal{I}_c$ yields uninformative results when applied to naive propositional encodings of planning problems. Domain adaptations of inconsistency measurement to non-classical settings, including \ac{ASP}~\cite{Ulbricht2016} and temporal logic for declarative processes~\cite{Corea2022}, are discussed in Section~\ref{sec:related_work}.

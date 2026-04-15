@@ -1,7 +1,7 @@
 \section{Implementation}
 \label{sec:implementation}
 
-This chapter presents the \ac{ASP}-based implementation of the adapted inconsistency measures from Section~\ref{sec:proposed_measures}. The system accepts \ac{PDDL} planning problems as input and, given a horizon parameter $h$, computes the full diagnostic profile
+This section presents the \ac{ASP}-based implementation of the adapted inconsistency measures from Section~\ref{sec:proposed_measures}. The system accepts \ac{PDDL} planning problems as input and, given a horizon parameter $h$, computes the full diagnostic profile
 \begin{equation*}
     (\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h), \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h), \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h))
 \end{equation*}
@@ -31,7 +31,7 @@ The input to the system is a pair of standard \ac{PDDL} files, a domain specific
 \subsubsection{Adoption of plasp}
 \label{sec:plasp_adoption}
 
-An initial prototype grounded \ac{PDDL} action schemas via typed Cartesian product enumeration using the \texttt{pddl} Python library by Favorito~\cite{Favorito2021}. Testing on the IPC~2016 benchmarks by Muise~\cite{Muise2016} revealed two limitations of this approach. The library does not support the \texttt{:constants} declaration used by several IPC domains, and naive Cartesian product grounding produces prohibitively large programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the constraining \texttt{in-line} predicate.
+An initial prototype grounded \ac{PDDL} action schemas via typed Cartesian product enumeration using the \texttt{pddl} Python library by Favorito et al.~\cite{Favorito2021}. Testing on the IPC~2016 benchmarks by Muise and Lipovetzky~\cite{Muise2016} revealed two limitations of this approach. The library does not support the \texttt{:constants} declaration used by several IPC domains, and naive Cartesian product grounding produces prohibitively large programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the constraining \texttt{in-line} predicate.
 
 The implementation was therefore restructured to use \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019} for \ac{PDDL} translation. The \textit{plasp} tool, developed as part of the Potassco project, translates \ac{PDDL} specifications into a lifted \ac{ASP} representation where Clingo handles the grounding process. This offers two advantages. First, \textit{plasp} correctly handles \ac{PDDL} features including \texttt{:constants} and complex type hierarchies. Second, Clingo's grounding algorithm exploits the structure of \ac{ASP} rules to avoid generating impossible parameter combinations.
 
@@ -93,7 +93,7 @@ The main computation performs horizon-bounded state-space exploration. The encod
 
 \input{figures/lst_exploration}
 
-The choice rule on line~12 selects at most one applicable operator at each time step. Different selections produce different answer sets, each corresponding to a distinct execution trace through the state space. The frame axiom (line~17) ensures that propositions persist unless explicitly deleted.
+The choice rule on line~13 selects at most one applicable operator at each time step. Different selections produce different answer sets, each corresponding to a distinct execution trace through the state space. The frame axiom (line~18) ensures that propositions persist unless explicitly deleted.
 
 \subsubsection{Brave Reasoning for Witness Collection}
 \label{sec:witness_collection}
@@ -140,7 +140,7 @@ A batch processing module iterates over benchmark directories, automatically dis
 
 The batch runner and command-line interface accept a configurable timeout parameter (in seconds). When the time limit is exceeded, the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
 
-Implementing reliable timeouts for \ac{ASP} solving proved non-trivial. Clingo's \texttt{--time-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
+Implementing reliable timeouts for \ac{ASP} solving requires care. Clingo's \texttt{--time-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
 
 For reproducibility, the implementation is containerized with Docker, bundling Python~3.12, Clingo~5.6, and \textit{plasp}~3 in a consistent environment. The Dockerfile and build instructions are included in the repository.
 

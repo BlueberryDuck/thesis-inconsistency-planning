@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-This chapter evaluates the implemented measures on unsolvable planning benchmarks from the IPC~2016 Unsolvability Competition. The evaluation addresses Research Question~3, asking whether the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems. Section~\ref{sec:eval_methodology} describes the experimental setup and dataset. Section~\ref{sec:eval_results} presents the benchmark results across seven compatible domains. Section~\ref{sec:eval_case_studies} examines individual problems that illustrate the diagnostic capabilities and limitations of the measures. Section~\ref{sec:eval_horizon} analyzes the sensitivity of results to the horizon parameter, revealing a precision-recall tradeoff that constitutes a key methodological finding. Section~\ref{sec:eval_performance} discusses computational performance and scalability. Section~\ref{sec:eval_discussion} synthesizes the findings and addresses limitations.
+This section evaluates the implemented measures on unsolvable planning benchmarks from the IPC~2016 Unsolvability Competition. The evaluation addresses Research Question~3, asking whether the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems. Section~\ref{sec:eval_methodology} describes the experimental setup and dataset. Section~\ref{sec:eval_results} presents the benchmark results across seven compatible domains. Section~\ref{sec:eval_case_studies} examines individual problems that illustrate the diagnostic capabilities and limitations of the measures. Section~\ref{sec:eval_horizon} analyzes the sensitivity of results to the horizon parameter, revealing a soundness-completeness tradeoff that constitutes a key methodological finding. Section~\ref{sec:eval_performance} discusses computational performance and scalability. Section~\ref{sec:eval_discussion} synthesizes the findings and addresses limitations.
 
 \subsection{Evaluation Methodology}
 \label{sec:eval_methodology}
@@ -24,7 +24,7 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
         document-transfer   & Compatible      & 20                &                                                  \\
         pegsol-row5         & Compatible      & 15                &                                                  \\
         chessboard-pebbling & Compatible      & 23                &                                                  \\
-        3unsat${}^*$        & Compatible      & 30                &                                                  \\
+        3unsat              & Compatible      & 30                &                                                  \\
         \hline
         bag-barman          & Incompatible    &                   & \texttt{:equality} unsupported by \textit{plasp} \\
         tetris              & Incompatible    &                   & \texttt{:equality} unsupported by \textit{plasp} \\
@@ -37,7 +37,7 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
         pegsol              & Incompatible    &                   & Grounding timeout                                \\
         \hline
     \end{tabular}
-    \caption{Domain compatibility with the implementation pipeline. ${}^*$From the Eriksson benchmark collection~\cite{Eriksson2019}; all other domains from IPC~2016~\cite{Muise2016}.}
+    \caption{Domain compatibility with the implementation pipeline.}
     \label{tab:domain_compatibility}
 \end{table}
 
@@ -225,7 +225,7 @@ This represents a genuine limitation of the proposed measures, corresponding to 
 \subsection{Horizon Sensitivity Analysis}
 \label{sec:eval_horizon}
 
-The horizon parameter $h$ bounds the number of time steps explored during brave reasoning. This section presents evidence that the choice of horizon significantly affects the computed profiles, revealing a precision-recall tradeoff inherent to horizon-bounded brave reasoning.
+The horizon parameter $h$ bounds the number of time steps explored during brave reasoning. This section presents evidence that the choice of horizon significantly affects the computed profiles, revealing a soundness-completeness tradeoff inherent to horizon-bounded brave reasoning.
 
 \subsubsection{Mechanism}
 
@@ -286,7 +286,7 @@ The ten instances classified as consistent at $h = 20$ from \textit{cave-diving}
         \multicolumn{8}{l}{\textit{At $h = 20$: all of the above classified as consistent}}                           \\
         \hline
     \end{tabular}
-    \caption{Cave-diving at $h = 10$ vs.\ $h = 20$ (all consistent at $h = 20$, spuriously 2c-sequencing at $h = 10$).}
+    \caption{Cave-diving at $h = 10$ versus $h = 20$.}
     \label{tab:horizon_cavediving}
 \end{table}
 
@@ -311,7 +311,7 @@ The non-monotonic behavior of mutex and sequencing measures suggests three pract
 
 The implementation records per-phase timing for each computation, separating \ac{PDDL} translation, Clingo grounding, Clingo solving (brave reasoning), and Python measure extraction. Among the 70 successfully computed instances (68 unsolvable plus 2 solvable), total computation times range from 0.04 seconds for \textit{diagnosis}~prob06, with 49 propositions and 25 operators, to 84.5 seconds for \textit{chessboard-pebbling}~prob05, with 4{,}900 propositions and 117{,}649 operators. Table~\ref{tab:timing} summarizes the per-phase timing distribution.
 
-Translation and extraction are negligible across all domains: translation completes in under 150 milliseconds and extraction in under 1 millisecond for every instance. The computational cost is therefore entirely determined by the grounding and solving phases.
+Translation and extraction are negligible across all domains. Translation completes in under 150 milliseconds and extraction in under 1 millisecond for every instance. The computational cost is therefore entirely determined by the grounding and solving phases. In Table~\ref{tab:timing}, the Solve~\% column reports solving time as a fraction of grounding plus solving time, excluding the negligible translation and extraction phases.
 
 \begin{table}[ht]
     \centering
@@ -331,7 +331,7 @@ Translation and extraction are negligible across all domains: translation comple
         3unsat              & 20                                         & 0.06                                     & 0.51           & 1.50  & 0.20  & 2.32  & 39.2 & 83          \\
         \hline
     \end{tabular}
-    \caption{Per-phase timing breakdown for successfully computed instances. Solve~\% is computed as solve/(ground+solve), excluding the negligible translation and extraction phases.}
+    \caption{Per-phase timing breakdown for successfully computed instances.}
     \label{tab:timing}
 \end{table}
 
@@ -358,7 +358,7 @@ The \textit{diagnosis}~prob09 outlier, previously noted at 43.2 seconds total de
 The per-phase data suggests two distinct scalability regimes. For the 70 instances that complete within the time limit, the solving phase dominates and determines computation time. For the 90 instances that exceed the time limit (57\% of the total), no per-phase telemetry is available, so the phase responsible for each timeout cannot be measured directly. The following characterization is therefore a structural hypothesis rather than a measured claim: because Clingo must complete grounding before solving begins and the timestep-indexed encoding creates ground rules proportional to $|O| \times h$, grounding is expected to become the dominant cost as operator counts grow. This expectation is consistent with the exponential growth patterns of \textit{pegsol-row5} (operator counts: 216, 2{,}744, 13{,}824 across prob01--prob03) and \textit{chessboard-pebbling} (15{,}625, 46{,}656, 117{,}649 across prob03--prob05), where the next instance after the last completing one exceeds the time limit. This boundary also introduces a survivorship bias: the instances available for phase analysis are precisely those where grounding succeeded quickly enough to leave time for solving, so the measured solve-dominance in the 70 completing instances need not extend to the 90 timeouts.
 
 \paragraph{Instance-Specific Solve Cost.}
-The \textit{3unsat} domain provides a natural experiment for separating grounding cost from solving cost. Figure~\ref{fig:3unsat_variance} shows the five instances in the sat-3-86-20 group, which share identical problem structure ($|G| = 86$, $|P| = 106$, $|O| = 40$). Grounding time is effectively constant at $1.48 \pm 0.02$ seconds, confirming that grounding cost is determined by problem structure. Solving time, however, varies from 11.4 to 39.2 seconds (a factor of 3.5), reflecting the instance-specific combinatorial difficulty of the brave reasoning search across different clause assignments.
+The \textit{3unsat} domain isolates grounding cost from solving cost, since all instances in a problem group share identical structure. Figure~\ref{fig:3unsat_variance} shows the five instances in the sat-3-86-20 group, which share identical problem structure ($|G| = 86$, $|P| = 106$, $|O| = 40$). Grounding time is effectively constant at $1.48 \pm 0.02$ seconds, confirming that grounding cost is determined by problem structure. Solving time, however, varies from 11.4 to 39.2 seconds (a factor of 3.5), reflecting the instance-specific combinatorial difficulty of the brave reasoning search across different clause assignments.
 
 \input{figures/fig_3unsat_variance}
 

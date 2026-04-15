@@ -21,7 +21,7 @@ Before defining the measures themselves, several foundational concepts are estab
     \end{enumerate}
 \end{defn}
 
-The set $S_{\text{reach}}$ can be computed via forward reachability analysis: starting from $I$, iteratively apply all applicable operators until no new states are generated. Since $P$ is finite and each state is a subset of $P$, this process terminates in at most $2^{|P|}$ iterations. Empirical convergence behavior on benchmark problems is discussed in Chapter~\ref{sec:evaluation}.
+The set $S_{\text{reach}}$ can be computed via forward reachability analysis: starting from $I$, iteratively apply all applicable operators until no new states are generated. Since $P$ is finite and each state is a subset of $P$, this process terminates in at most $2^{|P|}$ iterations. Empirical convergence behavior on benchmark problems is discussed in Section~\ref{sec:evaluation}.
 
 \begin{defn}[Forward Reachability from State]
     \label{defn:forward_reachability}
@@ -44,7 +44,7 @@ The set $S_{\text{reach}}$ as defined above is the complete set of reachable sta
     \label{defn:bounded_reachable_states}
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The set of \emph{horizon-bounded reachable states} $S^h_{\text{reach}} \subseteq 2^P$ is defined by the step-indexed construction:
     \begin{align*}
-        S^0_{\text{reach}}     & = \{I\}                                                                                                                    \\
+        S^0_{\text{reach}}     & = \{I\}                                                                                                                     \\
         S^{i+1}_{\text{reach}} & = S^i_{\text{reach}} \cup \{\text{RESULT}(s,o) \mid s \in S^i_{\text{reach}},\ o \in O,\ \text{precond}(o) \subseteq s\}\,.
     \end{align*}
     Equivalently, $S^h_{\text{reach}}$ is the set of all states reachable from $I$ by applying at most $h$ operators in sequence.
