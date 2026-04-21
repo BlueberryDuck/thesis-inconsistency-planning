@@ -247,17 +247,17 @@ Table~\ref{tab:measure_ranges} summarizes the value ranges of all six measure co
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|l|l}
-        \hline
+    \begin{tabular}{lll}
+        \toprule
         Measure                                   & Range                 & Maximum                           \\
-        \hline
+        \midrule
         $\mathcal{I}^{\text{scope}}_{\text{UR}}$  & $[0, |G|]$            & All goals unreachable             \\
         $\mathcal{I}^{\text{struct}}_{\text{UR}}$ & $[0, |P|]$            & All propositions unreachable      \\
         $\mathcal{I}^{\text{scope}}_{\text{MX}}$  & $[0, |G|]$            & All goals in mutex relationships  \\
         $\mathcal{I}^{\text{struct}}_{\text{MX}}$ & $[0, \binom{|G|}{2}]$ & All goal pairs are mutex          \\
         $\mathcal{I}^{\text{scope}}_{\text{GS}}$  & $[0, |G|]$            & All goals in sequencing conflicts \\
         $\mathcal{I}^{\text{struct}}_{\text{GS}}$ & $[0, |G|(|G|-1)]$     & All ordered pairs are conflicts   \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Value ranges of proposed inconsistency measures.}
     \label{tab:measure_ranges}

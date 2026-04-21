@@ -15,9 +15,9 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
 \begin{table}[ht]
     \centering
     \begin{tabular}{llrl}
-        \hline
+        \toprule
         \textbf{Domain}     & \textbf{Status} & \textbf{Problems} & \textbf{Reason for Incompatibility}              \\
-        \hline
+        \midrule
         diagnosis           & Compatible      & 20                &                                                  \\
         bottleneck          & Compatible      & 25                &                                                  \\
         cave-diving         & Compatible      & 25                &                                                  \\
@@ -25,7 +25,7 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
         pegsol-row5         & Compatible      & 15                &                                                  \\
         chessboard-pebbling & Compatible      & 23                &                                                  \\
         3unsat              & Compatible      & 30                &                                                  \\
-        \hline
+        \midrule
         bag-barman          & Incompatible    &                   & \texttt{:equality} unsupported by \textit{plasp} \\
         tetris              & Incompatible    &                   & \texttt{:equality} unsupported by \textit{plasp} \\
         bag-gripper         & Incompatible    &                   & Grounding timeout                                \\
@@ -35,7 +35,7 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
         over-tpp            & Incompatible    &                   & Grounding timeout                                \\
         sliding-tiles       & Incompatible    &                   & Grounding timeout                                \\
         pegsol              & Incompatible    &                   & Grounding timeout                                \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Domain compatibility with the implementation pipeline.}
     \label{tab:domain_compatibility}
@@ -43,7 +43,7 @@ Of the 15 IPC~2016 domains, 6 are compatible with the implementation pipeline. O
 
 \subsubsection{Experimental Setup}
 
-All experiments run inside a Docker container with Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. The horizon parameter is set to $h = 20$ for all primary runs, and each problem has a time limit of 120 seconds. The batch runner (Section~\ref{sec:tooling}) processes all domain/problem pairs in each compatible domain, recording the full diagnostic profile, category classification, problem size metadata (goal, proposition, and operator counts), per-phase computation times (translation, grounding, solving, extraction), and status (OK, TIMEOUT, or ERROR) for each instance. Additional runs at $h = 10$ and $h = 30$ are performed on selected instances for the horizon sensitivity analysis in Section~\ref{sec:eval_horizon}.
+All experiments run inside a Docker container with Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1 on a host with an AMD Ryzen~5~5600X CPU (6 cores, 12 threads, 4.65\,GHz, 32\,MiB L3) and 32\,GiB of RAM. Clingo is invoked single-threaded through its Python API. The horizon parameter is set to $h = 20$ for all primary runs, and each problem has a time limit of 120 seconds. The batch runner (Section~\ref{sec:tooling}) processes all domain/problem pairs in each compatible domain, recording the full diagnostic profile, category classification, problem size metadata (goal, proposition, and operator counts), per-phase computation times (translation, grounding, solving, extraction), and status (OK, TIMEOUT, or ERROR) for each instance. Additional runs at $h = 10$ and $h = 30$ are performed on selected instances for the horizon sensitivity analysis in Section~\ref{sec:eval_horizon}.
 
 \subsection{Benchmark Results}
 \label{sec:eval_results}
@@ -55,9 +55,9 @@ Of the 158 unsolvable problems across the seven compatible domains, 68 (43\%) co
 \begin{table}[ht]
     \centering
     \begin{tabular}{lrrrl}
-        \hline
+        \toprule
         \textbf{Domain}     & \textbf{Total} & \textbf{OK} & \textbf{Timeout} & \textbf{Coverage} \\
-        \hline
+        \midrule
         diagnosis           & 20             & 18          & 2                & 90\%              \\
         bottleneck          & 25             & 12          & 13               & 48\%              \\
         cave-diving         & 25             & 9           & 16               & 36\%              \\
@@ -65,9 +65,9 @@ Of the 158 unsolvable problems across the seven compatible domains, 68 (43\%) co
         pegsol-row5         & 15             & 3           & 12               & 20\%              \\
         chessboard-pebbling & 23             & 3           & 20               & 13\%              \\
         3unsat              & 30             & 20          & 10               & 67\%              \\
-        \hline
+        \midrule
         \textbf{Total}      & \textbf{158}   & \textbf{68} & \textbf{90}      & \textbf{43\%}     \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Per-domain coverage at $h = 20$ with 120-second time limit.}
     \label{tab:coverage}
@@ -75,23 +75,9 @@ Of the 158 unsolvable problems across the seven compatible domains, 68 (43\%) co
 
 \subsubsection{Category Distribution}
 
-Table~\ref{tab:category_distribution} shows the distribution of category classifications among the 68 successfully computed unsolvable instances. Category~2a (unreachability) is the most common classification, appearing in 25 instances across four domains. Category~2c-sequencing appears in 13 instances across two domains. No instance exhibits a pure 2c-mutex classification (mutex without sequencing). Thirty instances are classified as consistent: 10 from the IPC~2016 domains, where Section~\ref{sec:eval_horizon} shows these are horizon-dependent, and 20 from \textit{3unsat}, where the consistent classification is horizon-independent (Section~\ref{sec:3unsat_case_study}).
+Figure~\ref{fig:category_distribution} shows the distribution of category classifications among the 68 successfully computed unsolvable instances. Category~2a (unreachability) is the most common classification, appearing in 25 instances across four domains. Category~2c-sequencing appears in 13 instances across two domains. No instance exhibits a pure 2c-mutex classification (mutex without sequencing). 30 instances are classified as consistent: 10 from the IPC~2016 domains, where Section~\ref{sec:eval_horizon} shows these are horizon-dependent, and 20 from \textit{3unsat}, where the consistent classification is horizon-independent (Section~\ref{sec:3unsat_case_study}).
 
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{lrl}
-        \hline
-        \textbf{Category} & \textbf{Count} & \textbf{Domains}                                                        \\
-        \hline
-        2a                & 25             & diagnosis (18), cave-diving (1), document-transfer (3), pegsol-row5 (3) \\
-        2c-sequencing     & 13             & bottleneck (10), chessboard-pebbling (3)                                \\
-        2c-mutex          & 0              &                                                                         \\
-        consistent        & 30             & 3unsat (20), cave-diving (8), bottleneck (2)                            \\
-        \hline
-    \end{tabular}
-    \caption{Category distribution among 68 successfully computed unsolvable instances.}
-    \label{tab:category_distribution}
-\end{table}
+\input{figures/fig_category_heatmap}
 
 The absence of pure 2c-mutex classifications is consistent with the theoretical relationship from Proposition~\ref{prop:measure_relationships}. Every instance with $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, 20) > 0$ also has $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, 20) > 0$, which is consistent with the proposition that sequencing conflicts imply mutex. The unit test scenarios in Section~\ref{sec:validation} confirm that pure mutex cases are correctly handled.
 
@@ -105,36 +91,41 @@ The \textit{diagnosis} domain provides the richest results, with the highest cov
     \centering
     \small
     \begin{tabular}{lrrr rr rr rr r}
-        \hline
-        \textbf{Problem} & $|G|$                        & $|P|$                       & $|O|$
-                         & $\mathcal{I}^s_{\text{UR}}$  & $\mathcal{I}^t_{\text{UR}}$
-                         & $\mathcal{I}^s_{\text{MX}}$  & $\mathcal{I}^t_{\text{MX}}$
-                         & $\mathcal{I}^s_{\text{GS}}$  & $\mathcal{I}^t_{\text{GS}}$
-                         & \textbf{Time}                                                                                          \\
-        \hline
-        prob01           & 16                           & 190                         & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob02           & 16                           & 190                         & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob03           & 16                           & 155                         & 125   & 10 & 20 & 0 & 0  & 0 & 0  & 0.2s  \\
-        prob04           & 38                           & 389                         & 568   & 31 & 59 & 0 & 0  & 0 & 0  & 1.6s  \\
-        prob05           & 56                           & 542                         & 957   & 49 & 97 & 0 & 0  & 0 & 0  & 2.9s  \\
-        prob06           & 7                            & 49                          & 25    & 1  & 1  & 0 & 0  & 0 & 0  & 0.04s \\
-        prob07           & 22                           & 154                         & 81    & 12 & 31 & 0 & 0  & 0 & 0  & 0.1s  \\
-        prob08           & 24                           & 170                         & 96    & 14 & 41 & 0 & 0  & 0 & 0  & 0.2s  \\
-        prob09           & 24                           & 241                         & 156   & 14 & 33 & 0 & 0  & 0 & 0  & 43.2s \\
-        prob10           & 24                           & 187                         & 99    & 14 & 25 & 2 & 1  & 2 & 2  & 0.3s  \\
-        prob11           & 22                           & 204                         & 139   & 14 & 33 & 0 & 0  & 0 & 0  & 2.8s  \\
-        prob12           & 24                           & 199                         & 99    & 15 & 26 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob13           & 36                           & 399                         & 232   & 27 & 67 & 0 & 0  & 0 & 0  & 0.9s  \\
-        prob14           & 28                           & 314                         & 152   & 19 & 38 & 0 & 0  & 0 & 0  & 1.4s  \\
-        prob15           & 24                           & 240                         & 155   & 14 & 35 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob16           & 36                           & 457                         & 257   & 20 & 32 & 8 & 28 & 8 & 56 & 2.5s  \\
-        prob17           & 24                           & 214                         & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob18           & \multicolumn{10}{c}{TIMEOUT}                                                                           \\
-        prob19           & 24                           & 214                         & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
-        prob20           & \multicolumn{10}{c}{TIMEOUT}                                                                           \\
-        \hline
+        \toprule
+                         & \multicolumn{3}{c}{\textbf{Size}}
+                         & \multicolumn{2}{c}{\textbf{UR}}
+                         & \multicolumn{2}{c}{\textbf{MX}}
+                         & \multicolumn{2}{c}{\textbf{GS}}   &                                                             \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+        \textbf{Problem} & $|G|$                             & $|P|$           & $|O|$
+                         & $\mathcal{I}^s$                   & $\mathcal{I}^t$
+                         & $\mathcal{I}^s$                   & $\mathcal{I}^t$
+                         & $\mathcal{I}^s$                   & $\mathcal{I}^t$
+                         & \textbf{Time}                                                                                   \\
+        \midrule
+        prob01           & 16                                & 190             & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob02           & 16                                & 190             & 216   & 9  & 16 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob03           & 16                                & 155             & 125   & 10 & 20 & 0 & 0  & 0 & 0  & 0.2s  \\
+        prob04           & 38                                & 389             & 568   & 31 & 59 & 0 & 0  & 0 & 0  & 1.6s  \\
+        prob05           & 56                                & 542             & 957   & 49 & 97 & 0 & 0  & 0 & 0  & 2.9s  \\
+        prob06           & 7                                 & 49              & 25    & 1  & 1  & 0 & 0  & 0 & 0  & 0.04s \\
+        prob07           & 22                                & 154             & 81    & 12 & 31 & 0 & 0  & 0 & 0  & 0.1s  \\
+        prob08           & 24                                & 170             & 96    & 14 & 41 & 0 & 0  & 0 & 0  & 0.2s  \\
+        prob09           & 24                                & 241             & 156   & 14 & 33 & 0 & 0  & 0 & 0  & 43.2s \\
+        prob10           & 24                                & 187             & 99    & 14 & 25 & 2 & 1  & 2 & 2  & 0.3s  \\
+        prob11           & 22                                & 204             & 139   & 14 & 33 & 0 & 0  & 0 & 0  & 2.8s  \\
+        prob12           & 24                                & 199             & 99    & 15 & 26 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob13           & 36                                & 399             & 232   & 27 & 67 & 0 & 0  & 0 & 0  & 0.9s  \\
+        prob14           & 28                                & 314             & 152   & 19 & 38 & 0 & 0  & 0 & 0  & 1.4s  \\
+        prob15           & 24                                & 240             & 155   & 14 & 35 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob16           & 36                                & 457             & 257   & 20 & 32 & 8 & 28 & 8 & 56 & 2.5s  \\
+        prob17           & 24                                & 214             & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob18           & \multicolumn{10}{c}{TIMEOUT}                                                                    \\
+        prob19           & 24                                & 214             & 120   & 15 & 27 & 0 & 0  & 0 & 0  & 0.5s  \\
+        prob20           & \multicolumn{10}{c}{TIMEOUT}                                                                    \\
+        \bottomrule
     \end{tabular}
-    \caption{Diagnostic profiles for the \textit{diagnosis} domain ($h = 20$, time limit 120s).}
+    \caption{Diagnostic profiles for the \textit{diagnosis} domain at $h = 20$ and time limit 120s.}
     \label{tab:diagnosis_results}
 \end{table}
 
@@ -148,29 +139,29 @@ All 18 successfully computed instances are classified as Category~2a, indicating
     \centering
     \small
     \begin{tabular}{lrrr rr rr rr r}
-        \hline
+        \toprule
         \textbf{Problem} & $|G|$                       & $|P|$                       & $|O|$
                          & $\mathcal{I}^s_{\text{MX}}$ & $\mathcal{I}^t_{\text{MX}}$
                          & $\mathcal{I}^s_{\text{GS}}$ & $\mathcal{I}^t_{\text{GS}}$
                          & \textbf{Cat.}               & \textbf{Time}                                                             \\
-        \hline
+        \midrule
         prob01           & 4                           & 629                         & 4{,}913  & 4 & 6  & 4 & 12 & 2c-seq & 2.1s  \\
         prob02           & 4                           & 702                         & 5{,}832  & 3 & 3  & 3 & 6  & 2c-seq & 2.3s  \\
         prob03           & 4                           & 779                         & 6{,}859  & 2 & 1  & 2 & 2  & 2c-seq & 2.8s  \\
-        \hline
+        \midrule
         prob04           & 5                           & 1{,}430                     & 17{,}576 & 5 & 10 & 5 & 20 & 2c-seq & 10.4s \\
         prob05           & 5                           & 1{,}539                     & 19{,}683 & 4 & 6  & 4 & 12 & 2c-seq & 11.4s \\
         prob06           & 5                           & 1{,}652                     & 21{,}952 & 3 & 3  & 3 & 6  & 2c-seq & 11.6s \\
         prob07           & 5                           & 1{,}769                     & 24{,}389 & 2 & 1  & 2 & 2  & 2c-seq & 14.5s \\
-        \hline
+        \midrule
         prob08           & 6                           & 2{,}849                     & 50{,}653 & 6 & 15 & 6 & 30 & 2c-seq & 32.1s \\
         prob09           & 6                           & 3{,}002                     & 54{,}872 & 4 & 4  & 4 & 8  & 2c-seq & 46.7s \\
         prob10           & 6                           & 3{,}159                     & 59{,}319 & 2 & 1  & 2 & 2  & 2c-seq & 51.9s \\
         prob11           & 6                           & 3{,}320                     & 64{,}000 & 0 & 0  & 0 & 0  & cons.  & 62.1s \\
         prob12           & 6                           & 3{,}485                     & 68{,}921 & 0 & 0  & 0 & 0  & cons.  & 67.8s \\
-        \hline
+        \bottomrule
     \end{tabular}
-    \caption{Diagnostic profiles for the \textit{bottleneck} domain ($h = 20$, $\mathcal{I}^{\text{scope}}_{\text{UR}} = 0$ throughout).}
+    \caption{Diagnostic profiles for the \textit{bottleneck} domain at $h = 20$.}
     \label{tab:bottleneck_results}
 \end{table}
 
@@ -244,15 +235,15 @@ Table~\ref{tab:horizon_diagnosis} shows the profile of \textit{diagnosis}~prob10
 \begin{table}[ht]
     \centering
     \begin{tabular}{r rr rr rr}
-        \hline
+        \toprule
         $h$ & $\mathcal{I}^s_{\text{UR}}$ & $\mathcal{I}^t_{\text{UR}}$
             & $\mathcal{I}^s_{\text{MX}}$ & $\mathcal{I}^t_{\text{MX}}$
             & $\mathcal{I}^s_{\text{GS}}$ & $\mathcal{I}^t_{\text{GS}}$                 \\
-        \hline
+        \midrule
         10  & 19                          & 39                          & 0 & 0 & 0 & 0 \\
         20  & 14                          & 25                          & 2 & 1 & 2 & 2 \\
         30  & 11                          & 17                          & 0 & 0 & 0 & 0 \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Horizon sensitivity for \textit{diagnosis}~prob10.}
     \label{tab:horizon_diagnosis}
@@ -266,12 +257,12 @@ The ten instances classified as consistent at $h = 20$ from \textit{cave-diving}
     \centering
     \small
     \begin{tabular}{llr rrrr l}
-        \hline
+        \toprule
         \textbf{Problem} & \textbf{Solvable?}          & $|G|$
                          & $\mathcal{I}^s_{\text{MX}}$ & $\mathcal{I}^t_{\text{MX}}$
                          & $\mathcal{I}^s_{\text{GS}}$ & $\mathcal{I}^t_{\text{GS}}$
                          & \textbf{Category}                                                                          \\
-        \hline
+        \midrule
         \multicolumn{8}{l}{\textit{At $h = 10$:}}                                                                     \\
         prob01           & No                          & 3                           & 3 & 2 & 3 & 4  & 2c-sequencing \\
         prob02           & No                          & 3                           & 3 & 2 & 3 & 4  & 2c-sequencing \\
@@ -282,9 +273,9 @@ The ten instances classified as consistent at $h = 20$ from \textit{cave-diving}
         prob13           & No                          & 5                           & 5 & 4 & 5 & 8  & 2c-sequencing \\
         prob14           & No                          & 5                           & 5 & 4 & 5 & 8  & 2c-sequencing \\
         satprob01        & Yes                         & 3                           & 3 & 2 & 3 & 4  & 2c-sequencing \\
-        \hline
+        \midrule
         \multicolumn{8}{l}{\textit{At $h = 20$: all of the above classified as consistent}}                           \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Cave-diving at $h = 10$ versus $h = 20$.}
     \label{tab:horizon_cavediving}
@@ -311,25 +302,25 @@ The non-monotonic behavior of mutex and sequencing measures suggests three pract
 
 The implementation records per-phase timing for each computation, separating \ac{PDDL} translation, Clingo grounding, Clingo solving (brave reasoning), and Python measure extraction. Among the 70 successfully computed instances (68 unsolvable plus 2 solvable), total computation times range from 0.04 seconds for \textit{diagnosis}~prob06, with 49 propositions and 25 operators, to 84.5 seconds for \textit{chessboard-pebbling}~prob05, with 4{,}900 propositions and 117{,}649 operators. Table~\ref{tab:timing} summarizes the per-phase timing distribution.
 
-Translation and extraction are negligible across all domains. Translation completes in under 150 milliseconds and extraction in under 1 millisecond for every instance. The computational cost is therefore entirely determined by the grounding and solving phases. In Table~\ref{tab:timing}, the Solve~\% column reports solving time as a fraction of grounding plus solving time, excluding the negligible translation and extraction phases.
+Translation and extraction are negligible across all domains. Translation completes in under 150 milliseconds and extraction in under 1 millisecond for every instance. The computational cost is therefore entirely determined by the grounding and solving phases, whose relative contributions per domain are shown in Figure~\ref{fig:phase_proportions}.
 
 \begin{table}[ht]
     \centering
     \small
-    \begin{tabular}{lr rrr rrr r}
-        \hline
-        \textbf{Domain}     & $n$
-                            & \multicolumn{3}{c}{\textbf{Grounding (s)}} & \multicolumn{3}{c}{\textbf{Solving (s)}} & \textbf{Solve}                                              \\
-                            &                                            & Min                                      & Med            & Max   & Min   & Med   & Max  & \textbf{\%} \\
-        \hline
-        diagnosis           & 18                                         & 0.01                                     & 0.05           & 0.35  & 0.02  & 0.39  & 43.0 & 86          \\
-        bottleneck          & 12                                         & 0.83                                     & 4.28           & 13.99 & 1.26  & 8.66  & 53.8 & 68          \\
-        cave-diving         & 10                                         & 0.10                                     & 1.27           & 4.95  & 0.43  & 4.23  & 35.0 & 80          \\
-        document-transfer   & 4                                          & 0.12                                     & 1.50           & 3.51  & 9.70  & 18.75 & 47.3 & 93          \\
-        pegsol-row5         & 3                                          & 0.02                                     & 0.37           & 2.17  & 0.004 & 0.10  & 1.90 & 21          \\
-        chessboard-pebbling & 3                                          & 3.02                                     & 8.68           & 22.79 & 7.34  & 35.8  & 61.7 & 73          \\
-        3unsat              & 20                                         & 0.06                                     & 0.51           & 1.50  & 0.20  & 2.32  & 39.2 & 83          \\
-        \hline
+    \begin{tabular}{lr rrr rrr}
+        \toprule
+        \textbf{Domain}     & $n$ & \multicolumn{3}{c}{\textbf{Grounding (s)}} & \multicolumn{3}{c}{\textbf{Solving (s)}}                                \\
+        \cmidrule(lr){3-5}\cmidrule(lr){6-8}
+                            &     & Min                                        & Med                                      & Max   & Min   & Med   & Max  \\
+        \midrule
+        diagnosis           & 18  & 0.01                                       & 0.05                                     & 0.35  & 0.02  & 0.39  & 43.0 \\
+        bottleneck          & 12  & 0.83                                       & 4.28                                     & 13.99 & 1.26  & 8.66  & 53.8 \\
+        cave-diving         & 10  & 0.10                                       & 1.27                                     & 4.95  & 0.43  & 4.23  & 35.0 \\
+        document-transfer   & 4   & 0.12                                       & 1.50                                     & 3.51  & 9.70  & 18.75 & 47.3 \\
+        pegsol-row5         & 3   & 0.02                                       & 0.37                                     & 2.17  & 0.004 & 0.10  & 1.90 \\
+        chessboard-pebbling & 3   & 3.02                                       & 8.68                                     & 22.79 & 7.34  & 35.8  & 61.7 \\
+        3unsat              & 20  & 0.06                                       & 0.51                                     & 1.50  & 0.20  & 2.32  & 39.2 \\
+        \bottomrule
     \end{tabular}
     \caption{Per-phase timing breakdown for successfully computed instances.}
     \label{tab:timing}
@@ -355,7 +346,9 @@ The sole exception is \textit{pegsol-row5}, where grounding dominates. Prob01 sp
 The \textit{diagnosis}~prob09 outlier, previously noted at 43.2 seconds total despite only 241 propositions and 156 operators, is now explained by the phase breakdown: grounding completes in 0.11 seconds, comparable to similarly sized instances, while the solving phase takes 43.0 seconds. The brave reasoning search is combinatorially expensive for this particular problem structure despite a moderate ground program. This demonstrates that operator count alone is not a reliable predictor of computation time.
 
 \paragraph{Two Bottleneck Regimes.}
-The per-phase data suggests two distinct scalability regimes. For the 70 instances that complete within the time limit, the solving phase dominates and determines computation time. For the 90 instances that exceed the time limit (57\% of the total), no per-phase telemetry is available, so the phase responsible for each timeout cannot be measured directly. The following characterization is therefore a structural hypothesis rather than a measured claim: because Clingo must complete grounding before solving begins and the timestep-indexed encoding creates ground rules proportional to $|O| \times h$, grounding is expected to become the dominant cost as operator counts grow. This expectation is consistent with the exponential growth patterns of \textit{pegsol-row5} (operator counts: 216, 2{,}744, 13{,}824 across prob01--prob03) and \textit{chessboard-pebbling} (15{,}625, 46{,}656, 117{,}649 across prob03--prob05), where the next instance after the last completing one exceeds the time limit. This boundary also introduces a survivorship bias: the instances available for phase analysis are precisely those where grounding succeeded quickly enough to leave time for solving, so the measured solve-dominance in the 70 completing instances need not extend to the 90 timeouts.
+The per-phase data suggests two distinct scalability regimes. For the 70 instances that complete within the time limit, the solving phase dominates and determines computation time. For the 90 instances that exceed the time limit, amounting to 57\% of the total, the phase responsible is not directly observable from the default run. To probe this second regime empirically, the two smallest timed-out instances per domain were re-run with a 600-second budget. Of the 14 targeted instances, 9 completed. 7 remain solve-dominated. For example, \textit{bottleneck}~prob13 grounds in 26.4 seconds and solves in 101.0 seconds, \textit{cave-diving}~prob06 grounds in 6.9 seconds and solves in 350.5 seconds, and \textit{pegsol-row5}~prob04 grounds in 8.5 seconds and solves in 212.5 seconds. One instance, \textit{chessboard-pebbling}~prob06, has roughly balanced grounding and solving costs at 54.8 and 104.0 seconds. A second, \textit{chessboard-pebbling}~prob07, is grounding-bound, with 124.0 seconds of grounding alone exceeding the original 120-second limit before its 223.2-second solve phase could begin. Five instances still timed out at 600 seconds without producing a phase breakdown. These are \textit{diagnosis}~prob18 and prob20, \textit{document-transfer}~prob02 and prob04, \textit{cave-diving}~prob04, and \textit{pegsol-row5}~prob05.
+
+These observations support a refined picture. Solve-dominance extends well beyond the 120-second boundary into the 600-second regime for most of the tested domains, while grounding-boundedness is confined to the operator-heavy \textit{chessboard-pebbling} and \textit{pegsol-row5} instances, where the timestep-indexed encoding produces ground rules proportional to $|O| \times h$. The five unresolved 600-second timeouts remain unexplained by phase telemetry, so the two-regime claim is empirically supported on the tested subset but not verified across all 90 timeouts.
 
 \paragraph{Instance-Specific Solve Cost.}
 The \textit{3unsat} domain isolates grounding cost from solving cost, since all instances in a problem group share identical structure. Figure~\ref{fig:3unsat_variance} shows the five instances in the sat-3-86-20 group, which share identical problem structure ($|G| = 86$, $|P| = 106$, $|O| = 40$). Grounding time is effectively constant at $1.48 \pm 0.02$ seconds, confirming that grounding cost is determined by problem structure. Solving time, however, varies from 11.4 to 39.2 seconds (a factor of 3.5), reflecting the instance-specific combinatorial difficulty of the brave reasoning search across different clause assignments.
@@ -379,7 +372,7 @@ Several limitations must be noted.
 
 \paragraph{Domain Coverage.} The measures are computable for 6 of 15 IPC~2016 domains and 1 additional Eriksson domain, with 68 of 158 unsolvable instances completing within the time limit. As shown in Section~\ref{sec:phase_analysis}, the scalability limitation has two distinct causes: for completing instances, the solving phase dominates and its cost depends on instance-specific combinatorial difficulty; for instances exceeding the time limit, the grounding phase likely dominates due to the $O(|O| \times h)$ scaling of the timestep-indexed encoding. Lifted \ac{ASP} solving techniques could potentially address the grounding bottleneck, while incremental solving strategies could reduce solve-phase cost, but both approaches are beyond the scope of this thesis.
 
-\paragraph{Solvable Instance Validation.} Only two solvable instances complete successfully, \textit{cave-diving}~\texttt{satprob01} and \textit{document-transfer}~\texttt{satprob01}, both correctly classified as consistent at $h = 20$. The remaining solvable instances fail for two distinct reasons. The \textit{diagnosis} solvable instances and several \textit{cave-diving} solvable instances fail at the \textit{plasp} translation level due to predicate mismatches. The pipeline detects these failures through error handling and reports them as incompatible, but cannot resolve them automatically since the mismatch originates in the external \textit{plasp} translator. Solvable instances in other domains exceed the 120-second time limit. A larger sample of solvable instances would strengthen the validation of the false-positive rate.
+\paragraph{Solvable Instance Validation.} Only two solvable instances complete successfully, \textit{cave-diving}~\texttt{satprob01} and \textit{document-transfer}~\texttt{satprob01}, both correctly classified as consistent at $h = 20$. The remaining solvable instances fail for two distinct reasons. The \textit{diagnosis} solvable instances and several \textit{cave-diving} solvable instances fail at the \textit{plasp} translation level due to predicate mismatches. The pipeline detects these failures through error handling and reports them as incompatible, but cannot resolve them automatically since the mismatch originates in the external \textit{plasp} translator. Solvable instances in other domains exceed the 120-second time limit. A larger sample of solvable instances would strengthen the validation of the false-positive rate. Observing zero misclassifications across only two solvable instances provides weak statistical evidence. Even a procedure that misclassifies the majority of solvable problems could produce this outcome by chance, so the absence of false positives here cannot rule out higher error rates on larger samples.
 
 \paragraph{Horizon Dependence.} As demonstrated in Section~\ref{sec:eval_horizon}, results depend on the horizon parameter. No theoretically optimal horizon exists, and the appropriate value depends on the maximum meaningful plan length for a given domain. The default of $h = 20$ is empirically justified by the absence of false positives, but different domains may benefit from different horizon values.
 

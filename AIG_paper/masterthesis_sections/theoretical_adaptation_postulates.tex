@@ -122,15 +122,16 @@ Table~\ref{tab:postulates} summarizes postulate compliance. The observation that
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|cc|cc|cc}
-        \hline
-                              & \multicolumn{2}{c|}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c|}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                                        \\
-        Postulate             & scope                                          & struct                                         & scope                                         & struct     & scope      & struct     \\
-        \hline
-        Planning Consistency  & \texttimes                                     & \texttimes                                     & \texttimes                                    & \texttimes & \texttimes & \texttimes \\
-        Operator Monotonicity & \checkmark                                     & \checkmark                                     & \texttimes                                    & \texttimes & \texttimes & \texttimes \\
-        Goal Monotonicity     & \checkmark                                     & \checkmark                                     & \checkmark                                    & \checkmark & \checkmark & \checkmark \\
-        \hline
+    \begin{tabular}{l cc cc cc}
+        \toprule
+                              & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                                        \\
+        \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+        Postulate             & scope                                         & struct                                        & scope                                         & struct     & scope      & struct     \\
+        \midrule
+        Planning Consistency  & \texttimes                                    & \texttimes                                    & \texttimes                                    & \texttimes & \texttimes & \texttimes \\
+        Operator Monotonicity & \checkmark                                    & \checkmark                                    & \texttimes                                    & \texttimes & \texttimes & \texttimes \\
+        Goal Monotonicity     & \checkmark                                    & \checkmark                                    & \checkmark                                    & \checkmark & \checkmark & \checkmark \\
+        \bottomrule
     \end{tabular}
     \caption{Postulate compliance of proposed planning inconsistency measures.}
     \label{tab:postulates}

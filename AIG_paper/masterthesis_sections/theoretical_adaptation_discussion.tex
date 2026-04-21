@@ -36,18 +36,19 @@ Table~\ref{tab:measure_values} demonstrates these relationships across the test 
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|cc|cc|cc}
-        \hline
-        Scenario         & \multicolumn{2}{c|}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c|}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
-                         & scope                                          & struct                                         & scope                                         & struct & scope & struct \\
-        \hline
-        Locked Door      & 1                                              & 3                                              & 0                                             & 0      & 0     & 0      \\
-        Bank Vault       & 1                                              & 7                                              & 0                                             & 0      & 0     & 0      \\
-        Light Switch     & 0                                              & 0                                              & 2                                             & 1      & 0     & 0      \\
-        Traffic Light    & 0                                              & 0                                              & 3                                             & 3      & 0     & 0      \\
-        Trust and Travel & 0                                              & 0                                              & 2                                             & 1      & 2     & 1      \\
-        Rival Alliances  & 0                                              & 0                                              & 2                                             & 1      & 2     & 2      \\
-        \hline
+    \begin{tabular}{l cc cc cc}
+        \toprule
+        Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
+        \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+                         & scope                                         & struct                                        & scope                                         & struct & scope & struct \\
+        \midrule
+        Locked Door      & 1                                             & 3                                             & 0                                             & 0      & 0     & 0      \\
+        Bank Vault       & 1                                             & 7                                             & 0                                             & 0      & 0     & 0      \\
+        Light Switch     & 0                                             & 0                                             & 2                                             & 1      & 0     & 0      \\
+        Traffic Light    & 0                                             & 0                                             & 3                                             & 3      & 0     & 0      \\
+        Trust and Travel & 0                                             & 0                                             & 2                                             & 1      & 2     & 1      \\
+        Rival Alliances  & 0                                             & 0                                             & 2                                             & 1      & 2     & 2      \\
+        \bottomrule
     \end{tabular}
     \caption{Measure values across test scenarios.}
     \label{tab:measure_values}

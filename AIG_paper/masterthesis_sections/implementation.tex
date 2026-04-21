@@ -41,15 +41,15 @@ The \textit{plasp} output format represents propositions as boolean-valued varia
     \centering
     \small
     \begin{tabular}{lll}
-        \hline
+        \toprule
         \textbf{Concept} & \textbf{plasp format}                              & \textbf{Internal format} \\
-        \hline
+        \midrule
         Initial state    & \texttt{initialState(V, value(V,true))}            & \texttt{init(P)}         \\
         Goal             & \texttt{goal(V, value(V,true))}                    & \texttt{goal(P)}         \\
         Precondition     & \texttt{precondition(A, V, value(V,true))}         & \texttt{precond(O, P)}   \\
         Add effect       & \texttt{postcondition(A,\,..., V, value(V,true))}  & \texttt{add(O, P)}       \\
         Delete effect    & \texttt{postcondition(A,\,..., V, value(V,false))} & \texttt{delete(O, P)}    \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Mapping between internal and \textit{plasp} predicates.}
     \label{tab:plasp_vocabulary}
@@ -155,9 +155,9 @@ Eleven test scenarios are tested against their theoretically derived expected pr
 \begin{table}[ht]
     \centering
     \begin{tabular}{llcc}
-        \hline
+        \toprule
         \textbf{Category} & \textbf{Scenario}     & \textbf{Expected} & \textbf{Computed} \\
-        \hline
+        \midrule
         P1 Unreachability & Locked Door           & $(1,3,0,0,0,0)$   & $(1,3,0,0,0,0)$   \\
                           & Bank Vault            & $(1,7,0,0,0,0)$   & $(1,7,0,0,0,0)$   \\
         P2 Mutex          & Light Switch          & $(0,0,2,1,0,0)$   & $(0,0,2,1,0,0)$   \\
@@ -169,7 +169,7 @@ Eleven test scenarios are tested against their theoretically derived expected pr
                           & Empty Goals           & $(0,0,0,0,0,0)$   & $(0,0,0,0,0,0)$   \\
                           & Delete Relaxation     & $(1,1,0,0,0,0)$   & $(1,1,0,0,0,0)$   \\
                           & Negative Precondition & $(1,1,0,0,0,0)$   & $(1,1,0,0,0,0)$   \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Computed profiles for the test scenarios.}
     \label{tab:validation_results}

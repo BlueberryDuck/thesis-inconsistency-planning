@@ -103,15 +103,15 @@ Table~\ref{tab:decision_complexity} summarizes these results.
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|l|l|l}
-        \hline
+    \begin{tabular}{llll}
+        \toprule
         Problem        & $\mathcal{I}_{\text{UR}}$ & $\mathcal{I}_{\text{MX}}$ & $\mathcal{I}_{\text{GS}}$ \\
-        \hline
+        \midrule
         $\text{UPPER}$ & PSPACE-c.                 & PSPACE-c.                 & PSPACE-c.                 \\
         $\text{LOWER}$ & PSPACE-c.                 & PSPACE-c.                 & PSPACE-c.                 \\
         $\text{EXACT}$ & PSPACE-c.                 & PSPACE-c.                 & PSPACE-c.                 \\
         $\text{VALUE}$ & in FPSPACE                & in FPSPACE                & in FPSPACE                \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Complexity of decision and function problems of measures.}
     \label{tab:decision_complexity}
@@ -160,15 +160,15 @@ Table~\ref{tab:complexity} summarizes these results.
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|l|l}
-        \hline
+    \begin{tabular}{lll}
+        \toprule
         Measure                                              & Time Complexity                                 & Space Complexity        \\
-        \hline
+        \midrule
         $S_{\text{reach}}$                                   & $O(2^{|P|} \cdot |O| \cdot |P|)$                & $O(2^{|P|} \cdot |P|)$  \\
         $\mathcal{I}_{\text{UR}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |P|)$               & $O(|P|)$                \\
         $\mathcal{I}_{\text{MX}}$ (given $S_{\text{reach}}$) & $O(|S_{\text{reach}}| \cdot |G|^2)$             & $O(|G|^2)$              \\
         $\mathcal{I}_{\text{GS}}$ (given $S_{\text{reach}}$) & $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ & $O(|S_{\text{reach}}|)$ \\
-        \hline
+        \bottomrule
     \end{tabular}
     \caption{Computational complexity of measures.}
     \label{tab:complexity}
