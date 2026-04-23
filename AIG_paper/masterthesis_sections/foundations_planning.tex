@@ -13,7 +13,7 @@ Russell and Norvig~\cite{Russell2016} describe classical planning as operating o
     A state $s$ is a subset $s \subseteq P$ representing the propositions that are true in that state.
 \end{defn}
 
-States follow database semantics with two key assumptions~\cite{Russell2016,Bylander1994}. The \emph{closed-world assumption} treats unmentioned propositions as false: any proposition $p \in P$ not explicitly in $s$ is considered false in state $s$, eliminating the need to explicitly represent negative facts. The \emph{unique names assumption} ensures that distinct object names refer to distinct entities in the domain.
+States follow database semantics with two key assumptions~\cite{Russell2016,Bylander1994}. The \emph{closed-world assumption} treats unmentioned propositions as false. Any proposition $p \in P$ not explicitly in $s$ is considered false in state $s$, eliminating the need to explicitly represent negative facts. The \emph{unique names assumption} ensures that distinct object names refer to distinct entities in the domain.
 
 \begin{defn}[Operator~\cite{Bylander1994}]
     \label{defn:operator}

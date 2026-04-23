@@ -28,7 +28,7 @@ Note that Operator Monotonicity reverses classical monotonicity because adding o
     \end{equation*}
 \end{defn}
 
-Goal Monotonicity preserves the direction of classical monotonicity: adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure. Counter-examples use the converged test scenarios from Section~\ref{sec:test_scenarios}, so the proofs write $\mathcal{I}(\Pi)$ for the converged measure values.
+Goal Monotonicity preserves the direction of classical monotonicity. Adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure. Counter-examples use the converged test scenarios from Section~\ref{sec:test_scenarios}, so the proofs write $\mathcal{I}(\Pi)$ for the converged measure values.
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
@@ -106,17 +106,17 @@ The structure variants satisfy the same postulates as their scope counterparts:
     $\mathcal{I}^{\text{struct}}_{\text{MX}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{MX}}$ applies: adding $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ creates a new mutex pair $\{g_1, g_2\}$, increasing $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi)$ from 0 to 1.
+    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{MX}}$ applies. Adding $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ creates a new mutex pair $\{g_1, g_2\}$, increasing $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi)$ from 0 to 1.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{struct}}_{\text{GS}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{GS}}$ applies: adding $\text{reach\_g2}$ creates sequencing conflicts $(g_1, g_2)$ and $(g_2, g_1)$, increasing $\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi)$ from 0 to 2.
+    The same counter-example as for $\mathcal{I}^{\text{scope}}_{\text{GS}}$ applies. Adding $\text{reach\_g2}$ creates sequencing conflicts $(g_1, g_2)$ and $(g_2, g_1)$, increasing $\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi)$ from 0 to 2.
 \end{proof}
 
-All three structure variants satisfy Goal Monotonicity: adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S^h_{\text{reach}}$ depends only on $I$, $O$, and $h$.
+All three structure variants satisfy Goal Monotonicity. Adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S^h_{\text{reach}}$ depends only on $I$, $O$, and $h$.
 
 Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this thesis, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
 

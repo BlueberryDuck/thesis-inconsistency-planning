@@ -42,11 +42,11 @@ Three independent chains fail at their roots (\textit{key1}, \textit{key2}, \tex
 
 \subsubsection{Mutex Scenarios}
 
-The following scenarios exhibit operator-induced mutual exclusions where goal propositions are each individually achievable but never simultaneously true in any reachable state. Actions are reversible: the system can transition between goal-satisfying states, but effects structurally prevent co-occurrence.
+The following scenarios exhibit operator-induced mutual exclusions where goal propositions are each individually achievable but never true in any common reachable state. Actions are reversible. The system can transition between goal-satisfying states, but effects structurally prevent co-occurrence.
 
 \paragraph{Scenario 3: Light Switch.}
 
-A goal requires both \textit{on} and \textit{off} to be true simultaneously, but toggle actions enforce mutual exclusion.
+A goal requires both \textit{on} and \textit{off} to be true, but toggle actions enforce mutual exclusion.
 
 \begin{align*}
   P & = \{\text{on}, \text{off}\}                                                              \\
@@ -60,7 +60,7 @@ Forward reachability yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\
 
 \paragraph{Scenario 4: Traffic Light.}
 
-A goal requires all three colors (\textit{red}, \textit{yellow}, \textit{green}) simultaneously, but cyclic transitions enforce that exactly one color is active at any time.
+A goal requires all three colors (\textit{red}, \textit{yellow}, \textit{green}), but cyclic transitions enforce that exactly one color is active at any time.
 
 \begin{align*}
   P & = \{\text{red}, \text{yellow}, \text{green}\}                                                           \\
@@ -113,7 +113,7 @@ Forward reachability yields:
 \begin{equation*}
   S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}
 \end{equation*}
-Both goals are individually achievable but never coexist (mutex). Unlike Trust and Travel, both directions are sequencing conflicts: allying with either faction alienates the other, deleting the precondition for the remaining alliance.
+Both goals are individually achievable but never coexist (mutex). Unlike Trust and Travel, both directions are sequencing conflicts. Allying with either faction alienates the other, deleting the precondition for the remaining alliance.
 
 \subsubsection{Scenario Summary}
 

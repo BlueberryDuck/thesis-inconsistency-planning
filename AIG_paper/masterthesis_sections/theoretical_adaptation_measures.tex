@@ -21,7 +21,7 @@ Before defining the measures themselves, several foundational concepts are estab
     \end{enumerate}
 \end{defn}
 
-The set $S_{\text{reach}}$ can be computed via forward reachability analysis: starting from $I$, iteratively apply all applicable operators until no new states are generated. Since $P$ is finite and each state is a subset of $P$, this process terminates in at most $2^{|P|}$ iterations. Empirical convergence behavior on benchmark problems is discussed in Section~\ref{sec:evaluation}.
+The set $S_{\text{reach}}$ can be computed via forward reachability analysis. Starting from $I$, iteratively apply all applicable operators until no new states are generated. Since $P$ is finite and each state is a subset of $P$, this process terminates in at most $2^{|P|}$ iterations. Empirical convergence behavior on benchmark problems is discussed in Section~\ref{sec:evaluation}.
 
 \begin{defn}[Forward Reachability from State]
     \label{defn:forward_reachability}
@@ -50,7 +50,7 @@ The set $S_{\text{reach}}$ as defined above is the complete set of reachable sta
     Equivalently, $S^h_{\text{reach}}$ is the set of all states reachable from $I$ by applying at most $h$ operators in sequence.
 \end{defn}
 
-This parameter plays an analogous role to the trace length parameter $m$ in linear temporal logic on fixed traces ($\text{LTL}_{\text{ff}}$), a temporal formalism in which formulas are evaluated over traces of a fixed length $m$ rather than infinite models, so $m$ enters the semantics as an explicit parameter. In that setting, Corea et al.~\cite{Corea2024} define inconsistency measures as functions $\mathcal{I} \colon \mathbb{K} \times \mathbb{N}_0 \to \mathbb{R}^{\infty}_{\geq 0}$ where $\mathbb{K}$ denotes the set of $\text{LTL}_{\text{ff}}$ knowledge bases and the second argument is the trace length, and Kuhlmann~\cite{Kuhlmann2025b} follows the same convention. The measures defined below adopt this approach and take the planning problem and the horizon as joint input.
+This parameter plays an analogous role to the trace length parameter $m$ in linear temporal logic on fixed traces ($\text{LTL}_{\text{ff}}$), a temporal formalism in which formulas are evaluated over traces of a fixed length $m$ rather than infinite models, so $m$ enters the semantics as an explicit parameter. In that setting, Corea et al.~\cite{Corea2024} define inconsistency measures as functions $\mathcal{I} \colon \mathbb{K} \times \mathbb{N}_0 \to \mathbb{R}^{\infty}_{\geq 0}$ where $\mathbb{K}$ denotes the set of $\text{LTL}_{\text{ff}}$ knowledge bases and the second argument is the trace length, and Kuhlmann~\cite{Kuhlmann2025b} follows the same convention. The measures defined below adopt this approach and take the planning problem and the horizon as input.
 
 The following properties relate bounded and unbounded reachability.
 
@@ -71,7 +71,7 @@ The following properties relate bounded and unbounded reachability.
 
 In $\text{LTL}_{\text{ff}}$, a sufficient trace length is computable from the syntactic depth of the formulas. Corea et al.~\cite{Corea2024} show that setting $m \geq d(\mathcal{K})$ guarantees that a three-valued interpretation exists. No analogous efficient bound exists for $h^*$ in the planning setting. Computing the state space diameter, which provides an upper bound on $h^*$, is PSPACE-hard for factored transition systems, as shown by Abdulaziz et al.~\cite{Abdulaziz2018}. This intractability motivates the explicit parameterization of the measures by $h$. Since no efficiently computable sufficient horizon is available in general, the dependence on $h$ is made part of the formal measure definition rather than treated as a purely implementational concern.
 
-An important consequence of the horizon bound is that the mutex and sequencing measures exhibit non-monotonic behavior in $h$. Increasing $h$ simultaneously makes new goal propositions reachable, which may introduce apparent conflicts among newly achievable goals, and provides new execution traces, which may resolve previously reported conflicts through longer witness paths. This contrasts with the unreachability measure, where $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is monotonically non-increasing in $h$ as a direct consequence of the monotonicity of $S^h_{\text{reach}}$. The non-monotonic behavior of the mutex and sequencing measures is demonstrated empirically in Section~\ref{sec:eval_horizon}.
+An important consequence of the horizon bound is that the mutex and sequencing measures exhibit non-monotonic behavior in $h$. Increasing $h$ both makes new goal propositions reachable, which may introduce apparent conflicts among newly achievable goals, and provides new execution traces, which may resolve previously reported conflicts through longer witness paths. This contrasts with the unreachability measure, where $\mathcal{I}^{\text{scope}}_{\text{UR}}$ is monotonically non-increasing in $h$ as a direct consequence of the monotonicity of $S^h_{\text{reach}}$. The non-monotonic behavior of the mutex and sequencing measures is demonstrated empirically in Section~\ref{sec:eval_horizon}.
 
 \subsubsection{Unreachability Profile}
 \label{sec:unreachability_profile}
@@ -87,7 +87,7 @@ The profile employs forward reachability analysis to compute: (1) the number of 
     \end{equation*}
 \end{defn}
 
-This measure indicates the scope of unreachability problems at the goal level: how many goal propositions cannot be achieved. The value ranges from $0$ (all goals reachable) to $|G|$ (no goals reachable).
+This measure indicates the scope of unreachability problems at the goal level. It counts how many goal propositions cannot be achieved. The value ranges from $0$ (all goals reachable) to $|G|$ (no goals reachable).
 
 \begin{defn}[Total Unreachable Propositions Count]
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$, with horizon-bounded reachable states $S^h_{\text{reach}}$. The measure $\mathcal{I}^{\text{struct}}_{\text{UR}}$ counting all unreachable propositions is defined as:
@@ -122,7 +122,7 @@ This demonstrates how $\mathcal{I}^{\text{struct}}_{\text{UR}}$ distinguishes sh
 \subsubsection{Goal Mutex Profile}
 \label{sec:goal_mutex_profile}
 
-The Goal Mutex Profile addresses unsolvability where goal propositions are each individually achievable but never simultaneously true in any reachable state. This differs from specification-level contradictions (goals containing explicit negation like $\{p, \neg p\}$, which do not exist in propositional STRIPS) and from sequencing conflicts (where achieving one goal permanently blocks another). Mutex relationships are operator-induced: actions enforce mutual exclusion through their effects, creating states where goals alternate but never coexist.
+The Goal Mutex Profile addresses unsolvability where goal propositions are each individually achievable but never true in any common reachable state. This differs from specification-level contradictions (goals containing explicit negation like $\{p, \neg p\}$, which do not exist in propositional STRIPS) and from sequencing conflicts (where achieving one goal permanently blocks another). Mutex relationships are operator-induced. Actions enforce mutual exclusion through their effects, creating states where goals alternate but never coexist.
 
 \begin{defn}[Mutex Goal Pair]
     \label{defn:mutex_goal_pair}
@@ -134,7 +134,7 @@ The Goal Mutex Profile addresses unsolvability where goal propositions are each 
     \end{enumerate}
 \end{defn}
 
-This definition captures operator-induced exclusions: both goals are individually reachable, but action effects prevent their simultaneous satisfaction. Note that mutex is a symmetric relation: if $(g_1, g_2)$ is mutex, then $(g_2, g_1)$ is also mutex.
+This definition captures operator-induced exclusions. Both goals are individually reachable, but action effects prevent them from holding in the same state. Note that mutex is a symmetric relation. If $(g_1, g_2)$ is mutex, then $(g_2, g_1)$ is also mutex.
 
 \begin{defn}[Mutex Goals Count]
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{scope}}_{\text{MX}}$ counting goal propositions involved in mutex relationships is defined as:
@@ -143,7 +143,7 @@ This definition captures operator-induced exclusions: both goals are individuall
     \end{equation*}
 \end{defn}
 
-This measure indicates the scope of mutex problems at the goal level: how many goal propositions participate in at least one mutex relationship. The value ranges from $0$ (no mutex) to $|G|$ (all goals involved in mutex).
+This measure indicates the scope of mutex problems at the goal level. It counts how many goal propositions participate in at least one mutex relationship. The value ranges from $0$ (no mutex) to $|G|$ (all goals involved in mutex).
 
 \begin{defn}[Mutex Pair Count]
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counting two-element subsets of $G$ whose elements are mutex is defined as:
@@ -154,24 +154,24 @@ This measure indicates the scope of mutex problems at the goal level: how many g
 
 This measure reveals the structure of mutex relationships by counting two-element subsets rather than ordered pairs, reflecting the symmetry of the mutex relation. The value ranges from $0$ to $\binom{|G|}{2}$. The ratio between $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ reveals conflict patterns: a small ratio suggests isolated mutex pairs, while a large ratio (approaching $\binom{|G|}{2}$) indicates dense mutex cliques. Together, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ form the Goal Mutex Profile.
 
-\paragraph{Example: Light Switch (Scenario~3).} For the Light Switch scenario, forward reachability analysis yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions appear in reachable states, but no state contains both simultaneously. The Goal Mutex Profile yields:
+\paragraph{Example: Light Switch (Scenario~3).} For the Light Switch scenario, forward reachability analysis yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions appear in reachable states, but no state contains both. The Goal Mutex Profile yields:
 \begin{align*}
     \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)  & = |\{\text{on}, \text{off}\}| = 2     \\
     \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) & = |\{\{\text{on}, \text{off}\}\}| = 1
 \end{align*}
-The profile detects operator-induced mutual exclusion despite reversibility: actions allow transitions between states, but effects structurally prevent co-occurrence.
+The profile detects operator-induced mutual exclusion despite reversibility. Actions allow transitions between states, but effects structurally prevent co-occurrence.
 
 \paragraph{Example: Traffic Light (Scenario~4).} For the Traffic Light scenario, reachability analysis yields $S_{\text{reach}} = \{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$. All three goal propositions are individually achievable (the system is cyclic), but no state contains more than one color. The Goal Mutex Profile yields:
 \begin{align*}
     \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)  & = |\{\text{red}, \text{yellow}, \text{green}\}| = 3                                                      \\
     \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) & = |\{\{\text{red}, \text{yellow}\}, \{\text{red}, \text{green}\}, \{\text{yellow}, \text{green}\}\}| = 3
 \end{align*}
-This demonstrates a complete mutex clique: all goal pairs are mutually exclusive, yielding $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) = \binom{3}{2} = 3$. The profile distinguishes this dense conflict structure from isolated mutex pairs.
+This demonstrates a complete mutex clique. All goal pairs are mutually exclusive, yielding $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) = \binom{3}{2} = 3$. The profile distinguishes this dense conflict structure from isolated mutex pairs.
 
 \subsubsection{Goal Sequencing Conflict Profile}
 \label{sec:sequencing_conflict_profile}
 
-The Goal Sequencing Conflict Profile addresses Category~2c unsolvability: sequencing conflicts where achieving certain goal propositions creates dead-end states that prevent other goal propositions from being reached. Unlike mutex relationships where goals can be achieved in different states but never simultaneously, sequencing conflicts involve irreversible state transitions where achieving one goal permanently blocks another.
+The Goal Sequencing Conflict Profile addresses Category~2c unsolvability, where achieving certain goal propositions creates dead-end states that prevent other goal propositions from being reached. Unlike mutex relationships where goals can be achieved in different states but never in the same state, sequencing conflicts involve irreversible state transitions where achieving one goal permanently blocks another.
 
 \begin{defn}[Sequencing Conflict]
     \label{defn:sequencing_conflict}
@@ -194,7 +194,7 @@ At sufficient horizon, condition 3 is equivalent to requiring that for every rea
     \end{equation*}
 \end{defn}
 
-This measure indicates the scope of sequencing conflicts: how many goal propositions participate in at least one action-based exclusion. The value ranges from $0$ (no sequencing conflicts) to $|G|$ (all goals involved).
+This measure indicates the scope of sequencing conflicts. It counts how many goal propositions participate in at least one action-based exclusion. The value ranges from $0$ (no sequencing conflicts) to $|G|$ (all goals involved).
 
 \begin{defn}[Sequencing Conflict Pair Count]
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{struct}}_{\text{GS}}$ counting ordered sequencing conflict pairs is defined as:
@@ -207,7 +207,7 @@ This measure reveals the structure of sequencing conflicts by counting ordered p
 
 \paragraph{Example: Trust and Travel (Scenario~5).} For the Trust and Travel scenario, forward reachability yields states including $\{\text{at\_local}, \text{trust}, \text{partnership}\}$ and $\{\text{at\_local}, \text{opportunity}\}$, but no state contains both goals.
 
-Both goals are individually achievable but never coexist, satisfying the mutex definition. Additionally, $(\text{opportunity}, \text{partnership})$ is a sequencing conflict: from any state with \textit{opportunity}, the agent lacks \textit{trust} to achieve \textit{partnership}. However, $(\text{partnership}, \text{opportunity})$ is not a sequencing conflict: from \textit{partnership}-states, \textit{opportunity} remains reachable via \textit{travel} $\rightarrow$ \textit{exploit} (though this path deletes \textit{partnership}).
+Both goals are individually achievable but never coexist, satisfying the mutex definition. Additionally, $(\text{opportunity}, \text{partnership})$ is a sequencing conflict. From any state with \textit{opportunity}, the agent lacks \textit{trust} to achieve \textit{partnership}. However, $(\text{partnership}, \text{opportunity})$ is not a sequencing conflict. From \textit{partnership}-states, \textit{opportunity} remains reachable via \textit{travel} $\rightarrow$ \textit{exploit} (though this path deletes \textit{partnership}).
 
 The Goal Mutex Profile yields:
 \begin{align*}
@@ -221,7 +221,7 @@ The Goal Sequencing Conflict Profile yields:
     \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) & = |\{(\text{opportunity}, \text{partnership})\}| = 1
 \end{align*}
 
-This demonstrates that irreversible problems exhibit both mutex and sequencing: the goals cannot coexist (mutex), and the sequencing measure additionally identifies the direction of the conflict.
+This demonstrates that irreversible problems exhibit both mutex and sequencing. The goals cannot coexist (mutex), and the sequencing measure additionally identifies the direction of the conflict.
 
 \paragraph{Example: Rival Alliances (Scenario~6).} For the Rival Alliances scenario, forward reachability yields $S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}$. Both goals are individually achievable but never coexist, and allying with either faction alienates the other.
 
