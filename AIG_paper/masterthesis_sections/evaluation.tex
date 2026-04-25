@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-This section evaluates the implemented measures on unsolvable planning benchmarks from the IPC~2016 Unsolvability Competition. The evaluation addresses Research Question~3, asking whether the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems. Section~\ref{sec:eval_methodology} describes the experimental setup and dataset. Section~\ref{sec:eval_results} presents the benchmark results across seven compatible domains. Section~\ref{sec:eval_case_studies} examines individual problems that illustrate the diagnostic capabilities and limitations of the measures. Section~\ref{sec:eval_horizon} analyzes the sensitivity of results to the horizon parameter, revealing a soundness-completeness tradeoff that constitutes a key methodological finding. Section~\ref{sec:eval_performance} discusses computational performance and scalability. Section~\ref{sec:eval_discussion} synthesizes the findings and addresses limitations.
+This section evaluates the implemented measures on unsolvable planning benchmarks from the IPC~2016 Unsolvability Competition. The evaluation addresses Research Question~3, asking whether the adapted measures provide practical diagnostic value for understanding and analyzing unsolvable planning problems. Section~\ref{sec:eval_methodology} describes the experimental setup and dataset. Section~\ref{sec:eval_results} presents the benchmark results across seven compatible domains. Section~\ref{sec:eval_case_studies} examines individual problems that illustrate the diagnostic capabilities and limitations of the measures. Section~\ref{sec:eval_horizon} analyzes the sensitivity of results to the horizon parameter, revealing a soundness-coverage tradeoff that constitutes a key methodological finding. Section~\ref{sec:eval_performance} discusses computational performance and scalability. Section~\ref{sec:eval_discussion} synthesizes the findings and addresses limitations.
 
 \subsection{Evaluation Methodology}
 \label{sec:eval_methodology}
@@ -125,7 +125,7 @@ The \textit{diagnosis} domain provides the richest results, with the highest cov
         prob20           & \multicolumn{10}{c}{TIMEOUT}                                                                    \\
         \bottomrule
     \end{tabular}
-    \caption{Diagnostic profiles for the \textit{diagnosis} domain at $h = 20$ and time limit 120s.}
+    \caption{Diagnostic profiles for \textit{diagnosis} domain at $h = 20$ and time limit 120s.}
     \label{tab:diagnosis_results}
 \end{table}
 
@@ -161,7 +161,7 @@ All 18 successfully computed instances are classified as Category~2a, indicating
         prob12           & 6                           & 3{,}485                     & 68{,}921 & 0 & 0  & 0 & 0  & cons.  & 67.8s \\
         \bottomrule
     \end{tabular}
-    \caption{Diagnostic profiles for the \textit{bottleneck} domain at $h = 20$.}
+    \caption{Diagnostic profiles for \textit{bottleneck} domain at $h = 20$.}
     \label{tab:bottleneck_results}
 \end{table}
 
@@ -216,7 +216,7 @@ This represents an inherent limitation of the proposed measures, corresponding t
 \subsection{Horizon Sensitivity Analysis}
 \label{sec:eval_horizon}
 
-The horizon parameter $h$ bounds the number of time steps explored during brave reasoning. This section presents evidence that the choice of horizon significantly affects the computed profiles, revealing a soundness-completeness tradeoff inherent to horizon-bounded brave reasoning.
+The horizon parameter $h$ bounds the number of time steps explored during brave reasoning. This section presents evidence that the choice of horizon significantly affects the computed profiles, revealing a soundness-coverage tradeoff inherent to horizon-bounded brave reasoning.
 
 \subsubsection{Mechanism}
 
@@ -227,6 +227,8 @@ Under the horizon-bounded brave reasoning approach, longer horizons allow more p
     \item \textbf{Non-monotonic mutex and sequencing}: As noted in Section~\ref{sec:horizon_bounded}, $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h)$ and $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h)$ are not monotonic in $h$, because increasing $h$ both makes new goals reachable, which may introduce apparent conflicts, and provides longer witness traces, which may resolve previously reported conflicts.
     \item \textbf{False positives at short horizons}: An insufficient horizon may fail to find witnesses that exist at longer traces, reporting conflicts that do not represent actual structural limitations. These are correct values of $\mathcal{I}(\Pi, h)$ for the given $h$ but do not reflect the converged values $\mathcal{I}(\Pi, h^*)$.
 \end{enumerate}
+
+These three effects describe the soundness side of the tradeoff. The coverage side reflects encoding cost. Each additional time step enlarges the grounded program, so longer horizons increase grounding and solving time within the time limit and reduce the number of instances that complete. The choice of $h$ therefore balances soundness against coverage rather than admitting a single optimum.
 
 \subsubsection{Evidence: Diagnosis prob10}
 
@@ -345,10 +347,10 @@ The sole exception is \textit{pegsol-row5}, where grounding dominates. Prob01 sp
 
 The \textit{diagnosis}~prob09 outlier, previously noted at 43.2 seconds total despite only 241 propositions and 156 operators, is now explained by the phase breakdown: grounding completes in 0.11 seconds, comparable to similarly sized instances, while the solving phase takes 43.0 seconds. The brave reasoning search is combinatorially expensive for this particular problem structure despite a moderate ground program. This demonstrates that operator count alone is not a reliable predictor of computation time.
 
-\paragraph{Two Bottleneck Regimes.}
-The per-phase data suggests two distinct scalability regimes. For the 70 instances that complete within the time limit, the solving phase dominates and determines computation time. For the 90 instances that exceed the time limit, amounting to 57\% of the total, the phase responsible is not directly observable from the default run. To probe this second regime empirically, the two smallest timed-out instances per domain were re-run with a 600-second budget. Of the 14 targeted instances, 9 completed. 7 remain solve-dominated. For example, \textit{bottleneck}~prob13 grounds in 26.4 seconds and solves in 101.0 seconds, \textit{cave-diving}~prob06 grounds in 6.9 seconds and solves in 350.5 seconds, and \textit{pegsol-row5}~prob04 grounds in 8.5 seconds and solves in 212.5 seconds. One instance, \textit{chessboard-pebbling}~prob06, has roughly balanced grounding and solving costs at 54.8 and 104.0 seconds. A second, \textit{chessboard-pebbling}~prob07, is grounding-bound, with 124.0 seconds of grounding alone exceeding the original 120-second limit before its 223.2-second solve phase could begin. Five instances still timed out at 600 seconds without producing a phase breakdown. These are \textit{diagnosis}~prob18 and prob20, \textit{document-transfer}~prob02 and prob04, \textit{cave-diving}~prob04, and \textit{pegsol-row5}~prob05.
+\paragraph{Two Bottleneck Patterns.}
+The per-phase data suggests two distinct scalability patterns. For the 70 instances that complete within the time limit, the solving phase dominates and determines computation time. For the 90 instances that exceed the time limit, amounting to 57\% of the total, the phase responsible is not directly observable from the default run. To probe this second pattern empirically, the two smallest timed-out instances per domain were re-run with a 600-second budget. Of the 14 targeted instances, 9 completed. 7 remain solve-dominated. For example, \textit{bottleneck}~prob13 grounds in 26.4 seconds and solves in 101.0 seconds, \textit{cave-diving}~prob06 grounds in 6.9 seconds and solves in 350.5 seconds, and \textit{pegsol-row5}~prob04 grounds in 8.5 seconds and solves in 212.5 seconds. One instance, \textit{chessboard-pebbling}~prob06, has roughly balanced grounding and solving costs at 54.8 and 104.0 seconds. A second, \textit{chessboard-pebbling}~prob07, is grounding-bound, with 124.0 seconds of grounding alone exceeding the original 120-second limit before its 223.2-second solve phase could begin. Five instances still timed out at 600 seconds without producing a phase breakdown. These are \textit{diagnosis}~prob18 and prob20, \textit{document-transfer}~prob02 and prob04, \textit{cave-diving}~prob04, and \textit{pegsol-row5}~prob05.
 
-These observations support a refined picture. Solve-dominance extends well beyond the 120-second boundary into the 600-second regime for most of the tested domains, while grounding-boundedness is confined to the operator-heavy \textit{chessboard-pebbling} and \textit{pegsol-row5} instances, where the timestep-indexed encoding produces ground rules proportional to $|O| \times h$. The five unresolved 600-second timeouts remain unexplained by phase telemetry, so the two-regime claim is empirically supported on the tested subset but not verified across all 90 timeouts.
+These observations support a refined picture. Solve-dominance extends well beyond the 120-second boundary into the 600-second budget for most of the tested domains, while grounding-boundedness is confined to the operator-heavy \textit{chessboard-pebbling} and \textit{pegsol-row5} instances, where the timestep-indexed encoding produces ground rules proportional to $|O| \times h$. The five unresolved 600-second timeouts remain unexplained by phase telemetry, so the two-pattern claim is empirically supported on the tested subset but not verified across all 90 timeouts.
 
 \paragraph{Instance-Specific Solve Cost.}
 The \textit{3unsat} domain isolates grounding cost from solving cost, since all instances in a problem group share identical structure. Figure~\ref{fig:3unsat_variance} shows the five instances in the sat-3-86-20 group, which share identical problem structure ($|G| = 86$, $|P| = 106$, $|O| = 40$). Grounding time is effectively constant at $1.48 \pm 0.02$ seconds, confirming that grounding cost is determined by problem structure. Solving time, however, varies from 11.4 to 39.2 seconds (a factor of 3.5), reflecting the instance-specific combinatorial difficulty of the brave reasoning search across different clause assignments.

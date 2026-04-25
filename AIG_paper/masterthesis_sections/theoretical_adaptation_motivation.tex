@@ -44,7 +44,7 @@ The contension measure $\mathcal{I}_c$ counts the minimum number of propositions
 
 \subsubsection{Limitations for Operator-Induced Conflicts}
 
-The Locked Door encoding detects inconsistency because the closed-world assumption $\neg\textit{has\_key}$ follows directly from the STRIPS specification. No operator produces \textit{has\_key}, and it is not in $I$. For scenarios involving operator-induced conflicts, the encoding faces a more fundamental limitation that persists even when the encoding is enriched.
+The Locked Door encoding detects inconsistency because the closed-world assumption $\neg\textit{has\_key}$ follows directly from the \ac{STRIPS} specification. No operator produces \textit{has\_key}, and it is not in $I$. For scenarios involving operator-induced conflicts, the encoding faces a more fundamental limitation that persists even when the encoding is enriched.
 
 \paragraph{Example: Precondition-Only Encoding.} Consider the Light Switch scenario (Scenario~3), where the goal requires both \textit{on} and \textit{off}, but toggle actions enforce mutual exclusion. Applying the encoding rules yields:
 \begin{align*}
