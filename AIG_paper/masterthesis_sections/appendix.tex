@@ -8,55 +8,7 @@
 \section{Full Benchmark Results}
 \label{app:results}
 
-This appendix lists the per-instance results of the primary benchmark run summarized in Section~\ref{sec:eval_results}. The CSV outputs used here are released with the implementation by Sebastian Bunge~\cite{Bunge2026}. The primary run was executed on 2026-04-02 with horizon $h = 20$ and a 120-second time limit per instance. Each table reports the problem identifier, problem size ($|G|$, $|P|$, $|O|$), scope and structural values for the three measures, and all per-phase times (translation, grounding, solving, extraction, and total). Solvable validation instances (\texttt{satprob*}) and instances rejected by \textit{plasp} translation are omitted, as documented in the data release.
-
-\subsection{Diagnosis}
-\label{app:results_diagnosis}
-
-\begin{table}[H]
-    \centering
-    \small
-    \resizebox{\textwidth}{!}{%
-        \begin{tabular}{lrrr rr rr rr rrrrr}
-            \toprule
-                             & \multicolumn{3}{c}{\textbf{Size}}
-                             & \multicolumn{2}{c}{\textbf{UR}}
-                             & \multicolumn{2}{c}{\textbf{MX}}
-                             & \multicolumn{2}{c}{\textbf{GS}}
-                             & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                          \\
-            \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-15}
-            \textbf{Problem} & $|G|$                                 & $|P|$           & $|O|$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & \textbf{Tr}                           & \textbf{Gr}     & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                             \\
-            \midrule
-            prob01           & 16                                    & 190             & 216         & 9           & 16           & 0 & 0  & 0 & 0  & 0.035 & 0.062 & 0.364  & 0.000 & 0.493  \\
-            prob02           & 16                                    & 190             & 216         & 9           & 16           & 0 & 0  & 0 & 0  & 0.035 & 0.065 & 0.361  & 0.000 & 0.494  \\
-            prob03           & 16                                    & 155             & 125         & 10          & 20           & 0 & 0  & 0 & 0  & 0.020 & 0.034 & 0.147  & 0.000 & 0.219  \\
-            prob04           & 38                                    & 389             & 568         & 31          & 59           & 0 & 0  & 0 & 0  & 0.104 & 0.262 & 1.085  & 0.000 & 1.553  \\
-            prob05           & 56                                    & 542             & 957         & 49          & 97           & 0 & 0  & 0 & 0  & 0.151 & 0.347 & 2.295  & 0.001 & 2.941  \\
-            prob06           & 7                                     & 49              & 25          & 1           & 1            & 0 & 0  & 0 & 0  & 0.006 & 0.010 & 0.018  & 0.000 & 0.038  \\
-            prob07           & 22                                    & 154             & 81          & 12          & 31           & 0 & 0  & 0 & 0  & 0.013 & 0.024 & 0.102  & 0.000 & 0.149  \\
-            prob08           & 24                                    & 170             & 96          & 14          & 41           & 0 & 0  & 0 & 0  & 0.019 & 0.036 & 0.128  & 0.000 & 0.198  \\
-            prob09           & 24                                    & 241             & 156         & 14          & 33           & 0 & 0  & 0 & 0  & 0.034 & 0.113 & 42.967 & 0.000 & 43.151 \\
-            prob10           & 24                                    & 187             & 99          & 14          & 25           & 2 & 1  & 2 & 2  & 0.020 & 0.040 & 0.187  & 0.000 & 0.264  \\
-            prob11           & 22                                    & 204             & 139         & 14          & 33           & 0 & 0  & 0 & 0  & 0.020 & 0.050 & 2.692  & 0.000 & 2.782  \\
-            prob12           & 24                                    & 199             & 99          & 15          & 26           & 0 & 0  & 0 & 0  & 0.018 & 0.045 & 0.411  & 0.000 & 0.491  \\
-            prob13           & 36                                    & 399             & 232         & 27          & 67           & 0 & 0  & 0 & 0  & 0.091 & 0.199 & 0.573  & 0.000 & 0.947  \\
-            prob14           & 28                                    & 314             & 152         & 19          & 38           & 0 & 0  & 0 & 0  & 0.041 & 0.114 & 1.157  & 0.000 & 1.357  \\
-            prob15           & 24                                    & 240             & 155         & 14          & 35           & 0 & 0  & 0 & 0  & 0.028 & 0.059 & 0.405  & 0.000 & 0.517  \\
-            prob16           & 36                                    & 457             & 257         & 20          & 32           & 8 & 28 & 8 & 56 & 0.106 & 0.266 & 2.077  & 0.001 & 2.542  \\
-            prob17           & 24                                    & 214             & 120         & 15          & 27           & 0 & 0  & 0 & 0  & 0.023 & 0.049 & 0.359  & 0.000 & 0.451  \\
-            prob18           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                   \\
-            prob19           & 24                                    & 214             & 120         & 15          & 27           & 0 & 0  & 0 & 0  & 0.023 & 0.046 & 0.376  & 0.000 & 0.465  \\
-            prob20           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                   \\
-            \bottomrule
-        \end{tabular}%
-    }
-    \caption{Per-instance results for the \textit{diagnosis} domain.}
-    \label{tab:appendix_diagnosis}
-\end{table}
+This appendix lists the per-instance results of the primary benchmark run summarized in Section~\ref{sec:eval_results}. The CSV outputs used here are released with the implementation by Sebastian Bunge~\cite{Bunge2026}. The primary run was executed on 2026-04-02 with horizon $h = 20$ and a 120-second time limit per instance. Each table reports the problem identifier, problem size ($|G|$, $|P|$, $|O|$), scope and structural values for the three measures, the per-phase times (translation, grounding, solving, extraction), and the total runtime. Solvable validation instances (\texttt{satprob*}), instances of unknown solvability (\texttt{unknownprob*}), and instances rejected by \textit{plasp} translation are omitted, as documented in the data release.
 
 \subsection{3unsat}
 \label{app:results_3unsat}
@@ -112,7 +64,7 @@ This appendix lists the per-instance results of the primary benchmark run summar
             \bottomrule
         \end{tabular}%
     }
-    \caption{Per-instance results for the \textit{3unsat} domain.}
+    \caption{Per-instance results for \textit{3unsat}.}
     \label{tab:appendix_3unsat}
 \end{table}
 
@@ -165,7 +117,7 @@ This appendix lists the per-instance results of the primary benchmark run summar
             \bottomrule
         \end{tabular}%
     }
-    \caption{Per-instance results for the \textit{bottleneck} domain.}
+    \caption{Per-instance results for \textit{bottleneck}.}
     \label{tab:appendix_bottleneck}
 \end{table}
 
@@ -218,99 +170,8 @@ This appendix lists the per-instance results of the primary benchmark run summar
             \bottomrule
         \end{tabular}%
     }
-    \caption{Per-instance results for the \textit{cave-diving} domain.}
+    \caption{Per-instance results for \textit{cave-diving}.}
     \label{tab:appendix_cavediving}
-\end{table}
-
-\subsection{Document-Transfer}
-\label{app:results_doctransfer}
-
-\begin{table}[H]
-    \centering
-    \small
-    \resizebox{\textwidth}{!}{%
-        \begin{tabular}{lrrr rr rr rr rrrrr}
-            \toprule
-                             & \multicolumn{3}{c}{\textbf{Size}}
-                             & \multicolumn{2}{c}{\textbf{UR}}
-                             & \multicolumn{2}{c}{\textbf{MX}}
-                             & \multicolumn{2}{c}{\textbf{GS}}
-                             & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                        \\
-            \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-15}
-            \textbf{Problem} & $|G|$                                 & $|P|$           & $|O|$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & \textbf{Tr}                           & \textbf{Gr}     & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                           \\
-            \midrule
-            prob01           & 19                                    & 1680            & 25839       & 19          & 1580         & 0 & 0 & 0 & 0 & 0.006 & 3.514 & 9.704  & 0.001 & 13.264 \\
-            prob02           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob03           & 19                                    & 1425            & 20592       & 19          & 1332         & 0 & 0 & 0 & 0 & 0.006 & 2.755 & 18.691 & 0.001 & 21.489 \\
-            prob04           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob05           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob06           & 4                                     & 210             & 1188        & 1           & 95           & 0 & 0 & 0 & 0 & 0.004 & 0.122 & 18.800 & 0.000 & 18.935 \\
-            prob07           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob08           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob09           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob10           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob11           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob12           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob13           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob14           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob15           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob16           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob17           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob18           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob19           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            prob20           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
-            \bottomrule
-        \end{tabular}%
-    }
-    \caption{Per-instance results for the \textit{document-transfer} domain.}
-    \label{tab:appendix_doctransfer}
-\end{table}
-
-\subsection{Pegsol-Row5}
-\label{app:results_pegsolrow5}
-
-\begin{table}[H]
-    \centering
-    \small
-    \resizebox{\textwidth}{!}{%
-        \begin{tabular}{lrrr rr rr rr rrrrr}
-            \toprule
-                             & \multicolumn{3}{c}{\textbf{Size}}
-                             & \multicolumn{2}{c}{\textbf{UR}}
-                             & \multicolumn{2}{c}{\textbf{MX}}
-                             & \multicolumn{2}{c}{\textbf{GS}}
-                             & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                      \\
-            \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-15}
-            \textbf{Problem} & $|G|$                                 & $|P|$           & $|O|$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
-                             & \textbf{Tr}                           & \textbf{Gr}     & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                         \\
-            \midrule
-            prob01           & 1                                     & 228             & 216         & 1           & 214          & 0 & 0 & 0 & 0 & 0.009 & 0.019 & 0.004 & 0.000 & 0.036 \\
-            prob02           & 1                                     & 2772            & 2744        & 1           & 2732         & 0 & 0 & 0 & 0 & 0.004 & 0.367 & 0.097 & 0.000 & 0.470 \\
-            prob03           & 1                                     & 13872           & 13824       & 1           & 13782        & 0 & 0 & 0 & 0 & 0.005 & 2.173 & 1.901 & 0.001 & 4.084 \\
-            prob04           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob05           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob06           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob07           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob08           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob09           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob10           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob11           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob12           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob13           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob14           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            prob15           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
-            \bottomrule
-        \end{tabular}%
-    }
-    \caption{Per-instance results for the \textit{pegsol-row5} domain.}
-    \label{tab:appendix_pegsolrow5}
 \end{table}
 
 \subsection{Chessboard-Pebbling}
@@ -360,48 +221,199 @@ This appendix lists the per-instance results of the primary benchmark run summar
             \bottomrule
         \end{tabular}%
     }
-    \caption{Per-instance results for the \textit{chessboard-pebbling} domain.}
+    \caption{Per-instance results for \textit{chessboard-pebbling}.}
     \label{tab:appendix_chesspebbling}
+\end{table}
+
+\subsection{Diagnosis}
+\label{app:results_diagnosis}
+
+\begin{table}[H]
+    \centering
+    \small
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{lrrr rr rr rr rrrrr}
+            \toprule
+                             & \multicolumn{3}{c}{\textbf{Size}}
+                             & \multicolumn{2}{c}{\textbf{UR}}
+                             & \multicolumn{2}{c}{\textbf{MX}}
+                             & \multicolumn{2}{c}{\textbf{GS}}
+                             & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                          \\
+            \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-15}
+            \textbf{Problem} & $|G|$                                 & $|P|$           & $|O|$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & \textbf{Tr}                           & \textbf{Gr}     & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                             \\
+            \midrule
+            prob01           & 16                                    & 190             & 216         & 9           & 16           & 0 & 0  & 0 & 0  & 0.035 & 0.062 & 0.364  & 0.000 & 0.493  \\
+            prob02           & 16                                    & 190             & 216         & 9           & 16           & 0 & 0  & 0 & 0  & 0.035 & 0.065 & 0.361  & 0.000 & 0.494  \\
+            prob03           & 16                                    & 155             & 125         & 10          & 20           & 0 & 0  & 0 & 0  & 0.020 & 0.034 & 0.147  & 0.000 & 0.219  \\
+            prob04           & 38                                    & 389             & 568         & 31          & 59           & 0 & 0  & 0 & 0  & 0.104 & 0.262 & 1.085  & 0.000 & 1.553  \\
+            prob05           & 56                                    & 542             & 957         & 49          & 97           & 0 & 0  & 0 & 0  & 0.151 & 0.347 & 2.295  & 0.001 & 2.941  \\
+            prob06           & 7                                     & 49              & 25          & 1           & 1            & 0 & 0  & 0 & 0  & 0.006 & 0.010 & 0.018  & 0.000 & 0.038  \\
+            prob07           & 22                                    & 154             & 81          & 12          & 31           & 0 & 0  & 0 & 0  & 0.013 & 0.024 & 0.102  & 0.000 & 0.149  \\
+            prob08           & 24                                    & 170             & 96          & 14          & 41           & 0 & 0  & 0 & 0  & 0.019 & 0.036 & 0.128  & 0.000 & 0.198  \\
+            prob09           & 24                                    & 241             & 156         & 14          & 33           & 0 & 0  & 0 & 0  & 0.034 & 0.113 & 42.967 & 0.000 & 43.151 \\
+            prob10           & 24                                    & 187             & 99          & 14          & 25           & 2 & 1  & 2 & 2  & 0.020 & 0.040 & 0.187  & 0.000 & 0.264  \\
+            prob11           & 22                                    & 204             & 139         & 14          & 33           & 0 & 0  & 0 & 0  & 0.020 & 0.050 & 2.692  & 0.000 & 2.782  \\
+            prob12           & 24                                    & 199             & 99          & 15          & 26           & 0 & 0  & 0 & 0  & 0.018 & 0.045 & 0.411  & 0.000 & 0.491  \\
+            prob13           & 36                                    & 399             & 232         & 27          & 67           & 0 & 0  & 0 & 0  & 0.091 & 0.199 & 0.573  & 0.000 & 0.947  \\
+            prob14           & 28                                    & 314             & 152         & 19          & 38           & 0 & 0  & 0 & 0  & 0.041 & 0.114 & 1.157  & 0.000 & 1.357  \\
+            prob15           & 24                                    & 240             & 155         & 14          & 35           & 0 & 0  & 0 & 0  & 0.028 & 0.059 & 0.405  & 0.000 & 0.517  \\
+            prob16           & 36                                    & 457             & 257         & 20          & 32           & 8 & 28 & 8 & 56 & 0.106 & 0.266 & 2.077  & 0.001 & 2.542  \\
+            prob17           & 24                                    & 214             & 120         & 15          & 27           & 0 & 0  & 0 & 0  & 0.023 & 0.049 & 0.359  & 0.000 & 0.451  \\
+            prob18           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                   \\
+            prob19           & 24                                    & 214             & 120         & 15          & 27           & 0 & 0  & 0 & 0  & 0.023 & 0.046 & 0.376  & 0.000 & 0.465  \\
+            prob20           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                   \\
+            \bottomrule
+        \end{tabular}%
+    }
+    \caption{Per-instance results for \textit{diagnosis}.}
+    \label{tab:appendix_diagnosis}
+\end{table}
+
+\subsection{Document-Transfer}
+\label{app:results_doctransfer}
+
+\begin{table}[H]
+    \centering
+    \small
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{lrrr rr rr rr rrrrr}
+            \toprule
+                             & \multicolumn{3}{c}{\textbf{Size}}
+                             & \multicolumn{2}{c}{\textbf{UR}}
+                             & \multicolumn{2}{c}{\textbf{MX}}
+                             & \multicolumn{2}{c}{\textbf{GS}}
+                             & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                        \\
+            \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-15}
+            \textbf{Problem} & $|G|$                                 & $|P|$           & $|O|$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & \textbf{Tr}                           & \textbf{Gr}     & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                           \\
+            \midrule
+            prob01           & 19                                    & 1680            & 25839       & 19          & 1580         & 0 & 0 & 0 & 0 & 0.006 & 3.514 & 9.704  & 0.001 & 13.264 \\
+            prob02           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob03           & 19                                    & 1425            & 20592       & 19          & 1332         & 0 & 0 & 0 & 0 & 0.006 & 2.755 & 18.691 & 0.001 & 21.489 \\
+            prob04           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob05           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob06           & 4                                     & 210             & 1188        & 1           & 95           & 0 & 0 & 0 & 0 & 0.004 & 0.122 & 18.800 & 0.000 & 18.935 \\
+            prob07           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob08           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob09           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob10           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob11           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob12           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob13           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob14           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob15           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob16           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob17           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob18           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob19           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            prob20           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                                 \\
+            \bottomrule
+        \end{tabular}%
+    }
+    \caption{Per-instance results for \textit{document-transfer}.}
+    \label{tab:appendix_doctransfer}
+\end{table}
+
+\subsection{Pegsol-Row5}
+\label{app:results_pegsolrow5}
+
+\begin{table}[H]
+    \centering
+    \small
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{lrrr rr rr rr rrrrr}
+            \toprule
+                             & \multicolumn{3}{c}{\textbf{Size}}
+                             & \multicolumn{2}{c}{\textbf{UR}}
+                             & \multicolumn{2}{c}{\textbf{MX}}
+                             & \multicolumn{2}{c}{\textbf{GS}}
+                             & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                      \\
+            \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-15}
+            \textbf{Problem} & $|G|$                                 & $|P|$           & $|O|$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                             & \textbf{Tr}                           & \textbf{Gr}     & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                         \\
+            \midrule
+            prob01           & 1                                     & 228             & 216         & 1           & 214          & 0 & 0 & 0 & 0 & 0.009 & 0.019 & 0.004 & 0.000 & 0.036 \\
+            prob02           & 1                                     & 2772            & 2744        & 1           & 2732         & 0 & 0 & 0 & 0 & 0.004 & 0.367 & 0.097 & 0.000 & 0.470 \\
+            prob03           & 1                                     & 13872           & 13824       & 1           & 13782        & 0 & 0 & 0 & 0 & 0.005 & 2.173 & 1.901 & 0.001 & 4.084 \\
+            prob04           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob05           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob06           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob07           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob08           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob09           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob10           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob11           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob12           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob13           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob14           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            prob15           & \multicolumn{14}{c}{TIMEOUT}                                                                                                                               \\
+            \bottomrule
+        \end{tabular}%
+    }
+    \caption{Per-instance results for \textit{pegsol-row5}.}
+    \label{tab:appendix_pegsolrow5}
 \end{table}
 
 \section{Extended-Budget Runs}
 \label{app:extended}
 
-This appendix lists the per-instance timings for the extended-budget probe runs discussed in Section~\ref{sec:eval_performance}. The two smallest timed-out instances per domain (14 instances in total) were re-executed with a 600-second time limit to expose the grounding-vs-solving split that the 120-second budget conceals. Translation and extraction times are omitted from this table. For the eight completed runs, both are below 0.02\,s. The remaining six runs timed out without a full phase breakdown.
+This appendix lists the per-instance results for the extended-budget probe runs discussed in Section~\ref{sec:eval_performance}. The two smallest timed-out instances per domain (14 instances in total) were re-executed with a 600-second time limit to recover measure values and a phase breakdown that the 120-second timeout leaves unreported. Six of the 14 runs again exhausted the 600-second limit and report no breakdown.
 
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{llrrrl}
-        \toprule
-        \textbf{Domain}     & \textbf{Problem} & \textbf{Ground (s)} & \textbf{Solve (s)} & \textbf{Total (s)} & \textbf{Status} \\
-        \midrule
-        3unsat              & sat-3-108-25-1   & 2.2                 & 139.0              & 141.4              & OK              \\
-        3unsat              & sat-3-108-25-2   & 2.2                 & 182.0              & 184.4              & OK              \\
-        bottleneck          & prob13           & 26.4                & 101.0              & 127.4              & OK              \\
-        bottleneck          & prob14           & 27.9                & 182.1              & 210.0              & OK              \\
-        cave-diving         & prob04           &                     &                    &                    & TIMEOUT         \\
-        cave-diving         & prob06           & 6.9                 & 350.5              & 357.5              & OK              \\
-        chessboard-pebbling & prob06           & 54.8                & 104.0              & 158.7              & OK              \\
-        chessboard-pebbling & prob07           & 124.0               & 223.2              & 347.4              & OK              \\
-        diagnosis           & prob18           &                     &                    &                    & TIMEOUT         \\
-        diagnosis           & prob20           &                     &                    &                    & TIMEOUT         \\
-        document-transfer   & prob02           &                     &                    &                    & TIMEOUT         \\
-        document-transfer   & prob04           &                     &                    &                    & TIMEOUT         \\
-        pegsol-row5         & prob04           & 8.5                 & 212.5              & 221.1              & OK              \\
-        pegsol-row5         & prob05           &                     &                    &                    & TIMEOUT         \\
-        \bottomrule
-    \end{tabular}
-    \caption{Per-instance timings for the 14 extended-budget probe runs at $h = 20$ with a 600-second time limit.}
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{llrrr rr rr rr rrrrr}
+            \toprule
+                                         &                                       & \multicolumn{3}{c}{\textbf{Size}}
+                                         & \multicolumn{2}{c}{\textbf{UR}}
+                                         & \multicolumn{2}{c}{\textbf{MX}}
+                                         & \multicolumn{2}{c}{\textbf{GS}}
+                                         & \multicolumn{5}{c}{\textbf{Time (s)}}                                                                                                                                                        \\
+            \cmidrule(lr){3-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}\cmidrule(lr){12-16}
+            \textbf{Domain}              & \textbf{Problem}                      & $|G|$                             & $|P|$       & $|O|$
+                                         & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                                         & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                                         & $\mathcal{I}^s$                       & $\mathcal{I}^t$
+                                         & \textbf{Tr}                           & \textbf{Gr}                       & \textbf{So} & \textbf{Ex} & \textbf{Tot}                                                                         \\
+            \midrule
+            \textit{3unsat}              & sat-3-108-25-1                        & 108                               & 133         & 50          & 0            & 0     & 0 & 0  & 0 & 0  & 0.019 & 2.157   & 139.025 & 0.006 & 141.375 \\
+            \textit{3unsat}              & sat-3-108-25-2                        & 108                               & 133         & 50          & 0            & 0     & 0 & 0  & 0 & 0  & 0.013 & 2.169   & 181.972 & 0.006 & 184.352 \\
+            \textit{bottleneck}          & prob13                                & 7                                 & 5150        & 125000      & 0            & 4673  & 7 & 21 & 7 & 42 & 0.006 & 26.381  & 101.037 & 0.001 & 127.448 \\
+            \textit{bottleneck}          & prob14                                & 7                                 & 5355        & 132651      & 0            & 4863  & 7 & 12 & 7 & 24 & 0.006 & 27.930  & 182.072 & 0.001 & 210.037 \\
+            \textit{cave-diving}         & prob04                                & \multicolumn{14}{c}{TIMEOUT}                                                                                                                         \\
+            \textit{cave-diving}         & prob06                                & 6                                 & 473         & 35736       & 0            & 260   & 0 & 0  & 0 & 0  & 0.005 & 6.918   & 350.532 & 0.000 & 357.488 \\
+            \textit{chessboard-pebbling} & prob06                                & 3                                 & 8320        & 262144      & 0            & 8081  & 3 & 2  & 3 & 2  & 0.007 & 54.755  & 103.956 & 0.001 & 158.748 \\
+            \textit{chessboard-pebbling} & prob07                                & 3                                 & 13284       & 531441      & 0            & 12979 & 3 & 2  & 3 & 2  & 0.009 & 124.007 & 223.198 & 0.002 & 347.364 \\
+            \textit{diagnosis}           & prob18                                & \multicolumn{14}{c}{TIMEOUT}                                                                                                                         \\
+            \textit{diagnosis}           & prob20                                & \multicolumn{14}{c}{TIMEOUT}                                                                                                                         \\
+            \textit{document-transfer}   & prob02                                & \multicolumn{14}{c}{TIMEOUT}                                                                                                                         \\
+            \textit{document-transfer}   & prob04                                & \multicolumn{14}{c}{TIMEOUT}                                                                                                                         \\
+            \textit{pegsol-row5}         & prob04                                & 1                                 & 46728       & 46656       & 1            & 46572 & 0 & 0  & 0 & 0  & 0.007 & 8.510   & 212.546 & 0.003 & 221.081 \\
+            \textit{pegsol-row5}         & prob05                                & \multicolumn{14}{c}{TIMEOUT}                                                                                                                         \\
+            \bottomrule
+        \end{tabular}%
+    }
+    \caption{Per-instance results for the extended-budget probe runs.}
     \label{tab:appendix_extended}
 \end{table}
 
 \section{Reproducibility}
 \label{app:reproducibility}
 
-The implementation, encodings, batch runner, and raw result data underlying this appendix and Section~\ref{sec:evaluation} are publicly archived by Sebastian Bunge~\cite{Bunge2026}. The Docker image bundled with the repository pins the toolchain to Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. All measurements were taken on a host with an AMD Ryzen~5~5600X CPU and 32\,GiB of RAM, with Clingo invoked single-threaded through its Python API.
+The implementation, encodings, batch runner, and raw result data underlying this appendix and Section~\ref{sec:evaluation} are publicly archived~\cite{Bunge2026}. The Docker image bundled with the repository pins the toolchain to Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. All measurements were taken on a host with an AMD Ryzen~5~5600X CPU and 32\,GiB of RAM, with Clingo invoked single-threaded through its Python API.
 
-The primary results in Tables~\ref{tab:appendix_diagnosis}--\ref{tab:appendix_chesspebbling} were produced on 2026-04-02 with horizon $h = 20$ and a 120-second per-instance time limit using the batch runner
+The primary results in Tables~\ref{tab:appendix_3unsat}--\ref{tab:appendix_pegsolrow5} were produced on 2026-04-02 with horizon $h = 20$ and a 120-second per-instance time limit using the batch runner
 
 \begin{verbatim}
 ./run.sh planning-measures batch <domain-dir> \
@@ -410,4 +422,4 @@ The primary results in Tables~\ref{tab:appendix_diagnosis}--\ref{tab:appendix_ch
     -t 120
 \end{verbatim}
 
-where \texttt{<domain-dir>} ranges over the IPC~2016 directories listed as compatible in Table~\ref{tab:domain_compatibility}, plus the Eriksson \textit{3unsat} directory. The seven resulting CSV files share the schema documented in the data release: problem identifier, problem size, scope and structural values for the three measures, category, per-phase timings, and status. The extended-budget probe runs in Table~\ref{tab:appendix_extended} were produced on 2026-04-20 and 2026-04-21 by re-invoking the same runner per instance with \texttt{-H 20} and \texttt{-t 600} on the 14 selected problems.
+where \texttt{<domain-dir>} ranges over the IPC~2016 directories listed as compatible in Table~\ref{tab:domain_compatibility}, plus the Eriksson \textit{3unsat} directory. The seven resulting CSV files share the schema documented in the data release: problem identifier, problem size, scope and structural values for the three measures, category, per-phase timings, and status. The extended-budget probe runs in Table~\ref{tab:appendix_extended} were produced on 2026-04-20 and 2026-04-21 by invoking the \texttt{compute} subcommand per instance with \texttt{-H 20} and \texttt{-t 600} on the 14 selected problems. The per-instance values reported come from each invocation's stdout rather than a shipped CSV and are reproduced by re-running the command on the same problem.
