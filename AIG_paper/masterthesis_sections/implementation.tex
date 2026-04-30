@@ -115,7 +115,7 @@ The \texttt{g2\_after\_g1\_witness(G1, G2)} atom is derived if some execution tr
 \subsection{Measure Extraction}
 \label{sec:measure_extraction}
 
-After the brave reasoning pass completes, a Python module collects the shown atoms via a callback mechanism. The measure values are computed through set operations on the collected atoms.
+After the brave reasoning pass completes, the witness atoms are returned as a typed value object. The measure-extraction module then computes the six measure values through pure set operations on those atoms.
 
 \paragraph{Unreachability Profile.}
 Let $G_{\text{reach}} = G \cap \{\, p \mid \texttt{true\_reachable}(p) \,\}$ denote the set of reachable goal propositions and $P_{\text{reach}} = \{\, p \mid \texttt{true\_reachable}(p) \,\}$ the set of all reachable propositions. The unreachability profile is:
@@ -129,16 +129,16 @@ For each unordered pair of achievable goals $(g_1, g_2) \in \binom{G_{\text{reac
 \paragraph{Goal Sequencing Profile.}
 For each ordered pair of achievable goals $(g_1, g_2) \in G_{\text{reach}} \times G_{\text{reach}}$ with $g_1 \neq g_2$, the pair is a sequencing conflict if $\texttt{g2\_after\_g1\_witness}(g_1, g_2)$ was not derived. The sequencing profile counts the number of goals involved in at least one conflict and the total number of ordered conflict pairs.
 
-The resulting six values are packaged into a diagnostic profile data structure that also provides automatic category classification according to the taxonomy from Section~\ref{sec:taxonomy}.
+The resulting six values are packaged into a diagnostic profile data structure that provides automatic category classification according to the taxonomy from Section~\ref{sec:taxonomy}. Problem size metadata (goal, proposition, and operator counts) is recorded separately and bundled with the profile and per-phase timing in the result envelope returned to the caller.
 
 \subsection{Tooling and Reproducibility}
 \label{sec:tooling}
 
-The implementation provides both a library API and a command-line interface. The library exposes a single entry point, \texttt{compute\_measures}, that accepts either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a horizon parameter $h$. This function directly implements the parameterized measures $\mathcal{I}(\Pi, h)$ from Section~\ref{sec:proposed_measures}.
+The implementation provides both a library \ac{API} and a \ac{CLI}. The library exposes \texttt{compute\_measures} as the primary entry point, accepting either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a horizon parameter $h$, and returning a result envelope that bundles the diagnostic profile, problem size metadata, and per-phase timing. A timeout-protected variant, \texttt{compute\_with\_timeout}, wraps this entry point for callers that need bounded execution. Together these directly implement the parameterized measures $\mathcal{I}(\Pi, h)$ from Section~\ref{sec:proposed_measures}.
 
-A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs using IPC naming conventions (\texttt{domain.pddl} with \texttt{prob*.pddl}, or numbered \texttt{dom01.pddl} with \texttt{prob01.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-phase timing (translation, grounding, solving, extraction, and total), and error reporting.
+A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs across three common layouts: a single \texttt{domain.pddl} paired with \texttt{prob*.pddl} or \texttt{satprob*.pddl}, numbered pairs (\texttt{dom01.pddl} with \texttt{prob01.pddl}), and the Eriksson layout (\texttt{domain\_<name>.pddl} with \texttt{<name>.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-phase timing (translation, grounding, solving, extraction, and total), and error reporting.
 
-The batch runner and command-line interface accept a configurable timeout parameter (in seconds). When the time limit is exceeded, the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
+Both the \ac{CLI} and the batch runner accept a configurable timeout parameter (in seconds), implemented through the library-level \texttt{compute\_with\_timeout} entry point. When the time limit is exceeded, the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
 
 Implementing reliable timeouts for \ac{ASP} solving requires care. Clingo's \texttt{--time-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
 
@@ -147,7 +147,7 @@ For reproducibility, the implementation is containerized with Docker, bundling P
 \subsection{Validation}
 \label{sec:validation}
 
-Correctness is verified through an automated test suite comprising 38 tests across five categories. All 38 tests execute in under one second, enabling rapid regression testing during development.
+Correctness is verified through an automated test suite comprising 80 tests across eight categories, with the per-phase decomposition of the pipeline mirrored by dedicated test files for the translation, brave-reasoning, and extraction seams. The full suite executes in under one second, enabling rapid regression testing during development.
 
 \paragraph{Scenario Tests.}
 Eleven test scenarios are tested against their theoretically derived expected profiles. Table~\ref{tab:validation_results} shows the computed profiles alongside the expected values. All eleven scenarios produce exact matches, including the \textit{Negative Precondition} scenario that exercises the \texttt{neg\_precond} encoding path.
@@ -178,11 +178,20 @@ Eleven test scenarios are tested against their theoretically derived expected pr
 \paragraph{Hierarchy Tests.}
 Four tests verify the measure relationships established in Section~\ref{sec:measure_relationships}. These tests confirm that unreachable goals do not participate in mutex or sequencing conflicts, that sequencing conflicts imply mutex, that mutex without sequencing indicates reversible conflicts, and that delete effects correctly prevent false reachability claims.
 
-\paragraph{API Contract Tests.}
-Eight tests verify the public interface: five tests confirm that the \texttt{MeasureProfile} dataclass correctly classifies categories and formats output, and three tests verify that \texttt{compute\_measures} raises appropriate errors for missing files and unsatisfiable programs, and that insufficient horizon values correctly surface as false unreachability.
+\paragraph{Dataclass Contract Tests.}
+Seventeen tests verify the public dataclasses (\texttt{MeasureProfile}, \texttt{ProblemSize}, \texttt{TimingProfile}, and the \texttt{MeasureResult} envelope), confirming category classification, the stable CSV field order, frozen-dataclass semantics, and the human-readable summary that crosses profile, size, and timing.
+
+\paragraph{Extraction Tests.}
+Eleven tests exercise the pure set-algebra extraction module on synthetic atom sets, covering unreachability counting, the directional treatment of sequencing witnesses, the exclusion of unreachable goals from mutex and sequencing analyses, and the derivation of problem size cardinalities.
+
+\paragraph{Brave Reasoning Tests.}
+Two tests confirm that the brave-reasoning runner returns a populated outcome on a known scenario and surfaces unsatisfiable programs as a clear error.
+
+\paragraph{Pipeline \ac{API} Tests.}
+Five tests on \texttt{compute\_measures} verify that the pipeline returns a fully populated result envelope, raises appropriate errors for missing files and unsatisfiable programs, captures horizon sensitivity, and emits a timing profile with positive grounding and solving times for \texttt{.lp} input.
+
+\paragraph{Execution and CSV Tests.}
+Seven tests verify the timeout-protected \texttt{compute\_with\_timeout} entry point and the \texttt{ExecutionResult} discriminator, covering the \texttt{OK}, \texttt{TIMEOUT}, and \texttt{ERROR} statuses, CSV row composition with stable field order, and the collapsing of multi-line error messages into a single CSV cell.
 
 \paragraph{PDDL Pipeline Tests.}
-Thirteen tests verify the end-to-end \ac{PDDL} pipeline: four tests confirm that the \textit{plasp} translation and bridge encoding produce correct measure profiles, three tests verify that the batch file discovery correctly identifies domain/problem pairs using IPC naming conventions, and six tests verify the cost-stripping preprocessor.
-
-\paragraph{Timing Tests.}
-Two tests verify the per-phase timing instrumentation: one confirms that \texttt{compute\_measures} returns a timing profile with positive grounding and solving times for \texttt{.lp} input (and zero translation time), and one verifies the dictionary serialization used for CSV output.
+Twenty-three tests cover the \ac{PDDL} ingestion path. Six tests confirm that the \textit{plasp} translation, the bridge encoding, and the context-managed translated-problem handle produce correct measure profiles end-to-end and surface translation failures cleanly. Eleven tests verify the cost-stripping splicer and the context-manager cleanup it shares with the translator. Six tests verify that benchmark discovery correctly identifies domain/problem pairs across the three supported layouts (single-domain, numbered, and Eriksson) and respects the skip list of known-incompatible domains.

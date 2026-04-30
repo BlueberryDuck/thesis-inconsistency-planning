@@ -411,7 +411,7 @@ This appendix lists the per-instance results for the extended-budget probe runs 
 \section{Reproducibility}
 \label{app:reproducibility}
 
-The implementation, encodings, batch runner, and raw result data underlying this appendix and Section~\ref{sec:evaluation} are publicly archived~\cite{Bunge2026}. The Docker image bundled with the repository pins the toolchain to Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. All measurements were taken on a host with an AMD Ryzen~5~5600X CPU and 32\,GiB of RAM, with Clingo invoked single-threaded through its Python API.
+The implementation, encodings, batch runner, and raw result data underlying this appendix and Section~\ref{sec:evaluation} are publicly archived~\cite{Bunge2026}. The Docker image bundled with the repository pins the toolchain to Python~3.12, Clingo~5.8.0, and \textit{plasp}~3.1.1. All measurements were taken on a host with an AMD Ryzen~5~5600X CPU and 32\,GiB of RAM, with Clingo invoked single-threaded through its Python \ac{API}.
 
 The primary results in Tables~\ref{tab:appendix_3unsat}--\ref{tab:appendix_pegsolrow5} were produced on 2026-04-02 with horizon $h = 20$ and a 120-second per-instance time limit using the batch runner
 

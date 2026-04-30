@@ -21,7 +21,7 @@ The measures were implemented using \ac{ASP}, whose support for non-monotonic re
 
 The key implementation insight is that brave reasoning computes the union of atoms true in any answer set without enumerating individual answer sets. Different answer sets correspond to different execution traces, and three categories of witness atoms capture the reachability and co-occurrence properties required by the measure definitions. The absence of a witness atom under brave reasoning constitutes a universal proof that the corresponding condition is unsatisfiable across all execution traces, providing the detection mechanism for mutex and sequencing conflicts (Section~\ref{sec:witness_collection}).
 
-Correctness was verified through 38 automated tests covering scenario-level validation, hierarchy relationship tests, API contract tests, and end-to-end \ac{PDDL} pipeline tests. All eleven test scenarios produced exact matches with their theoretically derived expected profiles (Section~\ref{sec:validation}).
+Correctness was verified through 80 automated tests covering scenario-level validation, hierarchy relationship tests, library-\ac{API} contract tests, and end-to-end \ac{PDDL} pipeline tests. All eleven test scenarios produced exact matches with their theoretically derived expected profiles (Section~\ref{sec:validation}).
 
 \subsubsection{Practical Evaluation (Research Question~3)}
 
