@@ -2,15 +2,17 @@
         \centering
         \begin{forest}
                 for tree={
-                rectangle, draw, rounded corners, thick,
-                align=center, font=\small,
-                minimum height=0.7cm,
-                inner sep=5pt,
-                l sep=10mm, s sep=3mm,
-                edge={thick},
-                },
+                                rectangle, draw, rounded corners, thick,
+                                align=center, font=\small,
+                                minimum height=0.7cm,
+                                inner sep=5pt,
+                                l sep=10mm, s sep=3mm,
+                                edge={thick},
+                        },
                 inscope/.style={fill=black!16},
-                [Unsolvable Planning\\Problems, minimum width=3.5cm, calign=child, calign child=2
+                where level=1{minimum width=3.4cm}{},
+                where level=2{minimum width=2.8cm}{},
+                        [Unsolvable Planning\\Problems, minimum width=3.5cm, calign=child, calign child=2
                                         [{Category 1:\\Goal Specification\\Conflicts}, inscope, tier=category
                                         ]
                                         [{Category 2:\\Dependency Graph\\Structure}, inscope, tier=category, calign=child, calign child=2
@@ -25,6 +27,17 @@
                                         ]
                         ]
         \end{forest}
+
+        \vspace{0.6em}
+        \begin{tikzpicture}[font=\footnotesize]
+                \node[rectangle, draw, rounded corners, thick, fill=black!16,
+                        minimum width=0.7cm, minimum height=0.35cm] (in) at (0,0) {};
+                \node[anchor=west, inner sep=2pt] at (in.east) {addressed in this thesis};
+                \node[rectangle, draw, rounded corners, thick,
+                        minimum width=0.7cm, minimum height=0.35cm] (out) at (4.6,0) {};
+                \node[anchor=west, inner sep=2pt] at (out.east) {out of scope};
+        \end{tikzpicture}
+
         \caption{Structural taxonomy for unsolvable planning problems.}
         \label{fig:taxonomy}
 \end{figure}

@@ -8,7 +8,10 @@ A natural approach to measuring inconsistency in planning problems would encode 
 A propositional encoding of a planning problem $\langle P, O, I, G \rangle$ includes:
 \begin{enumerate}
     \item \textbf{Goals}: $g$ for each $g \in G$
-    \item \textbf{Precondition dependencies}: For each $o \in O$ and each $p \in \text{add}(o)$: $p \rightarrow \bigwedge_{q \in \text{precond}(o)} q$, since achieving an add effect requires its preconditions
+    \item \textbf{Precondition dependencies}: For each $o \in O$ and each $p \in \text{add}(o)$, since achieving an add effect requires its preconditions:
+          \begin{equation*}
+              p \rightarrow \bigwedge_{q \in \text{precond}(o)} q
+          \end{equation*}
     \item \textbf{Closed-world assumptions}: $\neg p$ for propositions $p$ that are neither in $I$ nor produced by any operator
 \end{enumerate}
 
@@ -32,14 +35,18 @@ The contension measure $\mathcal{I}_c$ counts the minimum number of propositions
     $\mathcal{I}_c(K_{\text{LD}}) = 1$.
 \end{prop}
 \begin{proof}
-    Consider the three-valued interpretation $v$ with $v(\text{has\_key}) = B$, $v(\text{at\_door}) = v(\text{door\_unlocked}) = v(\text{in\_room}) = T$. Verification:
-    \begin{itemize}
-        \item $\text{in\_room}$: evaluates to $T$ \checkmark
-        \item $\text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked}$: $T \rightarrow T \land T = T$ \checkmark
-        \item $\text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key}$: $T \rightarrow T \land B = B$ \checkmark
-        \item $\neg\text{has\_key}$: $\neg B = B$ \checkmark
-    \end{itemize}
-    All formulas evaluate to $T$ or $B$, so $v$ is a model. Since only \textit{has\_key} is assigned $B$, $\mathcal{I}_c \leq 1$. Since $K_{\text{LD}}$ is classically inconsistent, $\mathcal{I}_c \geq 1$. Thus $\mathcal{I}_c(K_{\text{LD}}) = 1$.
+    Consider the three-valued interpretation $v$ defined by
+    \begin{equation*}
+        v(\text{has\_key}) = B, \qquad v(\text{at\_door}) = v(\text{door\_unlocked}) = v(\text{in\_room}) = T.
+    \end{equation*}
+    Each formula of $K_{\text{LD}}$ then evaluates to $T$ or $B$:
+    \begin{align*}
+        \text{in\_room}                                                         & = T,                           \\
+        \text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked} & = T \rightarrow T \land T = T, \\
+        \text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key} & = T \rightarrow T \land B = B, \\
+        \neg\text{has\_key}                                                     & = \neg B = B.
+    \end{align*}
+    Hence $v$ is a model of $K_{\text{LD}}$. Only \textit{has\_key} is assigned $B$, so $\mathcal{I}_c(K_{\text{LD}}) \leq 1$. Since $K_{\text{LD}}$ is classically inconsistent, $\mathcal{I}_c(K_{\text{LD}}) \geq 1$. Therefore $\mathcal{I}_c(K_{\text{LD}}) = 1$.
 \end{proof}
 
 \subsubsection{Limitations for Operator-Induced Conflicts}
@@ -54,7 +61,7 @@ The Locked Door encoding detects inconsistency because the closed-world assumpti
 \end{align*}
 No closed-world negations apply since both propositions are producible. This knowledge base is classically consistent. The interpretation $v(\textit{on}) = v(\textit{off}) = T$ satisfies all formulas. The precondition-only encoding omits delete effects, so the mutual exclusion between \textit{on} and \textit{off} is not represented despite the planning problem being unsolvable.
 
-\paragraph{Example: Enriched Encoding with Delete Effects.} A natural response is to extend the encoding with delete-effect implications. For each operator $o$, each $p \in \text{add}(o)$, and each $d \in \text{delete}(o)$, the additional rule $p \rightarrow \neg d$ captures that achieving $p$ via $o$ also removes $d$. For the Light Switch, this yields:
+\paragraph{Example: Enriched Encoding with Delete Effects.} A natural response is to extend the encoding with delete-effect implications. For each operator $o$ and each pair of an add effect $p$ and a delete effect $d$ of $o$, the additional rule $p \rightarrow \neg d$ captures that achieving $p$ via $o$ also removes $d$. For the Light Switch, this yields:
 \begin{align*}
     K^+_{\text{LS}} = \{ & \text{on}, \text{off},                  & \text{(goals)}                  \\
                          & \text{on} \rightarrow \text{off},       & \text{(turn\_on precondition)}  \\
@@ -62,9 +69,9 @@ No closed-world negations apply since both propositions are producible. This kno
                          & \text{on} \rightarrow \neg\text{off},   & \text{(turn\_on deletes off)}   \\
                          & \text{off} \rightarrow \neg\text{on} \} & \text{(turn\_off deletes on)}
 \end{align*}
-The enriched encoding is classically inconsistent. The goal \textit{on} together with $\text{on} \rightarrow \neg\text{off}$ yields $\neg\textit{off}$, contradicting the goal \textit{off}. However, $\mathcal{I}_c(K^+_{\text{LS}}) = 1$. The three-valued interpretation $v(\textit{off}) = B$, $v(\textit{on}) = T$ satisfies all formulas, since implications involving the $B$-valued \textit{off} evaluate to $B$ rather than $F$ under the logic of paradox.
+The enriched encoding is classically inconsistent. The goal \textit{on} together with the deletion rule yields $\neg\textit{off}$, contradicting the goal \textit{off}. Yet $\mathcal{I}_c(K^+_{\text{LS}}) = 1$. Setting \mbox{$v(\textit{off}) = B$} and $v(\textit{on}) = T$ satisfies every formula, since implications involving a $B$-valued atom evaluate to $B$ rather than $F$.
 
-\paragraph{Example: Sequencing Conflicts.} The same pattern applies to the Trust and Travel scenario (Scenario~5), where an agent must secure a partnership requiring trust and exploit a remote opportunity, but traveling destroys trust irreversibly. The precondition-only encoding
+\paragraph{Example: Sequencing Conflicts.} The same pattern applies to the Trust and Tra\-vel scenario (Scenario~5), where an agent must secure a partnership requiring trust and exploit a remote opportunity, but traveling destroys trust irreversibly. The precondition-only encoding
 \begin{align*}
     K_{\text{TT}} = \{ & \text{partnership}, \text{opportunity},                             & \text{(goals)}                \\
                        & \text{partnership} \rightarrow \text{at\_local} \land \text{trust}, & \text{(secure preconditions)} \\
@@ -72,7 +79,7 @@ The enriched encoding is classically inconsistent. The goal \textit{on} together
                        & \text{at\_remote} \rightarrow \text{at\_local},                     & \text{(travel precondition)}  \\
                        & \text{at\_local} \rightarrow \text{at\_remote} \}                   & \text{(return precondition)}
 \end{align*}
-is classically consistent. Setting all propositions to true satisfies every implication. Adding delete-effect implications for \textit{travel} ($\text{at\_remote} \rightarrow \neg\text{at\_local} \land \neg\text{trust}$) and \textit{return} ($\text{at\_local} \rightarrow \neg\text{at\_remote}$) makes the encoding classically inconsistent. The goal chain $\textit{opportunity} \rightarrow \textit{at\_remote}$ combined with both $\text{at\_remote} \rightarrow \text{at\_local}$ and $\text{at\_remote} \rightarrow \neg\text{at\_local}$ creates a contradiction whenever \textit{at\_remote} is true. Yet $\mathcal{I}_c = 1$. Assigning $v(\textit{at\_remote}) = B$ with all other propositions true satisfies every formula.
+is classically consistent. Setting all propositions to true satisfies every implication. Adding delete-effect implications for \textit{travel} ($\text{at\_remote} \rightarrow \neg\text{at\_local} \land \neg\text{trust}$) and \textit{return} ($\text{at\_local} \rightarrow \neg\text{at\_remote}$) makes the encoding classically inconsistent. The goal chain $\textit{opportunity} \rightarrow \textit{at\_remote}$ combined with both $\text{at\_remote} \rightarrow \text{at\_local}$ and $\text{at\_remote} \rightarrow \neg\text{at\_local}$ creates a contradiction whenever \textit{at\_remote} is true. Yet \mbox{$\mathcal{I}_c = 1$}. Assigning $v(\textit{at\_remote}) = B$ with all other propositions true satisfies every formula.
 
 Beyond the uninformativeness of $\mathcal{I}_c$, the delete-effect implications are themselves an overapproximation. The rule $p \rightarrow \neg d$ fires whenever $p$ is true, regardless of whether $p$ was achieved by operator $o$ or was already present in the initial state $I$. When multiple operators produce the same proposition with different delete effects, the encoding conflates their consequences. A more precise encoding would require tracking which operator produced each proposition, essentially reconstructing the state transition semantics that planning formalisms are designed to manage. Furthermore, sequencing conflicts are inherently path-dependent. The statement ``achieving \textit{opportunity} permanently blocks \textit{partnership}'' requires reasoning about trajectories through the state space. Propositional logic, being static, cannot express that from states where $p$ holds, $q$ becomes unreachable.
 

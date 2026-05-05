@@ -7,30 +7,16 @@ Beyond postulate compliance, the following propositions establish how the three 
     \label{prop:measure_relationships}
     For any planning problem $\Pi$ and horizon $h$, the proposed measures exhibit the following relationships:
     \begin{enumerate}
-        \item If goal $g$ is unreachable at horizon $h$, then $g$ does not participate in any
-              mutex relationship or sequencing conflict at horizon $h$
-        \item If $(g_1, g_2)$ is a sequencing conflict at horizon $h$ (with $g_2$ achievable),
-              then $g_1$ and $g_2$ are mutex at horizon $h$
+        \item If goal $g$ is unreachable at horizon $h$, then $g$ does not participate in any mutex relationship or sequencing conflict at horizon $h$
+        \item If $(g_1, g_2)$ is a sequencing conflict at horizon $h$ (with $g_2$ achievable), then $g_1$ and $g_2$ are mutex at horizon $h$
         \item Goals can be mutex at horizon $h$ without having any sequencing conflict at horizon $h$
     \end{enumerate}
 \end{prop}
 \begin{proof}
     \begin{enumerate}
-        \item Both mutex (Definition~\ref{defn:mutex_goal_pair}) and sequencing conflict
-              (Definition~\ref{defn:sequencing_conflict}) require participating goals to be achievable
-              within $S^h_{\text{reach}}$.
-              If $g$ is unreachable at horizon $h$, it fails this condition.
-
-        \item Suppose $(g_1, g_2)$ is a sequencing conflict at horizon $h$ with $g_2$ achievable.
-              By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and no execution trace
-              of length at most $h$ achieves $g_1$ at time $i$ and $g_2$ at time $j \geq i$.
-              In particular, no state in $S^h_{\text{reach}}$ contains both $g_1$ and $g_2$ (which would
-              correspond to $i = j$). Combined with both goals being achievable,
-              this satisfies Definition~\ref{defn:mutex_goal_pair}.
-
-        \item Light Switch: Goals $\{\text{on}, \text{off}\}$ are mutex
-              (both achievable, never co-occur) but have no sequencing conflict (from any
-              \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
+        \item Both mutex (Definition~\ref{defn:mutex_goal_pair}) and sequencing conflict (Definition~\ref{defn:sequencing_conflict}) require participating goals to be achievable within $S^h_{\text{reach}}$. If $g$ is unreachable at horizon $h$, it fails this condition.
+        \item Suppose $(g_1, g_2)$ is a sequencing conflict at horizon $h$ with $g_2$ achievable. By Definition~\ref{defn:sequencing_conflict}, $g_1$ is achievable and no execution trace of length at most $h$ achieves $g_1$ at time $i$ and $g_2$ at time $j \geq i$. In particular, no state in $S^h_{\text{reach}}$ contains both $g_1$ and $g_2$ (which would correspond to $i = j$). Combined with both goals being achievable, this satisfies Definition~\ref{defn:mutex_goal_pair}.
+        \item Light Switch: Goals $\{\text{on}, \text{off}\}$ are mutex (both achievable, never co-occur) but have no sequencing conflict (from any \textit{on}-state, \textit{off} is reachable via \textit{turn\_off}, and vice versa).
     \end{enumerate}
 \end{proof}
 
@@ -49,14 +35,8 @@ The scope and structure variants of each measure are also formally related:
 \end{prop}
 \begin{proof}
     \begin{enumerate}
-        \item Unreachable goals are a subset of all unreachable propositions,
-              which are a subset of $P$.
-
-        \item The maximum number of unordered pairs among
-              $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h)$ goals is $\binom{\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h)}{2}$.
-
-        \item The maximum number of ordered pairs among
-              $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h)$ goals is $n(n-1)$ where
-              $n = \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h)$.
+        \item Unreachable goals are a subset of all unreachable propositions, which are a subset of $P$.
+        \item The maximum number of unordered pairs among $n$ goals is $\binom{n}{2}$, where $n = \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h)$.
+        \item The maximum number of ordered pairs among $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h)$ goals is $n(n-1)$ where $n = \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h)$.
     \end{enumerate}
 \end{proof}

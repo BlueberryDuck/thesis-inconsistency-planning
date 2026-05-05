@@ -7,7 +7,11 @@ Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022},
 
 \begin{defn}[Decision and Function Problems]
     \label{defn:decision_problems}
-    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and let $k \in \mathbb{N}_0$. The following problems are defined for each measure $\mathcal{I}$, evaluated at the converged horizon (i.\,e., for the unbounded measures $\mathcal{I}(\Pi) = \lim_{h \to \infty} \mathcal{I}(\Pi, h)$):
+    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and let $k \in \mathbb{N}_0$. Write $\mathcal{I}(\Pi)$ for the converged measure
+    \begin{equation*}
+        \mathcal{I}(\Pi) = \lim_{h \to \infty} \mathcal{I}(\Pi, h).
+    \end{equation*}
+    The following problems are defined for each measure $\mathcal{I}$:
     \begin{enumerate}
         \item $\text{UPPER}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) \leq k$?
         \item $\text{LOWER}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) \geq k$?
@@ -39,10 +43,10 @@ Each completeness result below establishes membership and hardness as defined in
 
 \begin{cor}
     \label{cor:ur_all}
-    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ and $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ are PSPACE-complete. $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ is in FPSPACE.
+    For $\mathcal{I}_{\text{UR}}$, $\text{LOWER}$ and $\text{EXACT}$ are PSPACE-complete, and $\text{VALUE}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
-    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since PSPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}), it is also PSPACE-complete.
+    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since P\-SPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}), it is also PSPACE-complete.
 
     $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}, since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, and deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
 
@@ -75,7 +79,7 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, $\text{LOWE
 
 \begin{cor}
     \label{cor:mx_all}
-    $\text{LOWER}_{\mathcal{I}_{\text{MX}}}$ and $\text{EXACT}_{\mathcal{I}_{\text{MX}}}$ are PSPACE-complete. $\text{VALUE}_{\mathcal{I}_{\text{MX}}}$ is in FPSPACE.
+    For $\mathcal{I}_{\text{MX}}$, $\text{LOWER}$ and $\text{EXACT}$ are PSPACE-complete, and $\text{VALUE}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
     By the same arguments as Corollary~\ref{cor:ur_all}, applied to the reduction from Theorem~\ref{thm:mx_complexity}.
@@ -93,7 +97,7 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, $\text{LOWE
 
 \begin{cor}
     \label{cor:gs_all}
-    $\text{LOWER}_{\mathcal{I}_{\text{GS}}}$ and $\text{EXACT}_{\mathcal{I}_{\text{GS}}}$ are PSPACE-complete. $\text{VALUE}_{\mathcal{I}_{\text{GS}}}$ is in FPSPACE.
+    For $\mathcal{I}_{\text{GS}}$, $\text{LOWER}$ and $\text{EXACT}$ are PSPACE-complete, and $\text{VALUE}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
     By the same arguments as Corollary~\ref{cor:ur_all}, applied to the reduction from Theorem~\ref{thm:gs_complexity}.

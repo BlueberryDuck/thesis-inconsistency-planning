@@ -21,7 +21,7 @@ An agent must enter a room, but entry requires unlocking a door, which requires 
   G & = \{\text{in\_room}\}
 \end{align*}
 
-The \textit{unlock} operator requires \textit{has\_key}, which has no producer and is not in $I$, blocking the entire dependency structure. Forward reachability yields $S_{\text{reach}} = \{\{\text{at\_door}\}\}$.
+The \textit{unlock} operator requires \textit{has\_key}, which has no producer and is not in $I$, blocking the entire dependency structure. Only \textit{at\_door} remains reachable.
 
 \paragraph{Scenario 2: Bank Vault.}
 
@@ -94,7 +94,7 @@ An agent must secure a local partnership that requires established trust, and ex
 Both goals are individually achievable: \textit{partnership} via \textit{secure}, and \textit{opportunity} via \textit{travel} $\rightarrow$ \textit{exploit}. However, the goals never coexist (mutex). The conflict is asymmetric:
 \begin{itemize}
   \item $(\text{opportunity}, \text{partnership})$ \textbf{is} a sequencing conflict: from any state with \textit{opportunity}, the agent lacks \textit{trust} to achieve \textit{partnership} (travel destroyed it).
-  \item $(\text{partnership}, \text{opportunity})$ is \textbf{not} a sequencing conflict: from a \textit{partnership}-state, \textit{opportunity} remains reachable via \textit{travel} $\rightarrow$ \textit{exploit} (though this path deletes \textit{partnership}).
+  \item $(\text{partnership}, \text{opportunity})$ is \textbf{not} a sequencing conflict: from a \textit{partnership}-state, \textit{opportunity} remains reachable via \textit{travel} $\rightarrow$ \textit{exploit} (though this path de\-letes \textit{partnership}).
 \end{itemize}
 
 \paragraph{Scenario 6: Rival Alliances.}
@@ -140,11 +140,11 @@ Table~\ref{tab:scenario_summary} summarizes the test scenarios and their structu
 
 The structural patterns referenced in Table~\ref{tab:scenario_summary} are characterized as follows:
 \begin{itemize}
-  \item \textbf{Linear chain}: a single dependency path from the goal through intermediate propositions to an unproducible root.
-  \item \textbf{Parallel chains}: multiple independent dependency paths converging on a single goal operator.
+  \item \textbf{Linear chain}: a single dependency path from the goal to an unproducible root.
+  \item \textbf{Parallel chains}: multiple independent dependency paths to one goal operator.
   \item \textbf{Simple pair}: exactly one mutex pair among the goal propositions.
   \item \textbf{Complete clique}: every pair of goal propositions is mutually exclusive.
-  \item \textbf{Unidirectional}: achieving one goal permanently blocks the other, but not vice versa.
+  \item \textbf{Unidirectional}: one goal permanently blocks the other, not vice versa.
   \item \textbf{Symmetric}: achieving either goal permanently blocks the other.
 \end{itemize}
 

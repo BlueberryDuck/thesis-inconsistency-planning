@@ -17,7 +17,11 @@ States follow database semantics with two key assumptions~\cite{Russell2016,Byla
 
 \begin{defn}[Operator~\cite{Bylander1994}]
     \label{defn:operator}
-    An operator $o \in O$ is a triple $\langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects.
+    An operator $o \in O$ is a triple
+    \begin{equation*}
+        o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
+    \end{equation*}
+    where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects.
 \end{defn}
 
 Operators are ground, meaning all variables have been replaced by specific objects~\cite{Bylander1994}.
@@ -71,7 +75,7 @@ Predicates define the vocabulary of a planning domain as parameterized Boolean f
 \end{equation*}
 where $\text{pred}$ is the predicate name and $x_1, \ldots, x_n$ are typed or untyped parameters. When instantiated with concrete objects, a predicate becomes a ground atom (proposition) that can be true or false in a state.
 
-For example, in the blocksworld domain\footnote{Blocksworld is a classical planning benchmark involving stacking and unstacking blocks on a table; see Example~\ref{ex:blocksworld} for a detailed illustration.}, the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
+For example, in the blocksworld domain (Example~\ref{ex:blocksworld}), the predicate $\text{on}(x, y)$ with parameters $x$ and $y$ representing blocks becomes the ground atom $\text{on}(a, b)$ when instantiated with specific blocks $a$ and $b$, representing ``block $a$ is on block $b$.'' The set of all ground atoms formed from domain predicates and problem objects constitutes the proposition set $P$ in the planning problem formalization.
 
 \ac{PDDL} actions define parameterized operators using a precondition-effect structure. An action schema has the form:
 \begin{equation*}

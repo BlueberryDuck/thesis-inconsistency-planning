@@ -26,6 +26,7 @@
 \usetikzlibrary{arrows,positioning,fit,backgrounds}
 \usepackage{forest}                         % tree diagrams (taxonomy figure)
 \usepackage{listings}                       % code listings (ASP encoding)
+\usepackage{needspace}
 \usepackage{pgfplots}
 \lstset{
     basicstyle=\small\ttfamily,
@@ -39,6 +40,7 @@
     xleftmargin=2em,
     framexleftmargin=1.5em,
 }
+\BeforeBeginEnvironment{lstlisting}{\Needspace{5\baselineskip}}
 \lstdefinestyle{asp}{
     language={},
     alsoletter={\#},
@@ -53,6 +55,16 @@
     args/.style={circle, minimum size=0.9cm,draw=black, thick,fill=white},
 }
 \pgfplotsset{compat=1.18}
+
+% prevent widows and orphans (also before/after display math)
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\predisplaypenalty=10000
+
+% allow line breaks after escaped underscores in text (e.g. has\_key)
+\let\origunderscore\_
+\renewcommand{\_}{\origunderscore\discretionary{}{}{}}
 
 % === set information ===
 % if meta.tex does not exist, use default values

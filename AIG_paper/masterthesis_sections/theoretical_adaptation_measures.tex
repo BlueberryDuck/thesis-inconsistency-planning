@@ -56,7 +56,7 @@ The following properties relate bounded and unbounded reachability.
 
 \begin{prop}[Monotonicity and Convergence of Bounded Reachability]
     \label{prop:horizon_convergence}
-    Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem. Then:
+    Let $\Pi$ be a planning problem. Then:
     \begin{enumerate}
         \item \emph{(Monotonicity)} $S^h_{\text{reach}} \subseteq S^{h+1}_{\text{reach}}$ for all $h \in \mathbb{N}$.
         \item \emph{(Convergence)} There exists a finite $h^* \leq 2^{|P|}$ such that $S^h_{\text{reach}} = S_{\text{reach}}$ for all $h \geq h^*$.
@@ -152,7 +152,7 @@ This measure indicates the scope of mutex problems at the goal level. It counts 
     \end{equation*}
 \end{defn}
 
-This measure reveals the structure of mutex relationships by counting two-element subsets rather than ordered pairs, reflecting the symmetry of the mutex relation. The value ranges from $0$ to $\binom{|G|}{2}$. The ratio between $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ reveals conflict patterns: a small ratio suggests isolated mutex pairs, while a large ratio (approaching $\binom{|G|}{2}$) indicates dense mutex cliques. Together, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ form the Goal Mutex Profile.
+This measure reveals the structure of mutex relationships by counting two-ele\-ment subsets rather than ordered pairs, reflecting the symmetry of the mutex relation. The value ranges from $0$ to $\binom{|G|}{2}$. The ratio between $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ reveals conflict patterns: a small ratio suggests isolated mutex pairs, while a large ratio (approaching $\binom{|G|}{2}$) indicates dense mutex cliques. Together, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ and $\mathcal{I}^{\text{struct}}_{\text{MX}}$ form the Goal Mutex Profile.
 
 \paragraph{Example: Light Switch (Scenario~3).} For the Light Switch scenario, forward reachability analysis yields $S_{\text{reach}} = \{\{\text{off}\}, \{\text{on}\}\}$. Both goal propositions appear in reachable states, but no state contains both. The Goal Mutex Profile yields:
 \begin{align*}
@@ -190,7 +190,10 @@ At sufficient horizon, condition 3 is equivalent to requiring that for every rea
 \begin{defn}[Conflicting Goal Propositions Count]
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{scope}}_{\text{GS}}$ counting goal propositions involved in sequencing conflicts is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h) = |\{g \in G \mid \exists g' \in G : (g, g') \text{ or } (g', g) \text{ is a sequencing conflict at horizon } h\}|
+        \begin{aligned}
+            \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h) = |\{g \in G \mid {} & \exists g' \in G \text{ such that } (g, g') \text{ or } (g', g) \\
+                                                                                & \text{is a sequencing conflict at horizon } h\}|
+        \end{aligned}
     \end{equation*}
 \end{defn}
 
@@ -199,13 +202,20 @@ This measure indicates the scope of sequencing conflicts. It counts how many goa
 \begin{defn}[Sequencing Conflict Pair Count]
     Let $\Pi = \langle P, O, I, G \rangle$ be a planning problem and $h \in \mathbb{N}$. The measure $\mathcal{I}^{\text{struct}}_{\text{GS}}$ counting ordered sequencing conflict pairs is defined as:
     \begin{equation*}
-        \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h) = |\{(g_1, g_2) \mid g_1, g_2 \in G, g_1 \neq g_2, (g_1, g_2) \text{ is a sequencing conflict at horizon } h\}|
+        \begin{aligned}
+            \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h) = |\{(g_1, g_2) \mid {} & g_1, g_2 \in G, g_1 \neq g_2,                                \\
+                                                                                    & (g_1, g_2) \text{ is a sequencing conflict at horizon } h\}|
+        \end{aligned}
     \end{equation*}
 \end{defn}
 
 This measure reveals the structure of sequencing conflicts by counting ordered pairs. Unlike mutex pairs (which are unordered), sequencing conflicts have direction: $(g_1, g_2)$ means achieving $g_1$ blocks $g_2$, but the reverse may not hold. The value ranges from $0$ to $|G| \times (|G|-1)$. Together, $\mathcal{I}^{\text{scope}}_{\text{GS}}$ and $\mathcal{I}^{\text{struct}}_{\text{GS}}$ form the Goal Sequencing Conflict Profile.
 
-\paragraph{Example: Trust and Travel (Scenario~5).} For the Trust and Travel scenario, forward reachability yields states including $\{\text{at\_local}, \text{trust}, \text{partnership}\}$ and $\{\text{at\_local}, \text{opportunity}\}$, but no state contains both goals.
+\paragraph{Example: Trust and Travel (Scenario~5).} For the Trust and Travel scenario, forward reachability yields states including
+\begin{equation*}
+    \{\text{at\_local}, \text{trust}, \text{partnership}\} \quad \text{and} \quad \{\text{at\_local}, \text{opportunity}\},
+\end{equation*}
+but no state contains both goals.
 
 Both goals are individually achievable but never coexist, satisfying the mutex definition. Additionally, $(\text{opportunity}, \text{partnership})$ is a sequencing conflict. From any state with \textit{opportunity}, the agent lacks \textit{trust} to achieve \textit{partnership}. However, $(\text{partnership}, \text{opportunity})$ is not a sequencing conflict. From \textit{partnership}-states, \textit{opportunity} remains reachable via \textit{travel} $\rightarrow$ \textit{exploit} (though this path deletes \textit{partnership}).
 
@@ -223,7 +233,11 @@ The Goal Sequencing Conflict Profile yields:
 
 This demonstrates that irreversible problems exhibit both mutex and sequencing. The goals cannot coexist (mutex), and the sequencing measure additionally identifies the direction of the conflict.
 
-\paragraph{Example: Rival Alliances (Scenario~6).} For the Rival Alliances scenario, forward reachability yields $S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}$. Both goals are individually achievable but never coexist, and allying with either faction alienates the other.
+\paragraph{Example: Rival Alliances (Scenario~6).} For the Rival Alliances scenario, forward reachability yields
+\begin{equation*}
+    S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}.
+\end{equation*}
+Both goals are individually achievable but never coexist, and allying with either faction alienates the other.
 
 The Goal Mutex Profile yields:
 \begin{align*}

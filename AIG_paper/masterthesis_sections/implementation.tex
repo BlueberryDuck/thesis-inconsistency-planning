@@ -13,7 +13,7 @@ through a three-phase pipeline of \ac{PDDL} translation, \ac{ASP} state-space ex
 The implementation follows a pipeline architecture with three distinct phases, each handled by a dedicated component.
 
 \paragraph{Phase 1: PDDL Translation.}
-The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains that declare action costs using the \texttt{:functions} requirement, a preprocessing step strips cost-related elements, as these are irrelevant to inconsistency measure computation.
+The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains with the \texttt{:functions} requirement, a preprocessing step strips cost-related elements because they do not affect reachability.
 
 \paragraph{Phase 2: ASP Brave Reasoning.}
 The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation. Different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts. The grounding and solving phases are timed separately, enabling per-phase performance analysis (Section~\ref{sec:phase_analysis}).
@@ -42,13 +42,13 @@ The \textit{plasp} output format represents propositions as boolean-valued varia
     \small
     \begin{tabular}{lll}
         \toprule
-        \textbf{Concept} & \textbf{plasp format}                              & \textbf{Internal format} \\
+        \textbf{Concept} & \textbf{plasp format}                           & \textbf{Internal format} \\
         \midrule
-        Initial state    & \texttt{initialState(V, value(V,true))}            & \texttt{init(P)}         \\
-        Goal             & \texttt{goal(V, value(V,true))}                    & \texttt{goal(P)}         \\
-        Precondition     & \texttt{precondition(A, V, value(V,true))}         & \texttt{precond(O, P)}   \\
-        Add effect       & \texttt{postcondition(A,\,..., V, value(V,true))}  & \texttt{add(O, P)}       \\
-        Delete effect    & \texttt{postcondition(A,\,..., V, value(V,false))} & \texttt{delete(O, P)}    \\
+        Initial state    & \texttt{initialState(V, value(V,true))}         & \texttt{init(P)}         \\
+        Goal             & \texttt{goal(V, value(V,true))}                 & \texttt{goal(P)}         \\
+        Precondition     & \texttt{precondition(A, V, value(V,true))}      & \texttt{precond(O, P)}   \\
+        Add effect       & \texttt{postcondition(A,\,..., value(V,true))}  & \texttt{add(O, P)}       \\
+        Delete effect    & \texttt{postcondition(A,\,..., value(V,false))} & \texttt{delete(O, P)}    \\
         \bottomrule
     \end{tabular}
     \caption{Mapping between internal and \textit{plasp} predicates.}
@@ -72,9 +72,16 @@ The following example illustrates the complete translation for a small planning 
 
 \subsubsection{PDDL Preprocessing}
 
-Several IPC~2016 domains declare action costs through the \texttt{:functions} requirement, which \textit{plasp} does not support. Action costs affect only plan quality (the cost of a solution) and not plan existence (whether any solution exists); since the inconsistency measures defined in this thesis operate exclusively on reachability and achievability, removing cost annotations is semantically safe. A preprocessing step therefore removes cost-related elements: the \texttt{:action-costs} requirement, \texttt{(:functions ...)} declarations, \texttt{(increase ...)} and \texttt{(decrease ...)} effect terms, numeric function value assignments, and \texttt{(:metric ...)} specifications. After preprocessing, domains such as \textit{bag-transport} and \textit{over-nomystery} translate successfully.
+Several IPC~2016 domains declare action costs through the \texttt{:functions} requirement, which \textit{plasp} does not support. Action costs affect only plan quality, not plan existence. Since the inconsistency measures defined in this thesis operate on reachability and achievability, removing cost annotations is semantically safe. A preprocessing step therefore removes the following cost-related elements:
+\begin{itemize}
+    \item the \texttt{:action-costs} requirement,
+    \item \texttt{(:functions ...)} declarations and \texttt{(:metric ...)} specifications,
+    \item \texttt{(increase ...)} and \texttt{(decrease ...)} effect terms,
+    \item numeric function value assignments.
+\end{itemize}
+After preprocessing, domains such as \textit{bag-transport} and \textit{over-nomystery} translate successfully.
 
-Two IPC domains (\textit{bag-barman} and \textit{tetris}) use the \texttt{:equality} requirement with variable comparison expressions \texttt{(= ?x ?y)} in preconditions, which is not supported by \textit{plasp}. These domains remain incompatible and are excluded from the evaluation.
+The two IPC domains \textit{bag-barman} and \textit{tetris} use the \texttt{:equality} requirement with variable comparison expressions \texttt{(= ?x ?y)} in preconditions, which is not supported by \textit{plasp}. These domains remain incompatible and are excluded from the evaluation.
 
 \subsection{ASP Encoding for Measure Computation}
 \label{sec:asp_encoding}
@@ -93,7 +100,7 @@ The main computation performs horizon-bounded state-space exploration. The encod
 
 \input{figures/lst_exploration}
 
-The choice rule on line~13 selects at most one applicable operator at each time step. Different selections produce different answer sets, each corresponding to a distinct execution trace through the state space. The frame axiom (line~18) ensures that propositions persist unless explicitly deleted.
+The choice rule on line~13 selects at most one applicable operator at each time step. Different selections produce different answer sets, each corresponding to a distinct execution trace through the state space. The frame axiom (line~19) ensures that propositions persist unless explicitly deleted.
 
 \subsubsection{Brave Reasoning for Witness Collection}
 \label{sec:witness_collection}
@@ -108,7 +115,7 @@ Three categories of witness atoms are collected:
 
 Under brave reasoning, \texttt{true\_reachable(P)} is derived if and only if proposition $P$ appears in at least one state of at least one execution trace. A proposition is truly unreachable only if no execution trace of any length up to the horizon can produce a state containing it.
 
-The \texttt{coexist\_witness(G1, G2)} atom is derived if some execution trace reaches a state where both $G_1$ and $G_2$ hold. The absence of this witness under brave reasoning means that no execution trace, across all possible operator selections, ever produces a state satisfying both goals. This corresponds exactly to the mutex relationship from Definition~\ref{defn:mutex_goal_pair}.
+The \texttt{coexist\_witness(G1, G2)} atom is derived if some execution trace rea\-ches a state where both $G_1$ and $G_2$ hold. The absence of this witness under brave reasoning means that no execution trace, across all possible operator selections, ever produces a state satisfying both goals. This corresponds exactly to the mutex relationship from Definition~\ref{defn:mutex_goal_pair}.
 
 The \texttt{g2\_after\_g1\_witness(G1, G2)} atom is derived if some execution trace reaches $G_1$ at time $T_1$ and $G_2$ at some $T_2 \geq T_1$. Its absence means that achieving $G_1$ necessarily prevents subsequent achievement of $G_2$ in every possible continuation, corresponding to the sequencing conflict from Definition~\ref{defn:sequencing_conflict}.
 
@@ -127,7 +134,7 @@ Let $G_{\text{reach}} = G \cap \{\, p \mid \texttt{true\_reachable}(p) \,\}$ den
 For each unordered pair of achievable goals $(g_1, g_2) \in \binom{G_{\text{reach}}}{2}$, the pair is mutex if $\texttt{coexist\_witness}(g_1, g_2)$ was not derived under brave reasoning. The mutex profile counts the number of goals participating in at least one mutex pair and the total number of mutex pairs.
 
 \paragraph{Goal Sequencing Profile.}
-For each ordered pair of achievable goals $(g_1, g_2) \in G_{\text{reach}} \times G_{\text{reach}}$ with $g_1 \neq g_2$, the pair is a sequencing conflict if $\texttt{g2\_after\_g1\_witness}(g_1, g_2)$ was not derived. The sequencing profile counts the number of goals involved in at least one conflict and the total number of ordered conflict pairs.
+For each ordered pair of achievable goals $(g_1, g_2) \in G_{\text{reach}} \times G_{\text{reach}}$ with $g_1 \neq g_2$, the corresponding witness atom is derived when some execution trace reaches $g_1$ before $g_2$. The pair is a sequencing conflict if that witness atom is not derived under brave reasoning. The sequencing profile counts the number of goals involved in at least one conflict and the total number of ordered conflict pairs.
 
 The resulting six values are packaged into a diagnostic profile data structure that provides automatic category classification according to the taxonomy from Section~\ref{sec:taxonomy}. Problem size metadata (goal, proposition, and operator counts) is recorded separately and bundled with the profile and per-phase timing in the result envelope returned to the caller.
 
@@ -136,11 +143,18 @@ The resulting six values are packaged into a diagnostic profile data structure t
 
 The implementation provides both a library \ac{API} and a \ac{CLI}. The library exposes \texttt{compute\_measures} as the primary entry point, accepting either pre-translated \ac{ASP} files or \ac{PDDL} domain and problem files with a horizon parameter $h$, and returning a result envelope that bundles the diagnostic profile, problem size metadata, and per-phase timing. A timeout-protected variant, \texttt{compute\_with\_timeout}, wraps this entry point for callers that need bounded execution. Together these directly implement the parameterized measures $\mathcal{I}(\Pi, h)$ from Section~\ref{sec:proposed_measures}.
 
-A batch processing module iterates over benchmark directories, automatically discovering domain and problem file pairs across three common layouts: a single \texttt{domain.pddl} paired with \texttt{prob*.pddl} or \texttt{satprob*.pddl}, numbered pairs (\texttt{dom01.pddl} with \texttt{prob01.pddl}), and the Eriksson layout (\texttt{domain\_<name>.pddl} with \texttt{<name>.pddl}). Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-phase timing (translation, grounding, solving, extraction, and total), and error reporting.
+A batch processing module iterates over benchmark directories and automatically discovers domain and problem file pairs across three common layouts:
+\begin{itemize}
+    \item a single-domain layout with \texttt{domain.pddl} paired with \texttt{prob*.pddl} \\
+          or \texttt{satprob*.pddl},
+    \item numbered pairs with \texttt{dom01.pddl} and \texttt{prob01.pddl},
+    \item the Eriksson layout with \texttt{domain\_<name>.pddl} and \texttt{<name>.pddl}.
+\end{itemize}
+Results are written to CSV format with problem size metadata (goal, proposition, and operator counts), per-phase timing (translation, grounding, solving, extraction, and total), and error reporting.
 
 Both the \ac{CLI} and the batch runner accept a configurable timeout parameter (in seconds), implemented through the library-level \texttt{compute\_with\_timeout} entry point. When the time limit is exceeded, the problem is recorded with \texttt{TIMEOUT} status rather than blocking indefinitely. This is necessary for benchmark domains where grounding complexity causes prohibitive solve times.
 
-Implementing reliable timeouts for \ac{ASP} solving requires care. Clingo's \texttt{--time-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
+Implementing reliable timeouts for \ac{ASP} solving requires care. Clingo's \texttt{--time\-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
 
 For reproducibility, the implementation is containerized with Docker, bundling Python~3.12, Clingo~5.6, and \textit{plasp}~3 in a consistent environment. The Dockerfile and build instructions are included in the repository.
 
@@ -179,7 +193,7 @@ Eleven test scenarios are tested against their theoretically derived expected pr
 Four tests verify the measure relationships established in Section~\ref{sec:measure_relationships}. These tests confirm that unreachable goals do not participate in mutex or sequencing conflicts, that sequencing conflicts imply mutex, that mutex without sequencing indicates reversible conflicts, and that delete effects correctly prevent false reachability claims.
 
 \paragraph{Dataclass Contract Tests.}
-Seventeen tests verify the public dataclasses (\texttt{MeasureProfile}, \texttt{ProblemSize}, \texttt{TimingProfile}, and the \texttt{MeasureResult} envelope), confirming category classification, the stable CSV field order, frozen-dataclass semantics, and the human-readable summary that crosses profile, size, and timing.
+Seventeen tests verify the publicly accessible dataclasses (\texttt{MeasureProfile}, \texttt{ProblemSize}, \texttt{TimingProfile}, \texttt{MeasureResult}), confirming category classification, the stable CSV field order, frozen-dataclass semantics, and the human-readable summary that crosses profile, size, and timing.
 
 \paragraph{Extraction Tests.}
 Eleven tests exercise the pure set-algebra extraction module on synthetic atom sets, covering unreachability counting, the directional treatment of sequencing witnesses, the exclusion of unreachable goals from mutex and sequencing analyses, and the derivation of problem size cardinalities.

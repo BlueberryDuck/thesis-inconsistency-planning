@@ -15,7 +15,7 @@
 
         % Edges: precondition → effect (labeled with operator)
         \draw[->, thick] (haskey) -- node[right, font=\footnotesize\itshape] {unlock} (unlocked);
-        \draw[->, thick] (atdoor) -- node[above, font=\footnotesize\itshape, pos=0.4] {unlock} (unlocked);
+        \draw[->, thick] (atdoor) -- node[sloped, above, font=\footnotesize\itshape] {unlock} (unlocked);
         \draw[->, thick] (unlocked) -- node[above, font=\footnotesize\itshape] {enter} (inroom);
         \draw[->, thick] (atdoor) -- node[left, font=\footnotesize\itshape] {enter} (inroom);
 
