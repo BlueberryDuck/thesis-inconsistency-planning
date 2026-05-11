@@ -31,7 +31,7 @@ The input to the system is a pair of standard \ac{PDDL} files, a domain specific
 \subsubsection{Adoption of plasp}
 \label{sec:plasp_adoption}
 
-An initial prototype grounded \ac{PDDL} action schemas via typed Cartesian product enumeration using the \texttt{pddl} Python library by Favorito et al.~\cite{Favorito2021}. Testing on the IPC~2016 benchmarks by Muise and Lipovetzky~\cite{Muise2016} revealed two limitations of this approach. The library does not support the \texttt{:constants} declaration used by several IPC domains, and naive Cartesian product grounding produces prohibitively large programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the constraining \texttt{in-line} predicate.
+An initial prototype grounded \ac{PDDL} action schemas via typed Cartesian product enumeration using the \texttt{pddl} Python library by Favorito et al.~\cite{Favorito2021}. Testing on the \ac{IPC}~2016 benchmarks by Muise and Lipovetzky~\cite{Muise2016} revealed two limitations of this approach. The library does not support the \texttt{:constants} declaration used by several \ac{IPC} domains, and naive Cartesian product grounding produces prohibitively large programs for domains that use predicates to constrain parameter interactions. For example, the \textit{pegsol} domain produced over 395{,}000 ground \ac{ASP} facts because the translator enumerated all position triples regardless of the constraining \texttt{in-line} predicate.
 
 The implementation was therefore restructured to use \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019} for \ac{PDDL} translation. The \textit{plasp} tool, developed as part of the Potassco project, translates \ac{PDDL} specifications into a lifted \ac{ASP} representation where Clingo handles the grounding process. This offers two advantages. First, \textit{plasp} correctly handles \ac{PDDL} features including \texttt{:constants} and complex type hierarchies. Second, Clingo's grounding algorithm exploits the structure of \ac{ASP} rules to avoid generating impossible parameter combinations.
 
@@ -72,7 +72,7 @@ The following example illustrates the complete translation for a small planning 
 
 \subsubsection{PDDL Preprocessing}
 
-Several IPC~2016 domains declare action costs through the \texttt{:functions} requirement, which \textit{plasp} does not support. Action costs affect only plan quality, not plan existence. Since the inconsistency measures defined in this thesis operate on reachability and achievability, removing cost annotations is semantically safe. A preprocessing step therefore removes the following cost-related elements:
+Several \ac{IPC}~2016 domains declare action costs through the \texttt{:functions} requirement, which \textit{plasp} does not support. Action costs affect only plan quality, not plan existence. Since the inconsistency measures defined in this thesis operate on reachability and achievability, removing cost annotations is semantically safe. A preprocessing step therefore removes the following cost-related elements:
 \begin{itemize}
     \item the \texttt{:action-costs} requirement,
     \item \texttt{(:functions ...)} declarations and \texttt{(:metric ...)} specifications,
@@ -81,7 +81,7 @@ Several IPC~2016 domains declare action costs through the \texttt{:functions} re
 \end{itemize}
 After preprocessing, domains such as \textit{bag-transport} and \textit{over-nomystery} translate successfully.
 
-The two IPC domains \textit{bag-barman} and \textit{tetris} use the \texttt{:equality} requirement with variable comparison expressions \texttt{(= ?x ?y)} in preconditions, which is not supported by \textit{plasp}. These domains remain incompatible and are excluded from the evaluation.
+The two \ac{IPC} domains \textit{bag-barman} and \textit{tetris} use the \texttt{:equality} requirement with variable comparison expressions \texttt{(= ?x ?y)} in preconditions, which is not supported by \textit{plasp}. These domains remain incompatible and are excluded from the evaluation.
 
 \subsection{ASP Encoding for Measure Computation}
 \label{sec:asp_encoding}
