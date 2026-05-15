@@ -3,7 +3,7 @@
 
 This section analyzes the computational complexity of the proposed measures in terms of the complexity classes introduced in Section~\ref{sec:foundations_complexity}. Determining plan existence, \textsc{PlanSat}, for propositional \ac{STRIPS} is PSPACE-complete~\cite{Bylander1994}. All three measures depend on reachability analysis over the planning state space, and this structural connection to \textsc{PlanSat} determines their decision-problem complexity.
 
-Following Thimm and Wallner~\cite{Thimm2016a} and Corea et al.~\cite{Corea2022}, four computational problems are defined for each measure $\mathcal{I} \in \{\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}\}$.
+Following Thimm and Wallner~\cite{Thimm2016} and Corea et al.~\cite{Corea2022}, four computational problems are defined for each measure $\mathcal{I} \in \{\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}\}$.
 
 \begin{defn}[Decision and Function Problems]
     \label{defn:decision_problems}
@@ -53,7 +53,7 @@ Each completeness result below establishes membership and hardness as defined in
     $\text{VALUE}_{\mathcal{I}_{\text{UR}}}$ can be computed via binary search with $O(\log |G|)$ calls to $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$. Polynomially many calls to a PSPACE subroutine remain in FPSPACE.
 \end{proof}
 
-In the propositional setting of Thimm and Wallner~\cite{Thimm2016a}, $\text{LOWER}$ is coNP-complete rather than NP-complete, and $\text{EXACT}$ lands in $D^p$, the class of problems decidable by the conjunction of an NP and a coNP problem, believed to be strictly larger than $\text{NP} \cap \text{coNP}$. At the PSPACE level, PSPACE $=$ co-PSPACE collapses both distinctions. PSPACE is a deterministic class, so a machine deciding membership also decides the complement by negating its output, and the conjunction of two PSPACE problems remains in PSPACE. The broader consequences for the complexity landscape are discussed after Corollary~\ref{cor:gs_all}.
+In the propositional setting of Thimm and Wallner~\cite{Thimm2016}, $\text{LOWER}$ is coNP-complete rather than NP-complete, and $\text{EXACT}$ lands in $D^p$, the class of problems decidable by the conjunction of an NP and a coNP problem, believed to be strictly larger than $\text{NP} \cap \text{coNP}$. At the PSPACE level, PSPACE $=$ co-PSPACE collapses both distinctions. PSPACE is a deterministic class, so a machine deciding membership also decides the complement by negating its output, and the conjunction of two PSPACE problems remains in PSPACE. The broader consequences for the complexity landscape are discussed after Corollary~\ref{cor:gs_all}.
 
 \begin{thm}
     \label{thm:mx_complexity}
@@ -121,7 +121,7 @@ Table~\ref{tab:decision_complexity} summarizes these results.
     \label{tab:decision_complexity}
 \end{table}
 
-The uniform PSPACE tier observed above contrasts with the multi-tier structure for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016a} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
+The uniform PSPACE tier observed above contrasts with the multi-tier structure for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
 
 For classical planning, \textsc{PlanSat} is PSPACE-complete, and all three proposed measures reduce to polynomial compositions of reachability queries. The polynomial overhead from different measure definitions cannot push the complexity above PSPACE, because PSPACE is closed under polynomial time reductions. The result is a flat complexity landscape where all decision problems for all three measures are PSPACE-complete. This uniformity reflects a general principle. The complexity of inconsistency measures inherits from the base reasoning problem of the target formalism, and when that base problem is already PSPACE-complete, the polynomial differences between measure definitions are subsumed.
 
