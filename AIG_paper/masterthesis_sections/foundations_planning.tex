@@ -1,12 +1,7 @@
 \subsection{Classical Planning}
 \label{sec:foundations_planning}
 
-Russell and Norvig~\cite{Russell2016} describe classical planning as operating on factored representations, meaning the world state is decomposed into individual variables like ``robot at location A'' or ``door is open'' rather than treating each complete world situation as an indivisible atomic state. The formal definitions that follow adopt the propositional \ac{STRIPS} formulation of Bylander~\cite{Bylander1994}, which also serves as the reference for the later complexity results.
-
-\begin{defn}[Planning Problem~\cite{Bylander1994}]
-    \label{defn:planning_problem}
-    A planning problem is a 4-tuple $\langle P, O, I, G \rangle$ where $P$ is a finite set of atomic propositions, $O$ is a finite set of operators, $I \subseteq P$ is the initial state, and $G \subseteq P$ is the goal specification.
-\end{defn}
+Russell and Norvig~\cite{Russell2016} describe classical planning as operating on factored representations, meaning the world state is decomposed into individual variables like ``robot at location A'' or ``door is open'' rather than treating each complete world situation as an indivisible atomic state. The formal definitions that follow adopt the propositional \ac{STRIPS} formulation of Bylander~\cite{Bylander1994}, which also serves as the reference for the later complexity results. These representations are built over a finite set $P$ of atomic propositions. The following definitions introduce states and operators over $P$, then assemble them into the formal notion of a planning problem.
 
 \begin{defn}[State~\cite{Russell2016}]
     \label{defn:state}
@@ -17,14 +12,15 @@ States follow database semantics with two key assumptions~\cite{Russell2016,Byla
 
 \begin{defn}[Operator~\cite{Bylander1994}]
     \label{defn:operator}
-    An operator $o \in O$ is a triple
-    \begin{equation*}
-        o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle
-    \end{equation*}
-    where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects.
+    An operator $o$ is a triple $\langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ where $\text{precond}(o) \subseteq P$ are the preconditions, $\text{add}(o) \subseteq P$ are the add effects, and $\text{delete}(o) \subseteq P$ are the delete effects.
 \end{defn}
 
 Operators are ground, meaning all variables have been replaced by specific objects~\cite{Bylander1994}.
+
+\begin{defn}[Planning Problem~\cite{Bylander1994}]
+    \label{defn:planning_problem}
+    A planning problem is a 4-tuple $\langle P, O, I, G \rangle$ where $P$ is a finite set of atomic propositions, $O$ is a finite set of operators, $I \subseteq P$ is the initial state, and $G \subseteq P$ is the goal specification.
+\end{defn}
 
 \begin{defn}[Applicability and Result~\cite{Bylander1994}]
     \label{defn:applicability}
@@ -46,12 +42,12 @@ Operators are ground, meaning all variables have been replaced by specific objec
 
 \begin{defn}[Solvability~\cite{Bylander1994}]
     \label{defn:solvability}
-    A planning problem $\langle P, O, I, G \rangle$ is solvable if there exists a plan; it is unsolvable otherwise.
+    A planning problem $\langle P, O, I, G \rangle$ is solvable if there exists a plan and unsolvable otherwise.
 \end{defn}
 
 Determining whether a planning problem is solvable is PSPACE-complete~\cite{Bylander1994}, which has motivated extensive research into efficient algorithms and search techniques.
 
-While the preceding definitions establish the formal semantics of planning, practical planning systems require a concrete specification language. The \ac{PDDL}, introduced by Ghallab et al.~\cite{Ghallab1998} for the 1998 International Conference on Artificial Intelligence Planning Systems (AIPS) competition, was developed to provide a standardized language for describing planning problems. \ac{PDDL} has since become the de facto standard for representing classical planning problems, evolving through multiple versions to support increasingly expressive features while maintaining a foundational core based on the \ac{STRIPS} representation of Fikes and Nilsson~\cite{Fikes1971}. The \ac{STRIPS} framework established the foundational principles for modeling planning domains where actions have deterministic effects and the world is fully observable, which \ac{PDDL} extends with additional expressiveness and standardization.
+While the preceding definitions establish the formal semantics of planning, practical planning systems require a concrete specification language. The \ac{PDDL}, introduced by Ghallab et al.~\cite{Ghallab1998} for the 1998 International Conference on Artificial Intelligence Planning Systems competition, was developed to provide a standardized language for describing planning problems. \ac{PDDL} has since become the de facto standard for representing classical planning problems, evolving through multiple versions to support increasingly expressive features while maintaining a foundational core based on the \ac{STRIPS} representation of Fikes and Nilsson~\cite{Fikes1971}. The \ac{STRIPS} framework established the foundational principles for modeling planning domains where actions have deterministic effects and the world is fully observable, which \ac{PDDL} extends with additional expressiveness and standardization.
 
 Throughout this thesis, the term ``propositional \ac{PDDL}'' refers to \ac{PDDL} specifications using the \texttt{:strips} and \texttt{:typing} requirements without numeric fluents or other extensions from \ac{PDDL} 2.1 and later versions. The \texttt{:strips} requirement indicates the use of basic precondition-effect actions following the classical \ac{STRIPS} model, while \texttt{:typing} enables hierarchical type declarations for objects, allowing parameters to be restricted to specific types. Another common requirement is \texttt{:equality}, which enables the use of equality predicates to compare object references. This thesis focuses on \texttt{:strips} and \texttt{:typing}, corresponding to the classical planning model with propositional state representations, typed objects, and deterministic actions with conjunctive preconditions and effects.
 
@@ -98,7 +94,7 @@ The initial state in \ac{PDDL} is specified as a conjunction of ground atoms:
 \end{equation*}
 which corresponds to the set $I = \{p_1, p_2, \ldots, p_n\} \subseteq P$ under the closed-world assumption where unmentioned propositions are false.
 
-Goal specifications in \ac{PDDL} can be arbitrary logical formulas in the full language, but in basic \ac{PDDL} with \texttt{:strips} requirements they are restricted to conjunctions of positive atoms. Formally, a \ac{PDDL} goal $\text{Goal} = g_1 \land g_2 \land \cdots \land g_m$ corresponds to the goal set $G = \{g_1, g_2, \ldots, g_m\} \subseteq P$ in the planning problem formalization. A state $s$ satisfies the goal if and only if $G \subseteq s$. Note that negative goal literals (e.g., $\neg p$) require \ac{PDDL} 3.0 extensions~\cite{Gerevini2005}; this thesis focuses on positive goal conjunctions.
+Goal specifications in \ac{PDDL} can be arbitrary logical formulas in the full language, but in basic \ac{PDDL} with \texttt{:strips} requirements they are restricted to conjunctions of positive atoms. Formally, a \ac{PDDL} goal $\text{Goal} = g_1 \land g_2 \land \cdots \land g_m$ corresponds to the goal set $G = \{g_1, g_2, \ldots, g_m\} \subseteq P$ in the planning problem formalization. A state $s$ satisfies the goal if and only if $G \subseteq s$. Note that negative goal literals (e.g., $\neg p$) require the \ac{PDDL} 3.0 extensions of Gerevini and Long~\cite{Gerevini2005}. This thesis focuses on positive goal conjunctions.
 
 While \ac{PDDL} has evolved through multiple versions, \ac{PDDL} 2.1~\cite{Fox2003} added numeric fluents and durative actions, \ac{PDDL} 2.2~\cite{Edelkamp2004} introduced derived predicates and timed initial literals, \ac{PDDL} 3.0~\cite{Gerevini2005} added preferences and constraints, and \ac{PDDL}+~\cite{Fox2002} supports continuous processes. This thesis focuses on basic forms of \ac{PDDL} due to their foundational simplicity and well-understood semantics. Simple \ac{PDDL} formulations with conjunctive preconditions and effects provide sufficient expressiveness for systematic adaptation of inconsistency measurement without the complications of temporal reasoning, complex preferences, or soft constraints.
 

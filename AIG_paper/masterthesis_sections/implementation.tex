@@ -209,3 +209,5 @@ Seven tests verify the timeout-protected \texttt{compute\_with\_timeout} entry p
 
 \paragraph{PDDL Pipeline Tests.}
 Twenty-three tests cover the \ac{PDDL} ingestion path. Six tests confirm that the \textit{plasp} translation, the bridge encoding, and the context-managed translated-problem handle produce correct measure profiles end-to-end and surface translation failures cleanly. Eleven tests verify the cost-stripping splicer and the context-manager cleanup it shares with the translator. Six tests verify that benchmark discovery correctly identifies domain/problem pairs across the three supported layouts (single-domain, numbered, and Eriksson) and respects the skip list of known-incompatible domains.
+
+With the pipeline validated on controlled scenarios, Section~\ref{sec:evaluation} applies it to standard unsolvable planning benchmarks to assess the practical diagnostic value of the measures.
