@@ -139,6 +139,8 @@ All 18 successfully computed instances are classified as Category~2a, indicating
 
 \subsubsection{Other Domains}
 
+Beyond \textit{diagnosis}, five further benchmark domains yield instances that complete within the time limit. Each is discussed in turn below, reporting the completion rate, the dominant conflict category, and the structural pattern that characterizes it.
+
 \paragraph{Bottleneck.} Twelve of 25 instances complete, all exhibiting zero unreachability. Ten are classified as 2c-sequencing and two as consistent. Table~\ref{tab:bottleneck_results} shows the full results. The instances are grouped by grid dimension, with 4, 5, or 6 goals respectively. Within each group, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ decreases from the full goal count to 2 and then to 0 as the bottleneck position shifts. In the 4-goal group, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ drops from 4 in prob01 to 2 in prob03. In the 5-goal group, it drops from 5 in prob04 to 2 in prob07. In the 6-goal group, it drops from 6 in prob08 to 0 in prob11 and prob12. The two consistent instances, prob11 and prob12, have no actual pairwise structural conflicts at $h = 20$. Section~\ref{sec:eval_horizon} shows that a shorter horizon of $h = 10$ produces spurious conflict detections on these instances.
 
 \begin{table}[ht]

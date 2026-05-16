@@ -40,7 +40,7 @@ Eiter and Gottlob~\cite{Eiter1995} formalize two complementary modes of reasonin
 
 Modern \ac{ASP} solvers such as Clingo, developed by Gebser et al.~\cite{Gebser2012}, support both modes natively. In a planning context with non-deterministic operator selection, each answer set corresponds to a different execution trace. Brave consequences capture everything achievable under any choice of operators, making brave reasoning the appropriate mode for reachability analysis.
 
-\ac{ASP} provides a natural framework for encoding planning problems. The modern tool plasp~3 by Dimopoulos et al.~\cite{Dimopoulos2019} translates \ac{PDDL} specifications into \ac{ASP} programs where answer sets correspond to valid plans. The system generates rules encoding operator applicability, effect application, and goal satisfaction.
+\ac{ASP} provides a natural framework for encoding planning problems. The modern tool \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019} translates \ac{PDDL} specifications into \ac{ASP} programs where answer sets correspond to valid plans. The system generates rules encoding operator applicability, effect application, and goal satisfaction.
 
 \begin{defn}[Sequential Planning Encoding~\cite{Dimopoulos2019}]
     \label{defn:sequential_encoding}

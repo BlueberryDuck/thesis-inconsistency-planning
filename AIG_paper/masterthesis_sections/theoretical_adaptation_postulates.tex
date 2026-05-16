@@ -1,7 +1,7 @@
 \subsubsection{Rationality Postulates}
 \label{sec:postulates}
 
-A core component of inconsistency measurement research, as developed by Hunter and Konieczny~\cite{Hunter2008} and surveyed by Thimm~\cite{Thimm2019}, is analyzing which rationality postulates measures satisfy. As demonstrated by Ulbricht et al.~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons: first, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas; second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths. This thesis therefore introduces three planning-adapted postulates, namely Planning Consistency, Operator Monotonicity, and Goal Monotonicity, defined below.
+A core component of inconsistency measurement research, as developed by Hunter and Konieczny~\cite{Hunter2008} and surveyed by Thimm~\cite{Thimm2019}, is analyzing which rationality postulates measures satisfy. As demonstrated by Ulbricht et al.~\cite{Ulbricht2016}, domain-specific adaptations may require modified postulates. Classical postulates cannot be applied directly to planning problems for two reasons. First, planning has fundamentally different structure than propositional knowledge bases, involving goals, operators, and states rather than formulas. Second, planning exhibits inherently non-monotonic behavior, as adding operators can reduce inconsistency by enabling new solution paths. This thesis therefore introduces three planning-adapted postulates, namely Planning Consistency, Operator Monotonicity, and Goal Monotonicity, defined below.
 
 \begin{defn}[Planning Consistency]
     An inconsistency measure $\mathcal{I}$ for planning problems satisfies \emph{Planning Consistency} if for all $\Pi$ and all sufficiently large $h$:
@@ -29,12 +29,12 @@ Note that Operator Monotonicity reverses classical monotonicity because adding o
 \end{defn}
 
 Goal Monotonicity preserves the direction of classical monotonicity. Adding requirements (goals) can only increase or maintain inconsistency, never decrease it. The following propositions analyze postulate compliance for each measure. Counterexamples use the converged test scenarios from Section~\ref{sec:test_scenarios}, so the proofs write $\mathcal{I}(\Pi)$ for the converged measure values.
-
+\pagebreak
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{UR}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counterexample: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi) = 0$ (both goals \textit{on} and \textit{off} appear in reachable states at any $h \geq 1$) but is unsolvable (goals are mutex). Conversely, Planning Consistency requires $\mathcal{I} = 0$ only for solvable problems.
+    Counterexample: In the Light Switch problem both goals \textit{on} and \textit{off} appear in reachable states at any $h \geq 1$, so $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi) = 0$, yet the problem is unsolvable because the goals are mutex. This violates Planning Consistency, which requires $\mathcal{I} = 0$ only when $\Pi$ is solvable.
 \end{proof}
 
 \begin{prop}
@@ -55,45 +55,45 @@ Goal Monotonicity preserves the direction of classical monotonicity. Adding requ
     $\mathcal{I}^{\text{scope}}_{\text{MX}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counterexample: The Locked Door problem has $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi) = 0$ (no mutex relationships exist since the goal \textit{in\_room} is not even achievable) but is unsolvable.
+    Counterexample: In the Locked Door problem no mutex relationships exist because the goal \textit{in\_room} is not achievable, so $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi) = 0$, yet the problem is unsolvable.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{MX}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Counterexample: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no mutex exists and $\mathcal{I}^{\text{scope}}_{\text{MX}} = 0$. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, no reachable state contains both $g_1$ and $g_2$, because both operators delete $a$, which is the only initial proposition. So $g_1$ and $g_2$ become mutex, increasing $\mathcal{I}^{\text{scope}}_{\text{MX}}$ to 2.
+    Counterexample: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no mutex exists and $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi) = 0$. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, no reachable state contains both $g_1$ and $g_2$, because both operators delete $a$, which is the only initial proposition. So $g_1$ and $g_2$ become mutex, increasing $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi)$ from 0 to 2.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{MX}}$ satisfies Goal Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ increases; otherwise it remains unchanged.
+    Adding goal $g$ to $G$ can only increase the set of potential mutex pairs. If $g$ is mutex with existing goals, $\mathcal{I}^{\text{scope}}_{\text{MX}}$ increases. Otherwise it remains unchanged.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{GS}}$ does not satisfy Planning Consistency.
 \end{prop}
 \begin{proof}
-    Counterexample: The Light Switch problem has $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi) = 0$ (no sequencing conflicts since actions are reversible) but is unsolvable (goals are mutex).
+    Counterexample: In the Light Switch problem there are no sequencing conflicts since actions are reversible, so $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi) = 0$, yet the problem is unsolvable because the goals are mutex.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{GS}}$ does not satisfy Operator Monotonicity.
 \end{prop}
 \begin{proof}
-    Counterexample: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no sequencing conflict exists. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, from state $\{g_1\}$, neither operator is applicable since both require $\{a\}$. Thus $(g_1, g_2)$ becomes a sequencing conflict, increasing $\mathcal{I}^{\text{scope}}_{\text{GS}}$ from 0 to 2.
+    Counterexample: Consider $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$, and initial operator set $O = \{\text{reach\_g1}\}$ where $\text{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\} \rangle$. Goal $g_1$ is achievable but $g_2$ is not, so no sequencing conflict exists. Adding operator $\text{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\} \rangle$ makes $g_2$ achievable. However, from either state $\{g_1\}$ or $\{g_2\}$, neither operator is applicable since both require $\{a\}$, which has been deleted. Thus both $(g_1, g_2)$ and $(g_2, g_1)$ become sequencing conflicts, so $g_1$ and $g_2$ each participate, increasing $\mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi)$ from 0 to 2.
 \end{proof}
 
 \begin{prop}
     $\mathcal{I}^{\text{scope}}_{\text{GS}}$ satisfies Goal Monotonicity.
 \end{prop}
 \begin{proof}
-    Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge; existing conflicts are unaffected.
+    Adding goal $g$ to $G$ can only increase the set of potential sequencing conflicts. New conflicts of the form $(g, g')$ or $(g', g)$ may emerge. Existing conflicts are unaffected.
 \end{proof}
 
-The structure variants satisfy the same postulates as their scope counterparts:
+Each structure variant also fails Planning Consistency, by the same counterexamples used for its scope counterpart. The Light Switch problem has no unreachable propositions and no sequencing conflicts, so $\mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi) = \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) = 0$. The Locked Door problem has no mutex pairs, so $\mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi) = 0$. Both problems are unsolvable. The structure variants otherwise satisfy the same postulates as their scope counterparts:
 
 \begin{prop}
     $\mathcal{I}^{\text{struct}}_{\text{UR}}$ satisfies Operator Monotonicity.
@@ -118,7 +118,7 @@ The structure variants satisfy the same postulates as their scope counterparts:
 
 All three structure variants satisfy Goal Monotonicity. Adding a goal $g$ to $G$ increases the domain over which unreachable propositions, mutex pairs, and sequencing conflicts are counted, and existing counts are unaffected since $S^h_{\text{reach}}$ depends only on $I$, $O$, and $h$.
 
-Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this thesis, paralleling findings in~\cite{Ulbricht2016} where multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
+Table~\ref{tab:postulates} summarizes postulate compliance. The observation that no single measure satisfies Planning Consistency motivates the multi-faceted diagnostic approach adopted in this thesis, paralleling Ulbricht et al.~\cite{Ulbricht2016}, who found that multiple measures with different postulate profiles were necessary to adequately characterize inconsistency in \ac{ASP}.
 
 \begin{table}[ht]
     \centering

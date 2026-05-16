@@ -2,7 +2,7 @@
 \label{sec:naive_encoding}
 
 A natural approach to measuring inconsistency in planning problems would encode the problem as a propositional knowledge base and apply classical inconsistency measures. This section demonstrates why such encodings yield uninformative results, motivating planning-native measures.
-
+\pagebreak
 \subsubsection{Encoding Planning Problems as Knowledge Bases}
 
 A propositional encoding of a planning problem $\langle P, O, I, G \rangle$ includes:
@@ -29,7 +29,7 @@ This knowledge base is classically inconsistent. The goal \textit{in\_room} requ
 
 \subsubsection{Contension Measure Analysis}
 
-The contension measure $\mathcal{I}_c$ counts the minimum number of propositions assigned the conflicting value $B$ in Priest's three-valued logic of paradox~\cite{Priest1979} to satisfy all formulas. The value $B$ represents ``both true and false.'' A formula is satisfied if it evaluates to $T$ or $B$ rather than $F$.
+The contension measure $\mathcal{I}_c$ counts the minimum number of atoms assigned the conflicting value $B$ in Priest's three-valued logic of paradox~\cite{Priest1979} to satisfy all formulas. The value $B$ represents ``both true and false.'' A formula is satisfied if it evaluates to $T$ or $B$ rather than $F$.
 
 \begin{prop}
     $\mathcal{I}_c(K_{\text{LD}}) = 1$.
@@ -53,7 +53,7 @@ The contension measure $\mathcal{I}_c$ counts the minimum number of propositions
 
 The Locked Door encoding detects inconsistency because the closed-world assumption $\neg\textit{has\_key}$ follows directly from the \ac{STRIPS} specification. No operator produces \textit{has\_key}, and it is not in $I$. For scenarios involving operator-induced conflicts, the encoding faces a more fundamental limitation that persists even when the encoding is enriched.
 
-\paragraph{Example: Precondition-Only Encoding.} Consider the Light Switch scenario (Scenario~3), where the goal requires both \textit{on} and \textit{off}, but toggle actions enforce mutual exclusion. Applying the encoding rules yields:
+\paragraph{Example: Precondition-Only Encoding.} Consider the Light Switch scenario (Scenario~3), where the goal requires both \textit{on} and \textit{off}, but toggle operators enforce mutual exclusion. Applying the encoding rules yields:
 \begin{align*}
     K_{\text{LS}} = \{ & \text{on}, \text{off},              & \text{(goals)}                  \\
                        & \text{on} \rightarrow \text{off},   & \text{(turn\_on precondition)}  \\
@@ -70,7 +70,7 @@ No closed-world negations apply since both propositions are producible. This kno
                          & \text{off} \rightarrow \neg\text{on} \} & \text{(turn\_off deletes on)}
 \end{align*}
 The enriched encoding is classically inconsistent. The goal \textit{on} together with the deletion rule yields $\neg\textit{off}$, contradicting the goal \textit{off}. Yet $\mathcal{I}_c(K^+_{\text{LS}}) = 1$. Setting \mbox{$v(\textit{off}) = B$} and $v(\textit{on}) = T$ satisfies every formula, since implications involving a $B$-valued atom evaluate to $B$ rather than $F$.
-
+\pagebreak
 \paragraph{Example: Sequencing Conflicts.} The same pattern applies to the Trust and Tra\-vel scenario (Scenario~5), where an agent must secure a partnership requiring trust and exploit a remote opportunity, but traveling destroys trust irreversibly. The precondition-only encoding
 \begin{align*}
     K_{\text{TT}} = \{ & \text{partnership}, \text{opportunity},                             & \text{(goals)}                \\
@@ -85,7 +85,7 @@ Beyond the uninformativeness of $\mathcal{I}_c$, the delete-effect implications 
 
 \subsubsection{Why Direct Encoding Fails}
 
-The analysis reveals a consistent pattern. Across unreachability, mutex, and sequencing conflicts, $\mathcal{I}_c = 1$ regardless of problem structure. In each case, the three-valued $B$ (``both true and false'') absorbs the conflict at a single proposition, satisfying all downstream implications. The contension measure therefore assigns identical severity to structurally distinct planning problems: a single missing producer (Locked Door), a pair of mutually exclusive goals (Light Switch), and an irreversible sequencing conflict (Trust and Travel) all yield $\mathcal{I}_c = 1$.
+The analysis reveals a consistent pattern. Across unreachability, mutex, and sequencing conflicts, $\mathcal{I}_c = 1$ regardless of problem structure. In each case, the three-valued $B$ absorbs the conflict at a single proposition, satisfying all downstream implications. The contension measure therefore assigns identical severity to structurally distinct planning problems: a single missing producer (Locked Door), a pair of mutually exclusive goals (Light Switch), and an irreversible sequencing conflict (Trust and Travel) all yield $\mathcal{I}_c = 1$.
 
 This uninformativeness stems from a mismatch between the measure and the domain. The contension measure is designed for static knowledge bases where each additional conflicting proposition reliably indicates greater inconsistency. Planning problems, however, exhibit structured conflicts with internal organization: dependency graphs of varying depth for unreachability, sets of mutex pairs for mutual exclusion, and directed blocking relationships for sequencing. These structures are invisible to any measure that operates on a flat propositional encoding.
 
@@ -95,13 +95,13 @@ These limitations motivate planning-native measures that operate directly on pla
 
 \subsubsection{Design Principles}
 
-The adaptation strategy is guided by several key principles. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide diagnostic profiles consisting of multiple complementary values (formally defined in Definition~\ref{defn:diagnostic_profile}). This recognizes that different aspects of unsolvability serve different debugging purposes: the number of affected goals versus the extent of broken dependencies.
+The adaptation strategy is guided by several key principles. Rather than reducing inconsistency to a single numerical severity score, the proposed measures provide diagnostic profiles consisting of multiple complementary values (formally defined in Definition~\ref{defn:diagnostic_profile}). This recognizes that different aspects of unsolvability serve different debugging purposes, such as the number of affected goals versus the extent of broken dependencies.
 
 A fundamental principle is to ``measure what \emph{is}, not what \emph{should be}.'' Traditional repair-based inconsistency measures implicitly encode assumptions about valid repairs by counting minimal changes needed to restore consistency. In planning contexts, however, determining which components ``should'' exist requires domain expertise or exhaustive enumeration that is computationally prohibitive. Whether the fix involves missing operators, initial state facts, or goal modifications depends on the application. The proposed measures therefore report objective structural properties without presupposing which repairs are appropriate.
 
 The structural taxonomy in Section~\ref{sec:taxonomy} organizes unsolvability causes by their mathematical properties: goal specification conflicts in Category~1, dependency graph failures in Category~2, and resource insufficiency in Category~3. This section focuses on Category~1 and Category~2 problems with three measures that exhibit formal relationships between them. The first two measures, Unreachability and Mutex, perform state space analysis. They compute reachability once and analyze properties of the resulting state set. The third measure, Sequencing, performs trajectory analysis. It examines path-dependent properties from goal-achieving states. Sequencing conflicts imply mutex since achieving one goal that blocks another implies they never coexist, so the measures form a containment structure rather than detecting independent phenomena.
 
-Each profile (Definition~\ref{defn:diagnostic_profile}) provides two complementary values following a standardized pattern: the scope variant reports goal-level severity, while the structure variant reveals underlying structural detail. Scope values are directly comparable across measures; structure values provide diagnostic depth within each measure. Specifically:
+Each profile provides two complementary values following a standardized pattern: the scope variant reports goal-level severity, while the structure variant reveals underlying structural detail. Scope values are directly comparable across measures. Structure values provide diagnostic depth within each measure. Specifically:
 \begin{itemize}
     \item \textbf{Unreachability}: Structure expands from goal propositions to all propositions in the dependency graph, revealing cascading failure depth
     \item \textbf{Mutex}: Structure counts pairwise conflict relationships among affected goals, revealing conflict density

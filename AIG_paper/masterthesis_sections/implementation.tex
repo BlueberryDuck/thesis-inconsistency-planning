@@ -21,9 +21,9 @@ The translated \ac{ASP} program is loaded alongside a custom reachability encodi
 \paragraph{Phase 3: Measure Extraction.}
 A Python post-processing module collects the brave reasoning atoms and computes all six measure values through set operations. Unreachability is determined by comparing goal propositions against the set of truly reachable propositions. Mutex and sequencing conflicts are identified by the absence of the corresponding witness atoms. If brave reasoning, which considers all possible execution traces, never derives a witness, the conflict is guaranteed to hold. The details of the witness definitions and their correspondence to the formal measure definitions are given in Section~\ref{sec:witness_collection}.
 
-The implementation is written in Python~3.12 with Clingo~5.6+ as the sole computational dependency. Docker containerization enables consistent execution regardless of the environment, and an automated test suite ensures correctness and facilitates regression testing during development. The codebase is structured to allow both library usage and batch processing of benchmark domains, with configurable time limits to handle grounding complexity in larger problems. The complete source code, including all \ac{ASP} encodings, the Python measure extraction module, and the benchmark runner, is publicly available~\cite{Bunge2026}.
+The implementation is written in Python~3.12 with Clingo~5.8.0 as the sole computational dependency. Docker containerization enables consistent execution regardless of the environment, and an automated test suite ensures correctness and facilitates regression testing during development. The codebase is structured to allow both library usage and batch processing of benchmark domains, with configurable time limits to handle grounding complexity in larger problems. The complete source code, including all \ac{ASP} encodings, the Python measure extraction module, and the benchmark runner, is publicly available~\cite{Bunge2026}.
 
-\subsection{PDDL Translation}
+\subsection{Input Translation}
 \label{sec:pddl_translation}
 
 The input to the system is a pair of standard \ac{PDDL} files, a domain specification defining predicates and action schemas and a problem specification defining objects, the initial state, and goal conditions.
@@ -70,7 +70,7 @@ The following example illustrates the complete translation for a small planning 
     Note how \textit{plasp}'s \texttt{value(\ldots, false)} terms produce two semantically distinct internal predicates: \texttt{neg\_precond(enter, locked)} encodes that \texttt{enter} requires \texttt{locked} to be false before application, while \texttt{delete(unlock, locked)} encodes that \texttt{unlock} makes \texttt{locked} false as an effect. This distinction is central to the reachability encoding: negative preconditions restrict operator applicability (Section~\ref{sec:asp_encoding}), while delete effects drive state change and are the root cause of mutex and sequencing conflicts.
 \end{example}
 
-\subsubsection{PDDL Preprocessing}
+\subsubsection{Input Preprocessing}
 
 Several \ac{IPC}~2016 domains declare action costs through the \texttt{:functions} requirement, which \textit{plasp} does not support. Action costs affect only plan quality, not plan existence. Since the inconsistency measures defined in this thesis operate on reachability and achievability, removing cost annotations is semantically safe. A preprocessing step therefore removes the following cost-related elements:
 \begin{itemize}
@@ -83,7 +83,7 @@ After preprocessing, domains such as \textit{bag-transport} and \textit{over-nom
 
 The two \ac{IPC} domains \textit{bag-barman} and \textit{tetris} use the \texttt{:equality} requirement with variable comparison expressions \texttt{(= ?x ?y)} in preconditions, which is not supported by \textit{plasp}. These domains remain incompatible and are excluded from the evaluation.
 
-\subsection{ASP Encoding for Measure Computation}
+\subsection{Encoding for Measure Computation}
 \label{sec:asp_encoding}
 
 The core of the implementation is a pair of \ac{ASP} encodings that derive proposition and operator sets from the translated facts and perform horizon-bounded state-space exploration with brave reasoning. Following standard practice in the \ac{ASP} literature~\cite{Lifschitz2019,Gebser2012}, the encodings are presented directly, as the declarative nature of \ac{ASP} rules makes them serve both as formal specification and executable program.
@@ -156,7 +156,7 @@ Both the \ac{CLI} and the batch runner accept a configurable timeout parameter (
 
 Implementing reliable timeouts for \ac{ASP} solving requires care. Clingo's \texttt{--time\-limit} option is unavailable in the Python package distribution, and signal-based approaches (e.g., \texttt{SIGALRM}) are unreliable because Clingo's C extension can block signal delivery during grounding. The solution runs each computation in a separate child process using Python's \texttt{multiprocessing} module with the \texttt{spawn} start method, which creates a clean process that can be terminated with \texttt{SIGKILL} after the timeout, guaranteeing termination regardless of the solver's internal state.
 
-For reproducibility, the implementation is containerized with Docker, bundling Python~3.12, Clingo~5.6, and \textit{plasp}~3 in a consistent environment. The Dockerfile and build instructions are included in the repository.
+For reproducibility, the implementation is containerized with Docker, bundling Python~3.12, Clingo~5.8.0, and \textit{plasp}~3 in a consistent environment. The Dockerfile and build instructions are included in the repository.
 
 \subsection{Validation}
 \label{sec:validation}
