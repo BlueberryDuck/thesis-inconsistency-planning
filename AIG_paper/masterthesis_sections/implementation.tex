@@ -14,7 +14,7 @@ The implementation follows a pipeline architecture with three distinct phases, e
 
 \paragraph{Phase 1: PDDL Translation.}
 The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains with the \texttt{:functions} requirement, a preprocessing step strips cost-related elements because they do not affect reachability.
-
+\pagebreak
 \paragraph{Phase 2: ASP Brave Reasoning.}
 The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation. Different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts. The grounding and solving phases are timed separately, enabling per-phase performance analysis (Section~\ref{sec:phase_analysis}).
 

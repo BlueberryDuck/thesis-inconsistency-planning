@@ -4,6 +4,7 @@ prop(P) :- add(_, P).
 prop(P) :- delete(_, P).
 prop(P) :- precond(_, P).
 prop(P) :- goal(P).
+
 operator(O) :- precond(O, _).
 operator(O) :- add(O, _).
 

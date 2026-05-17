@@ -18,10 +18,10 @@ Following Thimm and Wallner~\cite{Thimm2016} and Corea et al.~\cite{Corea2022}, 
         \item $\text{EXACT}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) = k$?
         \item $\text{VALUE}_{\mathcal{I}}$: compute $\mathcal{I}^{\text{scope}}(\Pi)$.
     \end{enumerate}
-    The horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input are at most as hard, because any reachable state admits an acyclic witness path of length at most $2^{|P|}$. The effective search depth is therefore bounded by $\min(h, 2^{|P|})$, and the PSPACE membership arguments below apply unchanged.
+    The horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input are at most as hard, because any reachable state admits an acyclic witness path visiting at most $2^{|P|}$ distinct states. The effective search depth is therefore bounded by $\min(h, 2^{|P|})$, and the PSPACE membership arguments below apply unchanged.
 \end{defn}
 
-Analogous problems are defined for $\mathcal{I}^{\text{struct}}$. The scope variants iterate over $G$ or $G \times G$, while the structure variants iterate over $P$, unordered pairs from $G$, or ordered pairs from $G$, respectively. Since $|G| \leq |P|$ and all iteration domains are polynomial in the input size, scope and structure variants have identical decision-problem complexity. The following proofs are stated for the scope variants. The structure variants follow by the same membership arguments with the respective iteration domain, and hardness transfers since the scope problem reduces to any variant by the same polynomial composition.
+Analogous problems are defined for $\mathcal{I}^{\text{struct}}$. The scope variants iterate over $G$ or $G \times G$, while the structure variants iterate over $P$, unordered pairs from $G$, or ordered pairs from $G$, respectively. Since $|G| \leq |P|$ and every iteration domain is polynomial in the input size, the membership arguments below apply verbatim to the structure variants. The proofs are therefore stated for the scope variants, and the matching hardness of the structure variants is established collectively in Proposition~\ref{prop:struct_complexity}.
 
 Each completeness result below establishes membership and hardness as defined in Section~\ref{sec:foundations_complexity}.
 
@@ -46,7 +46,7 @@ Each completeness result below establishes membership and hardness as defined in
     For $\mathcal{I}_{\text{UR}}$, $\text{LOWER}$ and $\text{EXACT}$ are PSPACE-complete, and $\text{VALUE}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
-    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since P\-SPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}), it is also PSPACE-complete.
+    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since \linebreak PSPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}), it is also PSPACE-complete.
 
     $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}, since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, and deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
 
@@ -70,9 +70,9 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016}, $\text{LOWER
     \end{align*}
     The original operators in $O$ affect only propositions in $P$ and never modify $g_1$, $g_2$, or $\textit{flag}$. Goal $g_1$ is achievable since it is in $I'$. Goal $g_2$ is always achievable via $o_f$ followed by $o_a$.
 
-    If $\Pi$ is solvable: a plan for $\Pi$ reaches a state satisfying $G$, from which $o_m$ is applicable, producing $g_2$ without deleting $g_1$. The resulting state contains both $g_1$ and $g_2$, so the goals are not mutex, and $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi') = 0$.
+    If $\Pi$ is solvable, a plan for $\Pi$ reaches a state satisfying $G$, from which $o_m$ is applicable, producing $g_2$ without deleting $g_1$. The resulting state contains both $g_1$ and $g_2$, so the goals are not mutex, and $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi') = 0$.
 
-    If $\Pi$ is unsolvable: $o_m$ is never applicable because its precondition $G$ is never satisfied. The only path to $g_2$ is $o_f \to o_a$, but $o_f$ deletes $g_1$ and no operator in $O'$ re-adds it. No reachable state contains both $g_1$ and $g_2$, so the goals are mutex, and $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi') = 2$.
+    If $\Pi$ is unsolvable, $o_m$ is never applicable because its precondition $G$ is never satisfied. The only path to $g_2$ is $o_f \to o_a$, but $o_f$ deletes $g_1$ and no operator in $O'$ re-adds it. No reachable state contains both $g_1$ and $g_2$, so the goals are mutex, and $\mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi') = 2$.
 
     Therefore $\text{UPPER}_{\mathcal{I}_{\text{MX}}}$ with $k = 0$ decides \textsc{PlanSat}, establishing PSPACE-hardness.
 \end{proof}
@@ -103,6 +103,24 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016}, $\text{LOWER
     By the same arguments as Corollary~\ref{cor:ur_all}, applied to the reduction from Theorem~\ref{thm:gs_complexity}.
 \end{proof}
 
+\begin{prop}[Complexity of the Structure Variants]
+    \label{prop:struct_complexity}
+    For each of $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, and $\mathcal{I}_{\text{GS}}$, the structure variants of $\text{UPPER}$, $\text{LOWER}$, and $\text{EXACT}$ are PSPACE-complete, and $\text{VALUE}$ is in FPSPACE.
+\end{prop}
+\begin{proof}
+    \emph{Membership.} The structure variants invoke the same reachability subroutines as the scope variants over iteration domains polynomial in the input size, so the membership arguments of Theorems~\ref{thm:ur_complexity}, \ref{thm:mx_complexity}, and~\ref{thm:gs_complexity} apply unchanged.
+
+    \emph{Hardness.} For $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$, the instance $\Pi'$ of Theorems~\ref{thm:mx_complexity} and~\ref{thm:gs_complexity} contains, in the unsolvable case, exactly one structural artifact, namely the mutex goal pair $\{g_1, g_2\}$ or the ordered sequencing-conflict pair $(g_2, g_1)$, and none in the solvable case. Hence $\mathcal{I}^{\text{struct}}(\Pi') \in \{0, 1\}$, and $\text{UPPER}$ with $k = 0$ decides \textsc{PlanSat}.
+
+    For $\mathcal{I}_{\text{UR}}$, whose structure variant counts all unreachable propositions rather than only unreachable goal propositions, we adapt the reduction of Theorem~\ref{thm:ur_complexity}. Given a \textsc{PlanSat} instance $\Pi = \langle P, O, I, G \rangle$, construct
+    \begin{equation*}
+        \Pi'' = \langle P \cup \{g^*\}, O \cup \{o^*\} \cup \{o_p : p \in P\}, I, \{g^*\} \rangle,
+    \end{equation*}
+    with $o^* = \langle G, \{g^*\}, \emptyset \rangle$ and $o_p = \langle \{g^*\}, \{p\}, \emptyset \rangle$ for each $p \in P$. Each $o_p$ requires $g^*$, and $g^*$ requires all original goals. The added operators therefore cannot influence whether $G$ is first achieved, so the solvability of the embedded instance is preserved. If $\Pi$ is solvable, $g^*$ is reachable and every $o_p$ then makes its proposition reachable, so $\mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi'') = 0$. If $\Pi$ is unsolvable, $g^*$ is never reachable and $\mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi'') \geq 1$. The construction is computable in polynomial time, so deciding the structure variant of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}, establishing PSPACE-hardness.
+
+    The $\text{LOWER}$, $\text{EXACT}$, and $\text{VALUE}$ problems follow by the same arguments as in Corollaries~\ref{cor:ur_all}, \ref{cor:mx_all}, and~\ref{cor:gs_all}.
+\end{proof}
+
 Table~\ref{tab:decision_complexity} summarizes these results.
 
 \begin{table}[ht]
@@ -117,14 +135,13 @@ Table~\ref{tab:decision_complexity} summarizes these results.
         $\text{VALUE}$ & in FPSPACE                & in FPSPACE                & in FPSPACE                \\
         \bottomrule
     \end{tabular}
-    \caption{Complexity of decision and function problems of measures.}
+    \caption{Complexity of decision and function problems for the three profiles.}
     \label{tab:decision_complexity}
 \end{table}
 
 The uniform PSPACE tier observed above contrasts with the multi-tier structure for inconsistency measures in other formalisms. Thimm and Wallner~\cite{Thimm2016} show that propositional inconsistency measures span three distinct tiers, ranging from NP-complete through $\Sigma^p_2$- or $\Pi^p_2$-complete to $\#\cdot\text{coNP}$-complete for counting variants. This stratification arises because the base satisfiability problem is NP-complete, and different measure definitions add varying computational overhead above that base. Corea et al.~\cite{Corea2022} analyze measures for declarative process specifications over $\text{LTL}_{\text{ff}}$, where satisfiability is also NP-complete. Their time-sensitive inconsistency measures consequently land at the first level of the polynomial hierarchy, yielding NP-complete, coNP-complete, $D^p$, and $\text{FP}^{\text{NP}[\log n]}$ problems.
 
 For classical planning, \textsc{PlanSat} is PSPACE-complete, and all three proposed measures reduce to polynomial compositions of reachability queries. The polynomial overhead from different measure definitions cannot push the complexity above PSPACE, because PSPACE is closed under polynomial time reductions. The result is a flat complexity landscape where all decision problems for all three measures are PSPACE-complete. This uniformity reflects a general principle. The complexity of inconsistency measures inherits from the base reasoning problem of the target formalism, and when that base problem is already PSPACE-complete, the polynomial differences between measure definitions are subsumed.
-
 
 The preceding results characterize the inherent complexity of the decision problems. The following propositions complement them with explicit time and space bounds for the enumeration-based implementation.
 
@@ -157,7 +174,7 @@ The preceding results characterize the inherent complexity of the decision probl
     Given $S_{\text{reach}}$, computing $\mathcal{I}^{\text{scope}}_{\text{GS}}$ and $\mathcal{I}^{\text{struct}}_{\text{GS}}$ requires $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ time and $O(|S_{\text{reach}}|)$ additional space.
 \end{prop}
 \begin{proof}
-    Since $\text{REACH}(s) \subseteq S_{\text{reach}}$ for any $s \in S_{\text{reach}}$, local reachability is computed as graph traversal within the pre-computed state space rather than full reachability. For each goal pair $(g_1, g_2)$, check all $g_1$-states; each requires traversing at most $|S_{\text{reach}}|$ states with $|O|$ transitions each. There are $O(|G|^2)$ pairs and up to $|S_{\text{reach}}|$ starting states per pair.
+    Since $\text{REACH}(s) \subseteq S_{\text{reach}}$ for any $s \in S_{\text{reach}}$, local reachability is computed as graph traversal within the pre-computed state space rather than full reachability. For each goal pair $(g_1, g_2)$, check all $g_1$-states. Each $g_1$-state requires traversing at most $|S_{\text{reach}}|$ states with $|O|$ transitions each. There are $O(|G|^2)$ pairs and up to $|S_{\text{reach}}|$ starting states per pair.
 \end{proof}
 
 Table~\ref{tab:complexity} summarizes these results.
@@ -174,7 +191,7 @@ Table~\ref{tab:complexity} summarizes these results.
         $\mathcal{I}_{\text{GS}}$ (given $S_{\text{reach}}$) & $O(|G|^2 \cdot |S_{\text{reach}}|^2 \cdot |O|)$ & $O(|S_{\text{reach}}|)$ \\
         \bottomrule
     \end{tabular}
-    \caption{Computational complexity of measures.}
+    \caption{Computational complexity of the profiles.}
     \label{tab:complexity}
 \end{table}
 
