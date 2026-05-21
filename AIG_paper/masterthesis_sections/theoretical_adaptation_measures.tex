@@ -235,7 +235,7 @@ This demonstrates that irreversible problems exhibit both mutex and sequencing. 
 
 \paragraph{Example: Rival Alliances (Scenario~6).} For the Rival Alliances scenario, forward reachability yields
 \begin{equation*}
-    S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}.
+    S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_A}\}, \{\text{neutral\_B}, \text{allied\_B}\}\}.
 \end{equation*}
 Both goals are individually achievable but never coexist, and allying with either faction alienates the other.
 
@@ -253,7 +253,7 @@ The Goal Sequencing Conflict Profile yields:
 
 This demonstrates symmetric exclusions where both alliances block each other. Like Trust and Travel, it exhibits both mutex and sequencing, but with $\mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi) = 2$ (bidirectional) rather than $1$ (unidirectional). The sequencing structure value thus distinguishes symmetric from asymmetric irreversibility.
 
-This measure provides directional information beyond mutex. Sequencing conflicts are a subset of mutex relationships (blocking implies non-coexistence), but the ordered pair count reveals which goal achievement causes the dead-end. Reversible mutex problems (Light Switch, Scenario~3) exhibit mutex without sequencing; irreversible problems (Trust and Travel, Scenario~5) exhibit both.
+This measure provides directional information beyond mutex. Since blocking implies non-coexistence, sequencing conflicts form a subset of mutex relationships, while the ordered pair count reveals which goal achievement causes the dead-end. The Light Switch scenario shows reversible mutex without sequencing, whereas Trust and Travel exhibits both.
 
 \subsubsection{Measure Range Summary}
 

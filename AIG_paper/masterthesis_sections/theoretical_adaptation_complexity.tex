@@ -18,7 +18,7 @@ Following Thimm and Wallner~\cite{Thimm2016} and Corea et al.~\cite{Corea2022}, 
         \item $\text{EXACT}_{\mathcal{I}}$: is $\mathcal{I}^{\text{scope}}(\Pi) = k$?
         \item $\text{VALUE}_{\mathcal{I}}$: compute $\mathcal{I}^{\text{scope}}(\Pi)$.
     \end{enumerate}
-    The horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input are at most as hard, because any reachable state admits an acyclic witness path visiting at most $2^{|P|}$ distinct states. The effective search depth is therefore bounded by $\min(h, 2^{|P|})$, and the PSPACE membership arguments below apply unchanged.
+    For the horizon-bounded variants $\mathcal{I}(\Pi, h)$ with $h$ given as part of the input, the PSPACE membership arguments below apply unchanged: any reachable state admits an acyclic witness path visiting at most $2^{|P|}$ distinct states, so the effective search depth is bounded by $\min(h, 2^{|P|})$ and fits in a polynomial-size counter. \linebreak PSPACE-hardness extends to the horizon-bounded variants by setting $h = 2^{|P|}$ in the reductions below, which is encodable in $|P|$ bits.
 \end{defn}
 
 Analogous problems are defined for $\mathcal{I}^{\text{struct}}$. The scope variants iterate over $G$ or $G \times G$, while the structure variants iterate over $P$, unordered pairs from $G$, or ordered pairs from $G$, respectively. Since $|G| \leq |P|$ and every iteration domain is polynomial in the input size, the membership arguments below apply verbatim to the structure variants. The proofs are therefore stated for the scope variants, and the matching hardness of the structure variants is established collectively in Proposition~\ref{prop:struct_complexity}.
@@ -46,7 +46,7 @@ Each completeness result below establishes membership and hardness as defined in
     For $\mathcal{I}_{\text{UR}}$, $\text{LOWER}$ and $\text{EXACT}$ are PSPACE-complete, and $\text{VALUE}$ is in FPSPACE.
 \end{cor}
 \begin{proof}
-    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$. Since \linebreak PSPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}), it is also PSPACE-complete.
+    $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k$ is the complement of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ with threshold $k - 1$, placing it in PSPACE since PSPACE $=$ co-PSPACE (Section~\ref{sec:foundations_complexity}). For hardness, the reduction in Theorem~\ref{thm:ur_complexity} yields $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$ with value $1$ iff $\Pi$ is unsolvable, so $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ with $k = 1$ decides the complement of \textsc{PlanSat}, which is PSPACE-complete. Therefore $\text{LOWER}_{\mathcal{I}_{\text{UR}}}$ is PSPACE-complete.
 
     $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ can be decided by checking both $\mathcal{I}^{\text{scope}}_{\text{UR}} \leq k$ and $\mathcal{I}^{\text{scope}}_{\text{UR}} \geq k$. Hardness follows from the same reduction as Theorem~\ref{thm:ur_complexity}, since $\mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi') \in \{0, 1\}$, and deciding $\text{EXACT}_{\mathcal{I}_{\text{UR}}}$ with $k = 0$ solves \textsc{PlanSat}. Therefore PSPACE-complete.
 
@@ -60,7 +60,7 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016}, $\text{LOWER
     $\text{UPPER}_{\mathcal{I}_{\text{MX}}}$ is PSPACE-complete.
 \end{thm}
 \begin{proof}
-    \emph{Membership.} Checking whether $\mathcal{I}^{\text{scope}}_{\text{MX}} \leq k$ requires verifying that at most $k$ goals participate in mutex relationships. For each pair $(g_1, g_2) \in G \times G$, the mutex check (Definition~\ref{defn:mutex_goal_pair}) involves verifying that each goal is individually reachable and that no reachable state contains both. Individual reachability is in PSPACE by the same nondeterministic argument as for $\mathcal{I}_{\text{UR}}$. The non-coexistence check is in co-PSPACE $=$ PSPACE. Since PSPACE is closed under Boolean combination and there are at most $|G|^2$ pairs, the overall problem is in PSPACE.
+    \emph{Membership.} Checking whether $\mathcal{I}^{\text{scope}}_{\text{MX}} \leq k$ requires verifying that at most $k$ goals participate in mutex relationships. For each pair $(g_1, g_2) \in G \times G$ with $g_1 \neq g_2$, the mutex check (Definition~\ref{defn:mutex_goal_pair}) involves verifying that each goal is individually reachable and that no reachable state contains both. Individual reachability is in PSPACE by the same nondeterministic argument as for $\mathcal{I}_{\text{UR}}$. The non-coexistence check is in co-PSPACE $=$ PSPACE. Since PSPACE is closed under Boolean combination and there are at most $|G|^2$ pairs, the overall problem is in PSPACE.
 
     \emph{Hardness.} We reduce from \textsc{PlanSat}. Given $\Pi = \langle P, O, I, G \rangle$, construct $\Pi' = \langle P', O', I', G' \rangle$ where $P' = P \cup \{g_1, g_2, \textit{flag}\}$ for three fresh propositions, $I' = I \cup \{g_1\}$, $G' = \{g_1, g_2\}$, and $O' = O \cup \{o_f, o_a, o_m\}$ with:
     \begin{align*}
@@ -84,13 +84,13 @@ In the propositional setting of Thimm and Wallner~\cite{Thimm2016}, $\text{LOWER
 \begin{proof}
     By the same arguments as Corollary~\ref{cor:ur_all}, applied to the reduction from Theorem~\ref{thm:mx_complexity}.
 \end{proof}
-
+\pagebreak
 \begin{thm}
     \label{thm:gs_complexity}
     $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ is PSPACE-complete.
 \end{thm}
 \begin{proof}
-    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) extends the mutex check with an additional condition, namely that no execution trace from $I$ achieves $g_1$ and subsequently $g_2$. At the converged horizon, this is equivalent to verifying that for all reachable $g_1$-states $s$, $g_2 \notin \text{REACH}(s)$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
+    \emph{Membership.} The sequencing conflict check (Definition~\ref{defn:sequencing_conflict}) requires that both goals are individually reachable and that no execution trace from $I$ achieves $g_1$ and subsequently $g_2$. At the converged horizon, the no-following condition is equivalent to verifying that for every reachable state $s$ with $g_1 \in s$, no state in $\text{REACH}(s)$ contains $g_2$. This local reachability query is itself in PSPACE by the same nondeterministic search argument. Checking this condition for all $g_1$-states is a universal property, placing it in co-PSPACE $=$ PSPACE. Since all sub-checks are in PSPACE and their combination involves polynomial overhead, the overall problem remains in PSPACE.
 
     \emph{Hardness.} The reduction from Theorem~\ref{thm:mx_complexity} also establishes hardness for $\mathcal{I}_{\text{GS}}$. In the constructed instance $\Pi'$, when $\Pi$ is unsolvable, no operator in $O'$ adds $g_1$ because the only source of $g_1$ is the initial state, and $o_f$ deletes it irreversibly. Thus from any $g_2$-state, which can only be reached via $o_f \to o_a$, $g_1$ is unreachable, making $(g_2, g_1)$ a sequencing conflict. Conversely, when $\Pi$ is solvable, $o_m$ produces a state where both goals co-occur, so no sequencing conflict exists. Therefore $\text{UPPER}_{\mathcal{I}_{\text{GS}}}$ with $k = 0$ decides \textsc{PlanSat}.
 \end{proof}

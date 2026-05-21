@@ -14,7 +14,7 @@ The implementation follows a pipeline architecture with three distinct phases, e
 
 \paragraph{Phase 1: PDDL Translation.}
 The \ac{PDDL} domain and problem files are translated into \ac{ASP} facts using \textit{plasp}~3 by Dimopoulos et al.~\cite{Dimopoulos2019}, a standard tool from the Potassco \ac{ASP} ecosystem. The translation produces a lifted \ac{ASP} program where propositions are represented as boolean-valued variables and operators as parameterized actions. For benchmark domains with the \texttt{:functions} requirement, a preprocessing step strips cost-related elements because they do not affect reachability.
-\pagebreak
+
 \paragraph{Phase 2: ASP Brave Reasoning.}
 The translated \ac{ASP} program is loaded alongside a custom reachability encoding and solved using Clingo~5 by Gebser et al.~\cite{Gebser2012} with the \texttt{--enum-mode=brave} configuration. Under brave reasoning (Definition~\ref{defn:brave_cautious}), Clingo computes the union of atoms that are true in \emph{any} answer set, without enumerating individual answer sets. This mode is central to the implementation. Different answer sets correspond to different operator execution traces, and the union across all answer sets captures the full scope of reachable states and achievable propositions. Dedicated witness atoms record whether goal pairs can coexist in a single state or be achieved in sequence; the absence of such a witness under brave reasoning constitutes proof that no execution trace satisfies the corresponding condition, which is the detection mechanism for mutex and sequencing conflicts. The grounding and solving phases are timed separately, enabling per-phase performance analysis (Section~\ref{sec:phase_analysis}).
 
@@ -125,16 +125,37 @@ The \texttt{g2\_after\_g1\_witness(G1, G2)} atom is derived if some execution tr
 After the brave reasoning pass completes, the witness atoms are returned as a typed value object. The measure-extraction module then computes the six measure values through pure set operations on those atoms.
 
 \paragraph{Unreachability Profile.}
-Let $G_{\text{reach}} = G \cap \{\, p \mid \texttt{true\_reachable}(p) \,\}$ denote the set of reachable goal propositions and $P_{\text{reach}} = \{\, p \mid \texttt{true\_reachable}(p) \,\}$ the set of all reachable propositions. The unreachability profile is:
+The set of reachable propositions is
+\begin{equation*}
+    P_{\text{reach}} = \{\, p \mid \texttt{true\_reachable}(p) \,\},
+\end{equation*}
+and $G_{\text{reach}} = G \cap P_{\text{reach}}$ collects the reachable goal propositions. The unreachability profile is:
 \begin{equation*}
     \mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h) = |G \setminus G_{\text{reach}}| \qquad \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h) = |P \setminus P_{\text{reach}}|
 \end{equation*}
 
 \paragraph{Goal Mutex Profile.}
-For each unordered pair of achievable goals $(g_1, g_2) \in \binom{G_{\text{reach}}}{2}$, the pair is mutex if $\texttt{coexist\_witness}(g_1, g_2)$ was not derived under brave reasoning. The mutex profile counts the number of goals participating in at least one mutex pair and the total number of mutex pairs.
+The set of mutex goal pairs is
+\begin{equation*}
+    M = \{\, \{g_1, g_2\} \in \tbinom{G_{\text{reach}}}{2} \mid \texttt{coexist\_witness}(g_1, g_2) \text{ not derived} \,\},
+\end{equation*}
+and $V_{\text{MX}} = \bigcup_{\{g_1, g_2\} \in M} \{g_1, g_2\}$ collects the goals participating in at least one such pair. The mutex profile is:
+\begin{equation*}
+    \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h) = |V_{\text{MX}}| \qquad \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h) = |M|
+\end{equation*}
 
 \paragraph{Goal Sequencing Profile.}
-For each ordered pair of achievable goals $(g_1, g_2) \in G_{\text{reach}} \times G_{\text{reach}}$ with $g_1 \neq g_2$, the corresponding witness atom is derived when some execution trace reaches $g_1$ before $g_2$. The pair is a sequencing conflict if that witness atom is not derived under brave reasoning. The sequencing profile counts the number of goals involved in at least one conflict and the total number of ordered conflict pairs.
+The set of ordered sequencing conflict pairs is
+\begin{equation*}
+    \begin{aligned}
+        C = \{\, (g_1, g_2) \in G_{\text{reach}} \times G_{\text{reach}} \mid {} & g_1 \neq g_2,                                                       \\
+                                                                                 & \texttt{g2\_after\_g1\_witness}(g_1, g_2) \text{ not derived} \,\},
+    \end{aligned}
+\end{equation*}
+and $V_{\text{GS}} = \{\, g \mid \exists g' : (g, g') \in C \lor (g', g) \in C \,\}$ collects the goals involved in at least one conflict. The sequencing profile is:
+\begin{equation*}
+    \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h) = |V_{\text{GS}}| \qquad \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h) = |C|
+\end{equation*}
 
 The resulting six values are packaged into a diagnostic profile data structure that provides automatic category classification according to the taxonomy from Section~\ref{sec:taxonomy}. Problem size metadata (goal, proposition, and operator counts) is recorded separately and bundled with the profile and per-phase timing in the result envelope returned to the caller.
 

@@ -3,7 +3,7 @@
 
 This section introduces six test scenarios that serve as running examples throughout the theoretical development. Each scenario represents a small, focused planning problem exhibiting a specific structural pattern of unsolvability. The scenarios are organized by the measure designed to detect their failure mode, though some scenarios trigger multiple measures.
 
-All scenarios are expressed as \ac{STRIPS} planning problems $\langle P, O, I, G \rangle$ following the notation established in Section~\ref{sec:foundations_planning}. For each scenario, the intuitive description, formal specification, and structural pattern are provided, along with forward reachability $S_{\text{reach}}$, formally defined in Definition~\ref{defn:reachable_states}. All test scenarios have small state spaces with $|P| \leq 8$ and converge within at most two steps ($h^* \leq 2$), as verified by direct inspection of the reachable state sets presented with each scenario. The examples therefore use the converged measures $\mathcal{I}(\Pi)$ throughout.
+All scenarios are expressed as \ac{STRIPS} planning problems $\langle P, O, I, G \rangle$ following the notation established in Section~\ref{sec:foundations_planning}. For each scenario, the intuitive description, formal specification, and structural pattern are provided, along with forward reachability $S_{\text{reach}}$, formally defined in Definition~\ref{defn:reachable_states}. All test scenarios have small state spaces with $|P| \leq 8$ and converge within at most four steps ($h^* \leq 4$), as verified by direct inspection of the reachable state sets presented with each scenario. The examples therefore use the converged measures $\mathcal{I}(\Pi)$ throughout.
 
 \subsubsection{Unreachability Scenarios}
 
@@ -21,7 +21,7 @@ An agent must enter a room, but entry requires unlocking a door, which requires 
   G & = \{\text{in\_room}\}
 \end{align*}
 
-The \textit{unlock} operator requires \textit{has\_key}, which has no producer and is not in $I$, blocking the entire dependency structure. Only \textit{at\_door} remains reachable.
+The \textit{unlock} operator requires \textit{has\_key}, which has no producer and is not in $I$, blocking the entire dependency structure. Forward reachability yields $S_{\text{reach}} = \{\{\text{at\_door}\}\}$.
 
 \paragraph{Scenario 2: Bank Vault.}
 
@@ -91,6 +91,11 @@ An agent must secure a local partnership that requires established trust, and ex
   G & = \{\text{partnership}, \text{opportunity}\}
 \end{align*}
 
+Forward reachability yields
+\begin{align*}
+  S_{\text{reach}} = \{ & \{\text{at\_local}, \text{trust}\}, \{\text{at\_local}, \text{trust}, \text{partnership}\}, \{\text{at\_remote}\}, \\
+                       & \{\text{at\_remote}, \text{opportunity}\}, \{\text{at\_local}\}, \{\text{at\_local}, \text{opportunity}\}\}.
+\end{align*}
 Both goals are individually achievable: \textit{partnership} via \textit{secure}, and \textit{opportunity} via \textit{travel} $\rightarrow$ \textit{exploit}. However, the goals never coexist (mutex). The conflict is asymmetric:
 \begin{itemize}
   \item $(\text{opportunity}, \text{partnership})$ \textbf{is} a sequencing conflict: from any state with \textit{opportunity}, the agent lacks \textit{trust} to achieve \textit{partnership} (travel destroyed it).
@@ -111,7 +116,7 @@ An agent seeks alliances with two rival factions, but each faction demands exclu
 
 Forward reachability yields:
 \begin{equation*}
-  S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_B}\}, \{\text{neutral\_B}, \text{allied\_A}\}\}
+  S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\}, \{\text{neutral\_A}, \text{allied\_A}\}, \{\text{neutral\_B}, \text{allied\_B}\}\}
 \end{equation*}
 Both goals are individually achievable but never coexist (mutex). Unlike Trust and Travel, both directions are sequencing conflicts. Allying with either faction alienates the other, deleting the precondition for the remaining alliance.
 
@@ -148,4 +153,4 @@ The structural patterns referenced in Table~\ref{tab:scenario_summary} are chara
   \item \textbf{Symmetric}: achieving either goal permanently blocks the other.
 \end{itemize}
 
-These scenarios will be referenced throughout the remainder of this section to illustrate measure definitions (Section~\ref{sec:proposed_measures}), demonstrate postulate compliance (Section~\ref{sec:postulates}), and provide concrete measure values for comparison (Table~\ref{tab:measure_values}).
+These scenarios reappear in Section~\ref{sec:proposed_measures} to illustrate measure definitions, in Section~\ref{sec:postulates} to demonstrate postulate compliance, and in Table~\ref{tab:measure_values} as concrete measure values for comparison.

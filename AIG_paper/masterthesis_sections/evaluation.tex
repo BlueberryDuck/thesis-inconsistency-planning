@@ -91,7 +91,7 @@ The 30 consistent classifications fall into two groups. Ten \ac{IPC}~2016 instan
 
 \subsubsection{Diagnosis Domain}
 
-The \textit{diagnosis} domain provides the richest results, with the highest coverage (90\%) and the only instances exhibiting all three measure types. Table~\ref{tab:diagnosis_results} shows the full results.
+The \textit{diagnosis} domain provides the richest results, with the highest coverage (90\%), and it contains the only benchmark instances exhibiting all three measure types. Table~\ref{tab:diagnosis_results} shows the full results.
 
 \begin{table}[ht]
     \centering
@@ -188,7 +188,7 @@ This section examines six benchmark instances in detail. The selected cases cove
 
 \subsubsection{Diagnosis prob10: All Three Measures}
 
-Instance prob10 is the only benchmark problem where all three measures are non-zero, with profile $(14, 25, 2, 1, 2, 2)$. Of the 24 goals, 14 are unreachable, leaving 10 achievable goals ($\mathcal{I}^{\text{scope}}_{\text{UR}}(\text{prob10}, 20) = 14$). Among these, 2 goals are in a single mutex pair ($\mathcal{I}^{\text{scope}}_{\text{MX}}(\text{prob10}, 20) = 2$, $\mathcal{I}^{\text{struct}}_{\text{MX}}(\text{prob10}, 20) = 1$), and the same 2 goals form 2 ordered sequencing conflicts ($\mathcal{I}^{\text{scope}}_{\text{GS}}(\text{prob10}, 20) = 2$, $\mathcal{I}^{\text{struct}}_{\text{GS}}(\text{prob10}, 20) = 2$). The sequencing structure count of 2 for 2 goals indicates both orderings $(g_1, g_2)$ and $(g_2, g_1)$ are conflicts, meaning achieving either goal permanently prevents the other. This is consistent with an irreversible exclusion in Category~2c.
+Instance prob10 is a benchmark problem where all three measures are non-zero, with profile $(14, 25, 2, 1, 2, 2)$. Of the 24 goals, 14 are unreachable, leaving 10 achievable goals ($\mathcal{I}^{\text{scope}}_{\text{UR}}(\text{prob10}, 20) = 14$). Among these, 2 goals are in a single mutex pair ($\mathcal{I}^{\text{scope}}_{\text{MX}}(\text{prob10}, 20) = 2$, $\mathcal{I}^{\text{struct}}_{\text{MX}}(\text{prob10}, 20) = 1$), and the same 2 goals form 2 ordered sequencing conflicts ($\mathcal{I}^{\text{scope}}_{\text{GS}}(\text{prob10}, 20) = 2$, $\mathcal{I}^{\text{struct}}_{\text{GS}}(\text{prob10}, 20) = 2$). The sequencing structure count of 2 for 2 goals indicates both orderings $(g_1, g_2)$ and $(g_2, g_1)$ are conflicts, meaning achieving either goal permanently prevents the other. This is consistent with an irreversible exclusion in Category~2c.
 
 This instance demonstrates the complementary diagnostic value of the measures. The unreachability profile identifies 14 goals that cannot be satisfied under any execution trace. The mutex profile identifies 2 additional goals that are individually achievable but cannot coexist in any reachable state. The sequencing profile further specifies that this mutex is caused by irreversible effects rather than by reversible state constraints. A planning engineer could use this decomposition to distinguish between goals requiring new operators (unreachable) and goals requiring operator modification (mutex/sequencing).
 
