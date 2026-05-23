@@ -1,0 +1,49 @@
+\section{Why naive encoding fails}
+
+% BUDGET: ~90s
+\begin{frame}{A propositional encoding of Locked Door works\dots}
+    \begin{exampleblock}{Encoding $K_{\text{LD}}$}
+        \begin{align*}
+            K_{\text{LD}} = \{ & \text{in\_room},                                                         \\
+                               & \text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked}, \\
+                               & \text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key}, \\
+                               & \neg \text{has\_key} \}
+        \end{align*}
+    \end{exampleblock}
+
+    \begin{block}{Contension measure analysis}
+        \begin{itemize}
+            \item Classically inconsistent, $\neg\textit{has\_key}$ blocks the chain
+            \item Setting $v(\textit{has\_key}) = B$ satisfies $K_{\text{LD}}$, so $\mathcal{I}_c(K_{\text{LD}}) = 1$
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.2}
+\end{frame}
+
+% BUDGET: ~90s
+\begin{frame}{\dots\ but flattens to $\mathcal{I}_c = 1$ for every conflict type}
+    \begin{exampleblock}{Three structurally distinct scenarios, one number}
+        \centering
+        \begin{tabular}{lcc}
+            \toprule
+            Scenario         & Conflict type  & $\mathcal{I}_c$ \\
+            \midrule
+            Locked Door      & unreachability & $1$             \\
+            Light Switch     & mutex          & $1$             \\
+            Trust and Travel & sequencing     & $1$             \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Why the measure collapses}
+        \begin{itemize}
+            \item Three-valued $B$ absorbs each conflict at a single proposition
+            \item Precondition-only encoding misses operator-induced conflicts entirely
+            \item Enriched encoding with delete effects detects them, still scores $1$
+            \item Structural detail in chain depth, mutex density, and irreversibility is lost
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.2}
+\end{frame}

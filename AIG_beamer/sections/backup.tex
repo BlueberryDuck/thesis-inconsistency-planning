@@ -1,0 +1,285 @@
+\appendix
+
+\section*{Backup}
+
+\begin{frame}[noframenumbering]{Backup, Trust and Travel full reachability}
+    \hypertarget{bk:trust-travel}{}
+    \begin{exampleblock}{Six reachable states}
+        \small
+        $S_{\text{reach}} = \{ \{\text{at\_local}, \text{trust}\},\ \{\text{at\_local}, \text{trust}, \text{partnership}\},\ \{\text{at\_local}\},$\\
+        $\phantom{S_{\text{reach}} = \{}\{\text{at\_local}, \text{opportunity}\},\ \{\text{at\_remote}\},\ \{\text{at\_remote}, \text{opportunity}\}\}$
+    \end{exampleblock}
+
+    \begin{block}{Why the conflict is one-directional}
+        \begin{itemize}
+            \item \textit{travel} deletes \textit{at\_local}, \textit{trust}, and \textit{partnership} on every firing
+            \item From an \textit{opportunity}-state \textit{trust} is gone, so \textit{partnership} is unreachable
+            \item From a \textit{partnership}-state \textit{travel} $\rightarrow$ \textit{exploit} still reaches \textit{opportunity}
+            \item Conflict $(\text{opportunity}, \text{partnership})$ holds, reverse direction fails
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.3.3 Scenario~5}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, 3unsat and the $k$-tuple blind spot}
+    \hypertarget{bk:3unsat}{}
+    \begin{exampleblock}{Pairwise coexistence with no triple-satisfying state}
+        \[
+            G = \{g_1, g_2, g_3\}, \qquad
+            S_{\text{reach}} \supseteq \{\{g_1, g_2\}, \{g_2, g_3\}, \{g_1, g_3\}\}
+        \]
+        Every pair is reachable together, yet no state satisfies all three.
+    \end{exampleblock}
+
+    \begin{block}{Consequence for the measures}
+        \begin{itemize}
+            \item All goals individually reachable, so $\mathcal{I}_{\text{UR}}(\Pi) = (0, 0)$
+            \item No mutex pair exists in $S_{\text{reach}}$, so $\mathcal{I}_{\text{MX}}(\Pi) = (0, 0)$
+            \item No ordered sequencing failure either, so $\mathcal{I}_{\text{GS}}(\Pi) = (0, 0)$
+            \item All 20 completed \textit{3unsat} instances confirm this at every tested horizon
+            \item Future work extends to $k$-tuple analysis for $|G| \geq 3$ failures
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S6.3.6, \S7.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, horizon sensitivity}
+    \hypertarget{bk:horizon}{}
+    \begin{exampleblock}{Solvable cave-diving \texttt{satprob01} across horizons}
+        \begin{itemize}
+            \item At $h = 10$, $\mathcal{I}_{\text{MX}}(\Pi) = (3, 2)$ and $\mathcal{I}_{\text{GS}}(\Pi) = (3, 4)$, classified 2c-sequencing
+            \item At $h = 20$, every profile is zero, classified consistent
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Soundness-coverage tradeoff}
+        \begin{itemize}
+            \item Short $h$ misses long witness traces, producing spurious conflicts
+            \item Identical artifacts appear on solvable and unsolvable cave-diving instances at $h = 10$
+            \item $h = 20$ chosen because no observed solvable instance produces conflicts
+            \item Longer $h$ adds grounding cost and reduces coverage
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S6.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, sequencing implies mutex}
+    \hypertarget{bk:seq-implies-mx}{}
+    \begin{exampleblock}{Proposition}
+        For any $\Pi$ and horizon $h$, if $(g_1, g_2)$ is a sequencing conflict with $g_2$ achievable, then $\{g_1, g_2\}$ is a mutex pair at horizon $h$.
+    \end{exampleblock}
+
+    \begin{block}{Proof sketch and counterexample}
+        \begin{itemize}
+            \item Sequencing gives both individually achievable, and no trace has $g_1$ at $\sigma_i$ and $g_2$ at $\sigma_j$ with $i \leq j$
+            \item The $i = j$ case is the mutex condition, no reachable state holds both
+            \item Combined with achievability, this is the mutex definition
+            \item Converse fails on Light Switch, $\mathcal{I}_{\text{MX}} = (2, 1)$ yet $\mathcal{I}_{\text{GS}} = (0, 0)$ because toggles are reversible
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.2}
+\end{frame}
+
+\begin{frame}[noframenumbering,fragile]{Backup, witness rules in ASP}
+    \hypertarget{bk:asp-listing}{}
+    \scriptsize
+    \begin{verbatim}
+% True reachability of a proposition
+true_reachable(P) :- holds(P, T), prop(P).
+
+% Coexistence witness for a goal pair
+coexist_witness(G1, G2) :- goal(G1), goal(G2), G1 < G2,
+    holds(G1, T), holds(G2, T), time(T).
+
+% Sequencing witness, G2 after G1
+g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
+    holds(G1, T1), holds(G2, T2), T2 >= T1.
+\end{verbatim}
+    \normalsize
+    Brave reasoning unions these atoms across answer sets. An atom missing under brave means no trace satisfies the condition.
+
+    \sectioncite{Thesis \S5.3.3}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, per-domain results breakdown}
+    \hypertarget{bk:per-domain}{}
+    \begin{center}
+        \scriptsize
+        \begin{tabular}{lcll}
+            \toprule
+            Domain              & OK / total & Classification         & Notable pattern                             \\
+            \midrule
+            diagnosis           & 18 / 20    & all Cat 2a             & UR severity 14\% to 88\%                    \\
+            bottleneck          & 12 / 25    & 10 Cat 2c-seq, 2 cons. & MX varies with bottleneck position          \\
+            cave-diving         & 9 / 25     & 1 Cat 2a, 8 cons.      & global constraint outside pairwise scope    \\
+            document-transfer   & 3 / 20     & all Cat 2a             & up to 19 of 19 goals unreachable            \\
+            pegsol-row5         & 3 / 15     & all Cat 2a             & one unreachable goal each                   \\
+            chessboard-pebbling & 3 / 23     & all Cat 2c-seq         & identical $(3, 2, 3, 2)$ regardless of grid \\
+            3unsat              & 20 / 30    & all consistent         & $k$-tuple blind spot, horizon-independent   \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+    \sectioncite{Thesis \S6.2}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, PSPACE-completeness proof sketch}
+    \hypertarget{bk:pspace-proof}{}
+    \begin{block}{Membership of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ in PSPACE}
+        \begin{itemize}
+            \item Nondeterministically guess an operator trace from $I$ in polynomial space, accept when $g$ appears
+            \item Acyclic paths have length $\leq 2^{|P|}$, so a polynomial-bit step counter suffices
+            \item NPSPACE $=$ PSPACE by Savitch, iterating over $|G|$ goals stays polynomial
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Hardness via reduction from PlanSat}
+        From $\Pi = \langle P, O, I, G \rangle$, build $\Pi' = \langle P \cup \{g^*\},\ O \cup \{o^*\},\ I,\ \{g^*\} \rangle$ with $o^* = \langle G, \{g^*\}, \emptyset \rangle$. Then $g^*$ is reachable iff $\Pi$ has a plan, so $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ at $k = 0$ decides PlanSat.
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.3}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, why ASP over SAT and MaxSAT}
+    \hypertarget{bk:asp-vs-sat}{}
+    \begin{block}{Reasons in favor of ASP}
+        \begin{itemize}
+            \item Default negation supports non-monotonic reasoning, matching reversed Operator Monotonicity
+            \item Brave reasoning unions answer-set traces in one solver call, no manual enumeration
+            \item ASP outperforms basic SAT encodings for inconsistency measures [Kuhlmann et al., 2025]
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Trade-off acknowledged}
+        Specialized MaxSAT beats ASP on classical formula-counting measures [Niskanen et al., 2023], and remains a future-work direction for scalability on planning-native measures.
+    \end{block}
+
+    \sectioncite{Thesis \S5, \S7.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, comparison vs Eriksson and Goebelbecker}
+    \hypertarget{bk:eriksson-goebel}{}
+    \begin{center}
+        \scriptsize
+        \begin{tabular}{lll}
+            \toprule
+            Approach                                        & Output                                                                                & Diagnostic shape         \\
+            \midrule
+            Dead-state certificates [Eriksson et al., 2018] & solvable or unsolvable                                                                & binary, no severity      \\
+            Excuses [G\"obelbecker et al., 2010]            & minimal repair edits                                                                  & prescriptive             \\
+            This thesis                                     & profile $(\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}})$ & quantitative, structural \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+    \begin{block}{Complementary roles}
+        \begin{itemize}
+            \item $\mathcal{I}_{\text{GS}}$ recovers a quantitative form of dead-state analysis
+            \item $\mathcal{I}_{\text{UR}}$ flags where add-producer excuses apply, $\mathcal{I}_{\text{GS}}$ where add-reversal excuses do
+            \item Measures stay descriptive, leaving repair decisions to domain experts
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S1.1, \S3}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, grounding bottleneck and solve cost}
+    \hypertarget{bk:grounding}{}
+    \begin{exampleblock}{Two scalability walls}
+        \begin{itemize}
+            \item 7 of 15 \ac{IPC} domains never complete grounding within 120\,s
+            \item Among compatible domains, 90 of 158 instances time out, 57\%
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Phase split on the 70 completing instances}
+        \begin{itemize}
+            \item Solving dominates in 6 of 7 domains, grounding dominates only on \textit{pegsol-row5}
+            \item \textit{document-transfer} prob06 spends 0.12\,s grounding and 18.8\,s solving, ratio 154
+            \item Solve cost reflects combinatorial brave search across delete effects, $O(|O| \times h)$ grounding bound stays separate
+            \item Future work, lifted ASP solving or MaxSAT to attack both phases independently
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S6.5}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, Bank Vault deepens the unreachability cascade}
+    \hypertarget{bk:bank-vault}{}
+    \begin{exampleblock}{Two unreachability profiles at convergence}
+        \centering
+        \begin{tabular}{lccc}
+            \toprule
+            Scenario    & $|P|$ & $\mathcal{I}_{\text{UR}}(\Pi)$ & cascade depth \\
+            \midrule
+            Locked Door & 4     & $(1, 3)$                       & 2             \\
+            Bank Vault  & 8     & $(1, 7)$                       & 6             \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Three parallel chains converge on \textit{in\_vault}}
+        \begin{itemize}
+            \item Root preconditions \textit{key1}, \textit{key2}, and \textit{admin\_appr} all lack producers
+            \item Six intermediate propositions cascade off the missing roots
+            \item Same scope value as Locked Door, four times the cascade depth
+            \item Structure $-$ scope grows with the number of converging blocked chains
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.3.2 Scenario~2}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, Rival Alliances exhibits symmetric sequencing}
+    \hypertarget{bk:rival-alliances}{}
+    \begin{exampleblock}{Three-state reachability of Scenario 6}
+        \[
+            S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\},\ \{\text{neutral\_A}, \text{allied\_A}\},\ \{\text{neutral\_B}, \text{allied\_B}\}\}
+        \]
+        $G = \{\text{allied\_A}, \text{allied\_B}\}$, the two goals never coexist.
+    \end{exampleblock}
+
+    \begin{block}{Profile contrast with Trust and Travel}
+        \begin{itemize}
+            \item Each \textit{ally} operator deletes the rival's neutral precondition, irreversibly
+            \item Both $(\text{allied\_A}, \text{allied\_B})$ and $(\text{allied\_B}, \text{allied\_A})$ are sequencing conflicts
+            \item Rival Alliances $\mathcal{I}_{\text{GS}}(\Pi) = (2, 2)$ vs Trust and Travel $(2, 1)$
+            \item Structure value separates symmetric exclusion from unidirectional blocking
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.3.6 Scenario~6}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, 80 automated tests verify the pipeline}
+    \hypertarget{bk:validation}{}
+    \begin{exampleblock}{Test suite}
+        \begin{itemize}
+            \item 80 tests across 8 categories, full suite runs in under one second
+            \item 11 test scenarios match expected profiles exactly
+            \item Categories cover scenarios, hierarchy, library \ac{API}, end-to-end \ac{PDDL}
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Sample expected vs computed matches}
+        \centering
+        \scriptsize
+        \begin{tabular}{lll}
+            \toprule
+            Category          & Scenario              & Profile              \\
+            \midrule
+            P1 Unreachability & Locked Door           & $(1, 3, 0, 0, 0, 0)$ \\
+            P2 Mutex          & Traffic Light         & $(0, 0, 3, 3, 0, 0)$ \\
+            P3 Sequencing     & Rival Alliances       & $(0, 0, 2, 1, 2, 2)$ \\
+            Edge case         & Empty Goals           & $(0, 0, 0, 0, 0, 0)$ \\
+            Edge case         & Negative Precondition & $(1, 1, 0, 0, 0, 0)$ \\
+            \bottomrule
+        \end{tabular}
+    \end{block}
+
+    \sectioncite{Thesis \S5.4}
+\end{frame}

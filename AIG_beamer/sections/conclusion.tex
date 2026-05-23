@@ -1,0 +1,43 @@
+\section{Conclusion}
+
+% BUDGET: ~90s
+% Last main frame. Click-through reveals a small "Thanks!" on the same slide; no separate thanks frame.
+\begin{frame}{Three contributions, three limits, three directions ahead}
+    \begin{columns}[t]
+        \begin{column}{0.33\textwidth}
+            \begin{block}{Contributions}
+                \begin{itemize}
+                    \item Three planning-native profiles $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
+                    \item \ac{ASP} brave-reasoning pipeline with witness atoms
+                    \item 68 of 158 instances diagnosed across three granularity levels
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{Limits}
+                \begin{itemize}
+                    \item Grounding bottleneck times out on 57\% of instances
+                    \item Pairwise blind spot on $k$-tuple unsatisfiability
+                    \item Only two solvable instances available for specificity check
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \begin{block}{Directions}
+                \begin{itemize}
+                    \item $k$-tuple extension beyond pairwise tests
+                    \item MaxSAT or symbolic encodings for scalability
+                    \item Adaptive horizon via iterative deepening
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \vfill
+
+    \alert{Planning conflicts are reachability and achievability failures, not direct contradictions.}
+
+    \vfill
+    \only<2->{\hfill\textit{Thanks!}}
+    \sectioncitebk{bk:grounding}{Thesis \S7}
+\end{frame}

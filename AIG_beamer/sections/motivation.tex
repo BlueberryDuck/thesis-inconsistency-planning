@@ -1,0 +1,41 @@
+\section{Motivation}
+
+% BUDGET: ~60s
+\begin{frame}{Planners report ``unsolvable'' without explaining why}
+    \begin{exampleblock}{Logistics planning}
+        A delivery company routes a package:
+        \begin{itemize}
+            \item Deliver to New York by noon
+            \item Process the same package in Los Angeles at noon
+        \end{itemize}
+        The planner returns \textbf{Unsolvable}. Which constraint caused the conflict?
+    \end{exampleblock}
+
+    \begin{alertblock}{The diagnostic gap}
+        \begin{itemize}
+            \item Planners excel when a plan exists
+            \item Binary failure report when none does
+            \item No location, no severity, no structural account
+        \end{itemize}
+    \end{alertblock}
+    \sectioncite{Thesis \S1.1}
+\end{frame}
+
+% BUDGET: ~60s
+\begin{frame}{Existing tools certify or repair, never quantify}
+    \begin{block}{Unsolvability has real cost}
+        \begin{itemize}
+            \item Planner runtime wasted on instances with no plan
+            \item Model errors must be located before redeployment
+            \item Safety-critical specs need revision when no plan exists
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Prior diagnostics fall short}
+        \begin{itemize}
+            \item Dead-state certificates [Eriksson et al., 2018] yield a binary judgment
+            \item Excuses [G\"obelbecker et al., 2010] prescribe a repair, not a diagnosis
+        \end{itemize}
+    \end{block}
+    \sectioncitebk{bk:eriksson-goebel}{Thesis \S1, \S3}
+\end{frame}

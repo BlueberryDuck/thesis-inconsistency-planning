@@ -1,0 +1,55 @@
+\section{Postulates and complexity}
+
+% BUDGET: ~90s
+\begin{frame}{No measure satisfies Planning Consistency alone}
+    \begin{center}
+        \begin{tabular}{l cc cc cc}
+            \toprule
+                                  & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                                              \\
+            \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+            Postulate             & scope                                         & struct                                        & scope                                         & struct       & scope        & struct       \\
+            \midrule
+            Planning Consistency  & $\times$                                      & $\times$                                      & $\times$                                      & $\times$     & $\times$     & $\times$     \\
+            Operator Monotonicity & $\checkmark$                                  & $\checkmark$                                  & $\times$                                      & $\times$     & $\times$     & $\times$     \\
+            Goal Monotonicity     & $\checkmark$                                  & $\checkmark$                                  & $\checkmark$                                  & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+    \begin{block}{Three planning-adapted postulates}
+        \begin{itemize}
+            \item Planning Consistency, $\mathcal{I}(\Pi, h) = 0$ iff $\Pi$ solvable at sufficient $h$
+            \item Operator Monotonicity reverses sign, adding operators cannot raise $\mathcal{I}$
+            \item Goal Monotonicity keeps classical sign, adding goals cannot lower $\mathcal{I}$
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.1}
+\end{frame}
+
+% BUDGET: ~90s
+\begin{frame}{PSPACE absorbs the multi-tier complexity landscape}
+    \begin{exampleblock}{Decision-problem complexity for each $\mathcal{I} \in \{\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}\}$}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            Problem & Planning        & Propositional [Thimm and Wallner, 2016] \\
+            \midrule
+            UPPER   & PSPACE-complete & NP-complete                             \\
+            LOWER   & PSPACE-complete & coNP-complete                           \\
+            EXACT   & PSPACE-complete & $D^p$-complete                          \\
+            VALUE   & FPSPACE         & FP$^{\text{NP}}$                        \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Why the landscape flattens}
+        \begin{itemize}
+            \item Reachability over the state space is already PSPACE-complete [Bylander, 1994]
+            \item PSPACE $=$ co-PSPACE collapses UPPER, LOWER, and EXACT into one class
+            \item VALUE follows by polynomially many PSPACE calls
+        \end{itemize}
+    \end{block}
+
+    \sectioncitebk{bk:pspace-proof}{Thesis \S4.5.3}
+\end{frame}

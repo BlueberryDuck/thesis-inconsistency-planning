@@ -1,0 +1,52 @@
+\section{Implementation}
+
+% BUDGET: ~90s
+\begin{frame}{Brave reasoning replaces exponential trace enumeration}
+    \begin{center}
+        \begin{tikzpicture}[
+                node distance=14mm,
+                box/.style={rectangle, draw, rounded corners, thick, minimum height=10mm, align=center, inner sep=3pt, font=\scriptsize},
+                arr/.style={-stealth, thick}
+            ]
+            \node[box]               (pddl) {PDDL\\ domain + problem};
+            \node[box, right=of pddl] (asp) {ASP facts\\ (lifted)};
+            \node[box, right=of asp]  (wit) {Witness atoms\\ (brave union)};
+            \node[box, right=of wit] (prof) {Profile\\ $\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}$};
+            \draw[arr] (pddl) -- node[above, font=\scriptsize]{\textit{plasp}} (asp);
+            \draw[arr] (asp)  -- node[above, font=\scriptsize]{brave} (wit);
+            \draw[arr] (wit)  -- node[above, font=\scriptsize]{extract} (prof);
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{block}{Key choice}
+        \begin{itemize}
+            \item \texttt{--enum-mode=brave} unions atoms true in at least one answer set
+            \item Each answer set is one execution trace, and brave captures all without enumeration
+            \item Witness atoms record whether goal pairs coexist or sequence
+            \item Absence of a witness under brave proves no trace satisfies the condition
+        \end{itemize}
+    \end{block}
+
+    \sectioncitebk{bk:asp-vs-sat}{Thesis \S5.1}
+\end{frame}
+
+% BUDGET: ~90s
+\begin{frame}{Witness absence under brave reasoning is a universal proof}
+    \begin{exampleblock}{Two witness atoms for goal pairs}
+        \begin{itemize}
+            \item \texttt{coexist\_witness($g_1$, $g_2$)} derived when some trace reaches a state with both goals
+            \item \texttt{g2\_after\_g1\_witness($g_1$, $g_2$)} derived when some trace reaches $g_1$ then $g_2$
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Brave gives the right semantics}
+        \begin{itemize}
+            \item $\text{BRAVE}(\Pi)$ unions atoms across all answer sets, one per trace
+            \item Witness $\in \text{BRAVE}$ means at least one trace satisfies the condition
+            \item Witness $\notin \text{BRAVE}$ means no trace does, hence mutex or sequencing
+            \item Cautious would intersect traces and give the wrong direction
+        \end{itemize}
+    \end{block}
+
+    \sectioncitebk{bk:asp-listing}{Thesis \S5.3.3}
+\end{frame}

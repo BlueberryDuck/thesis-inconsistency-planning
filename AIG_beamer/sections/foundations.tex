@@ -1,0 +1,64 @@
+\section{Foundations refresher}
+
+% BUDGET: ~90s
+\begin{frame}{Locked Door has four propositions, two operators, and no plan}
+    \begin{exampleblock}{Scenario 1 Locked Door}
+        \begin{itemize}
+            \item $P = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}$
+            \item $O = \{\text{unlock}, \text{enter}\}$
+            \item $I = \{\text{at\_door}\}$, \quad $G = \{\text{in\_room}\}$
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{\ac{STRIPS} planning problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
+        \begin{itemize}
+            \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ is applicable in $s$ when $\text{precond}(o) \subseteq s$
+            \item A plan is an applicable operator sequence from $I$ ending in $s_k \supseteq G$
+        \end{itemize}
+    \end{block}
+
+    \alert{No operator produces \textit{has\_key} $\Rightarrow$ unsolvable.}
+
+    \sectioncite{Thesis \S2.2}
+\end{frame}
+
+% BUDGET: ~60s
+\begin{frame}{From binary inconsistency to a numerical score $\mathcal{I}(K)$}
+    \begin{exampleblock}{Knowledge base value}
+        $K = \{a \land b,\ \neg a,\ \neg b\}$ \quad inconsistent.\\
+        Contension measure [Grant and Hunter, 2011] yields $\mathcal{I}_c(K) = 2$.
+    \end{exampleblock}
+
+    \begin{block}{Inconsistency measure [Thimm, 2019]}
+        \[
+            \mathcal{I} : \mathbb{K} \to \mathbb{R}_{\geq 0}
+        \]
+        \begin{itemize}
+            \item $\mathcal{I}(K) = 0$ iff $K$ consistent, the \emph{Consistency} postulate
+            \item Monotone in formula additions and insensitive to free formulas
+            \item Many candidates exist. This thesis tries $\mathcal{I}_c$ first on planning
+        \end{itemize}
+    \end{block}
+    \sectioncite{Thesis \S2.1}
+\end{frame}
+
+% BUDGET: ~90s
+\begin{frame}{Each answer set is a trace and brave reasoning unions them}
+    \begin{exampleblock}{Two answer sets, one program}
+        Rules \quad $p \leftarrow \mathbf{not}\ q.$ \quad $q \leftarrow \mathbf{not}\ p.$\\[2pt]
+        Two answer sets $\{p\}$ and $\{q\}$. \quad
+        $\text{BRAVE} = \{p, q\}$, \quad $\text{CAUTIOUS} = \emptyset$.
+    \end{exampleblock}
+
+    \begin{block}{Logic program [Dimopoulos et al., 1997]}
+        \begin{itemize}
+            \item Rule form $h \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n$
+            \item An answer set is a minimal stable model under default negation
+            \item Brave reasoning unions all answer sets, cautious intersects them [Eiter and Gottlob, 1995]
+        \end{itemize}
+    \end{block}
+
+    \alert{Later, each answer set witnesses one execution trace and brave decides achievability.}
+
+    \sectioncite{Thesis \S2.4}
+\end{frame}

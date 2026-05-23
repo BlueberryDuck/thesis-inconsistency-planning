@@ -1,0 +1,86 @@
+\section{Evaluation}
+
+% BUDGET: ~90s
+\begin{frame}{Seven compatible domains, 158 unsolvable instances, $h = 20$}
+    \begin{exampleblock}{Configuration}
+        \begin{itemize}
+            \item Horizon $h = 20$, time limit 120\,s, single Clingo thread
+            \item Running on AMD Ryzen 5 5600X, 32\,GiB RAM, inside Docker
+            \item Stack Python 3.12, Clingo 5.8.0, \textit{plasp} 3.1.1
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Benchmark suites}
+        \begin{itemize}
+            \item \ac{IPC} 2016 Unsolvability [Muise and Lipovetzky, 2016], 15 domains, 6 compatible
+            \item Eriksson [Eriksson, 2019] adds \textit{3unsat} as the 7th compatible domain
+            \item Two compatible solvable instances also run as sanity check
+        \end{itemize}
+    \end{block}
+
+    \sectioncitebk{bk:horizon}{Thesis \S6.1}
+\end{frame}
+
+% BUDGET: ~90s
+\begin{frame}{68 of 158 complete and profiles separate categories}
+    \begin{columns}[t]
+        \begin{column}{0.5\textwidth}
+            \begin{exampleblock}{Coverage by domain}
+                \centering\small
+                \begin{tabular}{lrr}
+                    \toprule
+                    Domain              & OK / total        & coverage      \\
+                    \midrule
+                    diagnosis           & 18 / 20           & 90\%          \\
+                    3unsat              & 20 / 30           & 67\%          \\
+                    bottleneck          & 12 / 25           & 48\%          \\
+                    cave-diving         & 9 / 25            & 36\%          \\
+                    pegsol-row5         & 3 / 15            & 20\%          \\
+                    document-transfer   & 3 / 20            & 15\%          \\
+                    chessboard-pebbling & 3 / 23            & 13\%          \\
+                    \midrule
+                    \textbf{Total}      & \textbf{68 / 158} & \textbf{43\%} \\
+                    \bottomrule
+                \end{tabular}
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Category classification of the 68}
+                \begin{itemize}
+                    \item Category 2a unreachability, 25 instances across four domains
+                    \item Category 2c sequencing, 13 instances across two domains
+                    \item Zero pure 2c-mutex, consistent with sequencing $\subset$ mutex
+                    \item 30 classified consistent, 20 of those from \textit{3unsat} as a known blind spot
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \sectioncitebkk{bk:per-domain}{bk:validation}{Thesis \S6.2}
+\end{frame}
+
+% BUDGET: ~90s
+\begin{frame}{Severity, density, and one honest blind spot}
+    \begin{exampleblock}{Three case studies}
+        \centering\small
+        \begin{tabular}{llll}
+            \toprule
+            Instances        & Variant                                   & Value                  & Reading                          \\
+            \midrule
+            prob06 vs prob05 & $\mathcal{I}^{\text{scope}}_{\text{UR}}$  & 1 vs 49                & 14\% vs 88\% of goals blocked    \\
+            prob10 vs prob16 & $\mathcal{I}^{\text{struct}}_{\text{MX}}$ & 1 vs $\binom{8}{2}=28$ & single pair vs complete clique   \\
+            \textit{3unsat}  & all variants                              & 0                      & pairwise tests miss triple-unsat \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{What the diagnostic delivers}
+        \begin{itemize}
+            \item Scope grades severity at the goal level
+            \item Structure grades density of the underlying conflict graph
+            \item $k$-tuple unsatisfiability with $k \geq 3$ remains a known limit, addressed in future work
+        \end{itemize}
+    \end{block}
+
+    \sectioncitebk{bk:3unsat}{Thesis \S6.3}
+\end{frame}
