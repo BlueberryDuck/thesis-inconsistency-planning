@@ -2,22 +2,29 @@
 
 % BUDGET: ~90s
 \begin{frame}{Locked Door has four propositions, two operators, and no plan}
-    \begin{exampleblock}{Scenario 1 Locked Door}
-        \begin{itemize}
-            \item $P = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}$
-            \item $O = \{\text{unlock}, \text{enter}\}$
-            \item $I = \{\text{at\_door}\}$, \quad $G = \{\text{in\_room}\}$
-        \end{itemize}
-    \end{exampleblock}
+    \begin{columns}[T]
+        \begin{column}{0.58\textwidth}
+            \begin{exampleblock}{Scenario 1 Locked Door}
+                \small
+                $P = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}$\\
+                $O = \{\text{unlock}, \text{enter}\}$,\quad
+                $I = \{\text{at\_door}\}$,\quad $G = \{\text{in\_room}\}$
+            \end{exampleblock}
 
-    \begin{block}{\ac{STRIPS} planning problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
-        \begin{itemize}
-            \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ is applicable in $s$ when $\text{precond}(o) \subseteq s$
-            \item A plan is an applicable operator sequence from $I$ ending in $s_k \supseteq G$
-        \end{itemize}
-    \end{block}
-
-    \alert{No operator produces \textit{has\_key} $\Rightarrow$ unsolvable.}
+            \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
+                \begin{itemize}
+                    \item $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ applicable when $\text{precond}(o) \subseteq s$, with $\text{RESULT}(s, o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$
+                    \item Plan: applicable sequence from $I$ ending in $s_k \supseteq G$ (closed-world, unique-names)
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{center}
+                \input{figures/fig_dependency_graph}
+            \end{center}
+            \alert{\small No operator produces \textit{has\_key} $\Rightarrow$ unsolvable.}
+        \end{column}
+    \end{columns}
 
     \sectioncite{Thesis \S2.2}
 \end{frame}
@@ -40,6 +47,26 @@
         \end{itemize}
     \end{block}
     \sectioncite{Thesis \S2.1}
+\end{frame}
+
+% BUDGET: ~75s
+\begin{frame}{Horizon $h$ bounds reachability and converges at $h^*$}
+    \begin{exampleblock}{Horizon-bounded reachable states}
+        \[
+            S^h_{\text{reach}} = \{s \mid s \text{ reachable from } I \text{ in at most } h \text{ operator applications}\}
+        \]
+    \end{exampleblock}
+
+    \begin{block}{Monotone chain, finite convergence}
+        \begin{itemize}
+            \item $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ non-decreasing in $h$
+            \item Convergence horizon $h^* = \min\{h : S^h_{\text{reach}} = S_{\text{reach}}\}$, bounded by $h^* \leq 2^{|P|}$
+            \item Planning Consistency requires $h \geq h^*$; longer $h$ adds grounding cost
+            \item Evaluation fixes $h = 20$ on empirical grounds
+        \end{itemize}
+    \end{block}
+
+    \sectioncitebk{bk:horizon}{Thesis \S4.4.2}
 \end{frame}
 
 % BUDGET: ~90s

@@ -41,10 +41,9 @@
 
     \begin{block}{Brave gives the right semantics}
         \begin{itemize}
-            \item $\text{BRAVE}(\Pi)$ unions atoms across all answer sets, one per trace
-            \item Witness $\in \text{BRAVE}$ means at least one trace satisfies the condition
-            \item Witness $\notin \text{BRAVE}$ means no trace does, hence mutex or sequencing
-            \item Cautious would intersect traces and give the wrong direction
+            \item $\text{BRAVE}(\Pi) = \bigcup_{S \in \text{AS}(\Pi)} S$, one answer set per trace
+            \item Witness $\in \text{BRAVE}$ iff \emph{some} trace satisfies the condition; absence iff \emph{no} trace does, the mutex/sequencing definition
+            \item Cautious uses $\bigcap$, requires \emph{every} trace to have the witness, wrong quantifier for non-existence claims
         \end{itemize}
     \end{block}
 
