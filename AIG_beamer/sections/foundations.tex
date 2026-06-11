@@ -14,7 +14,7 @@
             \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
                 \begin{itemize}
                     \item $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ applicable when $\text{precond}(o) \subseteq s$, with $\text{RESULT}(s, o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$
-                    \item Plan: applicable sequence from $I$ ending in $s_k \supseteq G$ (closed-world, unique-names)
+                    \item Plan: applicable sequence from $I$ ending in $s_k \supseteq G$ under closed-world and unique-names assumptions
                 \end{itemize}
             \end{block}
         \end{column}
@@ -59,9 +59,9 @@
 
     \begin{block}{Monotone chain, finite convergence}
         \begin{itemize}
-            \item $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ non-decreasing in $h$
-            \item Convergence horizon $h^* = \min\{h : S^h_{\text{reach}} = S_{\text{reach}}\}$, bounded by $h^* \leq 2^{|P|}$
-            \item Planning Consistency requires $h \geq h^*$; longer $h$ adds grounding cost
+            \item Chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at the convergence horizon $h^* \leq 2^{|P|}$
+            \item Planning Consistency requires $h \geq h^*$, longer $h$ adds grounding cost
+            \item Same $h$-parameterization as $\text{LTL}_{\text{ff}}$ measures [Corea et al., 2024; Kuhlmann, 2025]
             \item Evaluation fixes $h = 20$ on empirical grounds
         \end{itemize}
     \end{block}

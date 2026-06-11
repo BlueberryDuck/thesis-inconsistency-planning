@@ -6,7 +6,7 @@
     \vfill
     \begin{center}
         {\Huge\bfseries Backup slides}\\[1em]
-        {\large Reachability, proofs, performance, scenarios}
+        {\large Reachability, proofs, postulates, performance, scenarios}
     \end{center}
     \vfill
 \end{frame}
@@ -180,6 +180,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
             \midrule
             Dead-state certificates [Eriksson et al., 2018] & solvable or unsolvable                                                                & binary, no severity      \\
             Excuses [G\"obelbecker et al., 2010]            & minimal repair edits                                                                  & prescriptive             \\
+            Explanations [Sreedharan et al., 2019]          & unreachable-goal accounts                                                             & qualitative, per case    \\
             This thesis                                     & profile $(\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}})$ & quantitative, structural \\
             \bottomrule
         \end{tabular}
@@ -189,6 +190,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
         \begin{itemize}
             \item $\mathcal{I}_{\text{GS}}$ recovers a quantitative form of dead-state analysis
             \item $\mathcal{I}_{\text{UR}}$ flags where add-producer excuses apply, $\mathcal{I}_{\text{GS}}$ where add-reversal excuses do
+            \item Goal-level mutex over $S^h_{\text{reach}}$ differs from Graphplan's level-based proposition mutex [Blum and Furst, 1997]
             \item Measures stay descriptive, leaving repair decisions to domain experts
         \end{itemize}
     \end{block}
@@ -234,13 +236,13 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
     \begin{block}{Three parallel chains converge on \textit{in\_vault}}
         \begin{itemize}
             \item Root preconditions \textit{key1}, \textit{key2}, and \textit{admin\_appr} all lack producers
-            \item Six intermediate propositions cascade off the missing roots
-            \item Same scope value as Locked Door, four times the cascade depth
+            \item Three blocked intermediates cascade off the three missing roots
+            \item Same scope value as Locked Door, three times the cascade depth
             \item Structure $-$ scope grows with the number of converging blocked chains
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S4.3.2 Scenario~2}
+    \sectioncite{Thesis \S4.3.1 Scenario~2}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, Rival Alliances exhibits symmetric sequencing}
@@ -261,7 +263,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S4.3.6 Scenario~6}
+    \sectioncite{Thesis \S4.3.3 Scenario~6}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, 80 automated tests verify the pipeline}
@@ -290,5 +292,43 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
         \end{tabular}
     \end{block}
 
-    \sectioncite{Thesis \S5.4}
+    \sectioncite{Thesis \S5.6}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, postulate choice and the combined measure}
+    \hypertarget{bk:postulates}{}
+    \begin{exampleblock}{Does the combined profile satisfy Planning Consistency?}
+        \begin{itemize}
+            \item No. \textit{3unsat} instances are unsolvable yet all six values stay zero at every horizon
+            \item For $|G| \leq 2$ the converse holds, all measures zero implies solvable
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Why these three postulates}
+        \begin{itemize}
+            \item Classical postulates assume formula structure, planning has goals, operators, and states
+            \item Adding operators can resolve conflicts, so Monotonicity reverses sign
+            \item Modified postulates and the multi-measure approach follow the ASP precedent [Ulbricht et al., 2016]
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.1, \S6.3.6, \S7.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, absolute counts instead of normalized measures}
+    \hypertarget{bk:normalization}{}
+    \begin{exampleblock}{Relative measures exist [Besnard and Grant, 2020]}
+        Dividing by $|G|$, $|P|$, or the maximal conflict count would yield percentage-style scores comparable across problem sizes.
+    \end{exampleblock}
+
+    \begin{block}{Why the profiles stay absolute}
+        \begin{itemize}
+            \item Severity is not proportional to size, 2 conflicting goals among 100 may be easier to repair than a complete clique on 3
+            \item Every denominator choice encodes an assumption about problem structure
+            \item The profiles already carry relative information, scope against structure within each measure
+            \item Future work calibrates normalization against the \ac{IPC} benchmark distribution
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.6.2}
 \end{frame}
