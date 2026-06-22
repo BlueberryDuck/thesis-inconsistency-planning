@@ -1,22 +1,22 @@
 \section{Foundations refresher}
 
 % BUDGET: ~90s
-\begin{frame}{Locked Door has four propositions, two operators, and no plan}
+\begin{frame}{A STRIPS problem $\langle P,O,I,G\rangle$, and a Locked Door with no plan}
     \begin{columns}[T]
         \begin{column}{0.58\textwidth}
-            \begin{exampleblock}{Scenario 1 Locked Door}
-                \small
-                $P = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}$\\
-                $O = \{\text{unlock}, \text{enter}\}$,\quad
-                $I = \{\text{at\_door}\}$,\quad $G = \{\text{in\_room}\}$
-            \end{exampleblock}
-
             \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
                 \begin{itemize}
                     \item $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ applicable when $\text{precond}(o) \subseteq s$, with $\text{RESULT}(s, o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$
                     \item Plan: applicable sequence from $I$ ending in $s_k \supseteq G$ under closed-world and unique-names assumptions
                 \end{itemize}
             \end{block}
+
+            \begin{exampleblock}{Scenario 1 Locked Door}
+                \small
+                $P = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}$\\
+                $O = \{\text{unlock}, \text{enter}\}$,\quad
+                $I = \{\text{at\_door}\}$,\quad $G = \{\text{in\_room}\}$
+            \end{exampleblock}
         \end{column}
         \begin{column}{0.42\textwidth}
             \begin{center}
@@ -31,11 +31,6 @@
 
 % BUDGET: ~60s
 \begin{frame}{From binary inconsistency to a numerical score $\mathcal{I}(K)$}
-    \begin{exampleblock}{Knowledge base value}
-        $K = \{a \land b,\ \neg a,\ \neg b\}$ \quad inconsistent.\\
-        Contension measure [Grant and Hunter, 2011] yields $\mathcal{I}_c(K) = 2$.
-    \end{exampleblock}
-
     \begin{block}{Inconsistency measure [Thimm, 2019]}
         \[
             \mathcal{I} : \mathbb{K} \to \mathbb{R}_{\geq 0}
@@ -46,6 +41,11 @@
             \item Many candidates exist. This thesis tries $\mathcal{I}_c$ first on planning
         \end{itemize}
     \end{block}
+
+    \begin{exampleblock}{Knowledge base value}
+        $K = \{a \land b,\ \neg a,\ \neg b\}$ \quad inconsistent.\\
+        Contension measure [Grant and Hunter, 2011] yields $\mathcal{I}_c(K) = 2$.
+    \end{exampleblock}
     \sectioncite{Thesis \S2.1}
 \end{frame}
 
@@ -71,12 +71,6 @@
 
 % BUDGET: ~90s
 \begin{frame}{Each answer set is a trace and brave reasoning unions them}
-    \begin{exampleblock}{Two answer sets, one program}
-        Rules \quad $p \leftarrow \mathbf{not}\ q.$ \quad $q \leftarrow \mathbf{not}\ p.$\\[2pt]
-        Two answer sets $\{p\}$ and $\{q\}$. \quad
-        $\text{BRAVE} = \{p, q\}$, \quad $\text{CAUTIOUS} = \emptyset$.
-    \end{exampleblock}
-
     \begin{block}{Logic program [Dimopoulos et al., 1997]}
         \begin{itemize}
             \item Rule form $h \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n$
@@ -84,6 +78,12 @@
             \item Brave reasoning unions all answer sets, cautious intersects them [Eiter and Gottlob, 1995]
         \end{itemize}
     \end{block}
+
+    \begin{exampleblock}{Two answer sets, one program}
+        Rules \quad $p \leftarrow \mathbf{not}\ q.$ \quad $q \leftarrow \mathbf{not}\ p.$\\[2pt]
+        Two answer sets $\{p\}$ and $\{q\}$. \quad
+        $\text{BRAVE} = \{p, q\}$, \quad $\text{CAUTIOUS} = \emptyset$.
+    \end{exampleblock}
 
     \alert{Later, each answer set witnesses one execution trace and brave decides achievability.}
 

@@ -3,19 +3,19 @@
 % BUDGET: ~60s
 \begin{frame}{Planners report ``unsolvable'' without explaining why}
     \begin{exampleblock}{Logistics planning}
-        A delivery company routes a single package, and the goal demands both
+        A delivery company routes a single package, and the goal requires it to end up
         \begin{itemize}
-            \item delivered in New York
-            \item in processing in Los Angeles
+            \item in New York
+            \item in Los Angeles
         \end{itemize}
-        The planner returns \textbf{Unsolvable}. Which constraint caused the conflict?
+        One package cannot be in both, so the planner returns \textbf{Unsolvable}. Which goal should give way, and how severe is the conflict?
     \end{exampleblock}
 
     \begin{alertblock}{The diagnostic gap}
         \begin{itemize}
             \item Planners excel when a plan exists
             \item Binary failure report when none does
-            \item No location, no severity, no structural account
+            \item No location, no severity, no structural explanation
         \end{itemize}
     \end{alertblock}
     \sectioncite{Thesis \S1.1}
