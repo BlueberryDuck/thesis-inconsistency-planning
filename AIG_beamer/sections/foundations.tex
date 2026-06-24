@@ -1,13 +1,30 @@
 \section{Foundations refresher}
 
+% BUDGET: ~60s
+\begin{frame}{From binary inconsistency to a numerical score $\mathcal{I}(K)$}
+    \begin{block}{Inconsistency measure $\mathcal{I} : \mathbb{K} \to \mathbb{R}_{\geq 0}$ [Thimm, 2019]}
+        \begin{itemize}
+            \item Higher value means more inconsistency, $\mathcal{I}(K) = 0$ iff $K$ consistent
+            \item Rationality postulates such as Monotonicity and Free Formula Independence pin down sensible measures
+            \item Contension $\mathcal{I}_c$ [Grant and Hunter, 2011] counts atoms forced to ``both true and false'', not formulas
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Knowledge base value}
+        $K = \{a \land b,\ \neg a,\ \neg b\}$ forces $a$ and $b$ to ``both'', so $\mathcal{I}_c(K) = 2$.
+    \end{exampleblock}
+    \sectioncite{Thesis \S2.1}
+\end{frame}
+
 % BUDGET: ~90s
 \begin{frame}{A STRIPS problem $\langle P,O,I,G\rangle$, and a Locked Door with no plan}
     \begin{columns}[T]
         \begin{column}{0.58\textwidth}
             \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
                 \begin{itemize}
-                    \item $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$ applicable when $\text{precond}(o) \subseteq s$, with $\text{RESULT}(s, o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$
-                    \item Plan: applicable sequence from $I$ ending in $s_k \supseteq G$ under closed-world and unique-names assumptions
+                    \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
+                    \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$, applicable when $\text{precond}(o) \subseteq s$
+                    \item Plan: applicable sequence from $I$ reaching a state $\supseteq G$
                 \end{itemize}
             \end{block}
 
@@ -29,26 +46,6 @@
     \sectioncite{Thesis \S2.2}
 \end{frame}
 
-% BUDGET: ~60s
-\begin{frame}{From binary inconsistency to a numerical score $\mathcal{I}(K)$}
-    \begin{block}{Inconsistency measure [Thimm, 2019]}
-        \[
-            \mathcal{I} : \mathbb{K} \to \mathbb{R}_{\geq 0}
-        \]
-        \begin{itemize}
-            \item $\mathcal{I}(K) = 0$ iff $K$ consistent, the \emph{Consistency} postulate
-            \item Monotone in formula additions and insensitive to free formulas
-            \item Many candidates exist. This thesis tries $\mathcal{I}_c$ first on planning
-        \end{itemize}
-    \end{block}
-
-    \begin{exampleblock}{Knowledge base value}
-        $K = \{a \land b,\ \neg a,\ \neg b\}$ \quad inconsistent.\\
-        Contension measure [Grant and Hunter, 2011] yields $\mathcal{I}_c(K) = 2$.
-    \end{exampleblock}
-    \sectioncite{Thesis \S2.1}
-\end{frame}
-
 % BUDGET: ~75s
 \begin{frame}{Horizon $h$ bounds reachability and converges at $h^*$}
     \begin{exampleblock}{Horizon-bounded reachable states}
@@ -57,12 +54,12 @@
         \]
     \end{exampleblock}
 
-    \begin{block}{Monotone chain, finite convergence}
+    \begin{block}{Convergence makes the bound faithful}
         \begin{itemize}
-            \item Chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at the convergence horizon $h^* \leq 2^{|P|}$
-            \item Planning Consistency requires $h \geq h^*$, longer $h$ adds grounding cost
-            \item Same $h$-parameterization as $\text{LTL}_{\text{ff}}$ measures [Corea et al., 2024; Kuhlmann, 2025]
-            \item Evaluation fixes $h = 20$ on empirical grounds
+            \item Reachability must be bounded to stay computable, $h$ caps the operator applications
+            \item Monotone chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at $h^* \leq 2^{|P|}$
+            \item At $h \geq h^*$ the bound is exact, so detected conflicts are genuine, not short-horizon artifacts
+            \item $h^*$ is worst-case exponential, so the evaluation fixes $h = 20$
         \end{itemize}
     \end{block}
 
@@ -71,9 +68,11 @@
 
 % BUDGET: ~90s
 \begin{frame}{Each answer set is a trace and brave reasoning unions them}
+    The measures test reachability over the state space, the kind of declarative search \ac{ASP} is built for.
+
     \begin{block}{Logic program [Dimopoulos et al., 1997]}
         \begin{itemize}
-            \item Rule form $h \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n$
+            \item Rule form $a \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n$
             \item An answer set is a minimal stable model under default negation
             \item Brave reasoning unions all answer sets, cautious intersects them [Eiter and Gottlob, 1995]
         \end{itemize}
@@ -84,8 +83,6 @@
         Two answer sets $\{p\}$ and $\{q\}$. \quad
         $\text{BRAVE} = \{p, q\}$, \quad $\text{CAUTIOUS} = \emptyset$.
     \end{exampleblock}
-
-    \alert{Later, each answer set witnesses one execution trace and brave decides achievability.}
 
     \sectioncite{Thesis \S2.4}
 \end{frame}
