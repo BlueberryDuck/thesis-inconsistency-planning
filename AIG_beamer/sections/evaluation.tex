@@ -2,13 +2,13 @@
 
 % BUDGET: ~90s
 \begin{frame}{Seven compatible domains, 158 unsolvable instances, $h = 20$}
-    \begin{exampleblock}{Configuration}
+    \begin{block}{Configuration}
         \begin{itemize}
             \item Horizon $h = 20$, time limit 120\,s, single Clingo thread
             \item Running on AMD Ryzen 5 5600X, 32\,GiB RAM, inside Docker
             \item Stack Python 3.12, Clingo 5.8.0, \textit{plasp} 3.1.1
         \end{itemize}
-    \end{exampleblock}
+    \end{block}
 
     \begin{block}{Benchmark suites}
         \begin{itemize}
@@ -78,7 +78,7 @@
         \begin{itemize}
             \item Scope grades severity at the goal level
             \item Structure grades density of the underlying conflict graph
-            \item $k$-tuple limit: in \textit{3unsat}, pairs $\{g_1, g_2\}, \{g_2, g_3\}, \{g_1, g_3\}$ all coexist yet no state holds all three, invisible to pairwise tests, future work
+            \item $k$-tuple blind spot, every pair coexists yet no state holds all three
         \end{itemize}
     \end{block}
 

@@ -2,19 +2,30 @@
 
 % BUDGET: ~90s
 \begin{frame}{A propositional encoding of Locked Door works\dots}
-    \begin{exampleblock}{Encoding $K_{\text{LD}}$}
-        \begin{align*}
-            K_{\text{LD}} = \{ & \text{in\_room},                                                         \\
-                               & \text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked}, \\
-                               & \text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key}, \\
-                               & \neg \text{has\_key} \}
-        \end{align*}
-    \end{exampleblock}
+    Each implication encodes one operator's preconditions.
+
+    \begin{columns}[T]
+        \begin{column}{0.58\textwidth}
+            \begin{exampleblock}{Precondition encoding $K_{\text{LD}}$}
+                \small
+                \begin{align*}
+                    K_{\text{LD}} = \{ & \text{in\_room},                                                         \\
+                                       & \text{in\_room} \rightarrow \text{at\_door} \land \text{door\_unlocked}, \\
+                                       & \text{door\_unlocked} \rightarrow \text{at\_door} \land \text{has\_key}, \\
+                                       & \neg \text{has\_key} \}
+                \end{align*}
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{center}
+                \input{figures/fig_dependency_graph}
+            \end{center}
+        \end{column}
+    \end{columns}
 
     \begin{block}{Contension measure analysis}
         \begin{itemize}
-            \item Classically inconsistent, $\neg\textit{has\_key}$ blocks the chain
-            \item Setting $v(\textit{has\_key}) = B$ satisfies $K_{\text{LD}}$, so $\mathcal{I}_c(K_{\text{LD}}) = 1$
+            \item $\neg\textit{has\_key}$ blocks the chain, forcing $v(\textit{has\_key}) = B$, so $\mathcal{I}_c(K_{\text{LD}}) = 1$
         \end{itemize}
     \end{block}
 
@@ -22,28 +33,27 @@
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{\dots\ but flattens to $\mathcal{I}_c = 1$ for every conflict type}
-    \begin{exampleblock}{Three distinct scenarios, one number under enriched encoding}
+\begin{frame}{\dots\ but either misses the conflict or flattens it to $\mathcal{I}_c = 1$}
+    \begin{exampleblock}{$\mathcal{I}_c$ under two encodings, neither informative}
         \centering
         \begin{tabular}{lcc}
             \toprule
-            Scenario         & Conflict type  & $\mathcal{I}_c$ \\
+            Planning failure                         & precondition & enriched \\
             \midrule
-            Locked Door      & unreachability & $1$             \\
-            Light Switch     & mutex          & $1$             \\
-            Trust and Travel & sequencing     & $1$             \\
+            Goal with no producer, as in Locked Door & $1$          & $1$      \\
+            Two goals that never hold together       & $0$          & $1$      \\
+            A goal that irreversibly blocks another  & $0$          & $1$      \\
             \bottomrule
         \end{tabular}
     \end{exampleblock}
 
-    \begin{block}{Why the measure collapses}
+    \begin{block}{Why neither helps}
         \begin{itemize}
-            \item Three-valued $B$ absorbs each conflict at a single proposition
-            \item Precondition-only encoding misses operator-induced conflicts entirely
-            \item Enriched encoding with delete effects detects them, still scores $1$
-            \item Structural detail in chain depth, mutex density, and irreversibility is lost
+            \item Without delete effects, operator-induced conflicts read as a false $0$
+            \item With them, $B$ collapses each conflict to a flat $1$
+            \item Chain depth, goal clashes, and reversibility distinctions vanish
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S4.2}
+    \sectioncitebk{bk:enriched}{Thesis \S4.2}
 \end{frame}

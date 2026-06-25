@@ -1,0 +1,40 @@
+\begin{center}
+    \scalebox{0.68}{%
+        \begin{forest}
+            for tree={
+                    rectangle, draw, rounded corners, thick,
+                    align=center, font=\footnotesize,
+                    minimum height=0.5cm,
+                    inner sep=4pt,
+                    l sep=3mm, s sep=2.5mm,
+                    edge={thick},
+                },
+            inscope/.style={fill=black!16},
+            where level=1{minimum width=2.9cm}{},
+            where level=2{minimum width=2.4cm}{},
+                [Unsolvable Planning\\Problems, minimum width=3.0cm, calign=child, calign child=2
+                        [{Category 1:\\Operator-Induced\\Goal Conflicts}, inscope, tier=category
+                        ]
+                        [{Category 2:\\Dependency and\\Effect Structure}, inscope, tier=category, calign=child, calign child=2
+                                [{2a: Missing\\producers}, inscope, thin
+                                ]
+                                [{2b: Circular\\dependencies}, thin
+                                ]
+                                [{2c: Action-based\\exclusions}, inscope, thin
+                                ]
+                        ]
+                        [{Category 3:\\Resource\\Constraints}, tier=category
+                        ]
+                ]
+        \end{forest}}
+
+    \vspace{0.3em}
+    \begin{tikzpicture}[font=\footnotesize]
+        \node[rectangle, draw, rounded corners, thick, fill=black!16,
+            minimum width=0.6cm, minimum height=0.3cm] (in) at (0,0) {};
+        \node[anchor=west, inner sep=2pt] at (in.east) {addressed in this thesis};
+        \node[rectangle, draw, rounded corners, thick,
+            minimum width=0.6cm, minimum height=0.3cm] (out) at (4.6,0) {};
+        \node[anchor=west, inner sep=2pt] at (out.east) {out of scope};
+    \end{tikzpicture}
+\end{center}

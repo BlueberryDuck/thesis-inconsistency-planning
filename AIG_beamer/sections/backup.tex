@@ -11,6 +11,44 @@
     \vfill
 \end{frame}
 
+\begin{frame}[noframenumbering]{Backup, enriching the encoding still scores $1$}
+    \hypertarget{bk:enriched}{}
+    \begin{exampleblock}{Light Switch under two encodings}
+        Precondition-only \quad $K_{\text{LS}} = \{\text{on},\ \text{off},\ \text{on} \rightarrow \text{off},\ \text{off} \rightarrow \text{on}\}$\\[4pt]
+        Enriched \quad $K^+_{\text{LS}} = K_{\text{LS}} \cup \{\text{on} \rightarrow \neg\text{off},\ \text{off} \rightarrow \neg\text{on}\}$
+    \end{exampleblock}
+
+    \begin{block}{Detection without information}
+        \begin{itemize}
+            \item Precondition-only is classically consistent, $v(\text{on}) = v(\text{off}) = T$, the mutex is invisible and $\mathcal{I}_c = 0$
+            \item The delete-effect rule $p \rightarrow \neg d$ makes it inconsistent, so the mutex is now represented
+            \item Yet $v(\text{off}) = B$, $v(\text{on}) = T$ satisfies every formula, so $\mathcal{I}_c = 1$
+            \item $B$ absorbs the conflict at one proposition, the same flat score as Locked Door
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.2}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, one problem, three structural categories}
+    \hypertarget{bk:overlap}{}
+    \begin{exampleblock}{Security facility goal}
+        $G = \{\text{vault\_accessed}, \text{outside}, \text{lights\_on}, \text{lights\_off}\}$\\[3pt]
+        \textit{enter\_facility} needs \textit{has\_badge} and deletes \textit{outside}, toggle operators enforce the light mutex.
+    \end{exampleblock}
+
+    \begin{block}{Three categories in one problem}
+        \begin{itemize}
+            \item Category 1, \textit{lights\_on} and \textit{lights\_off} are operator-induced mutex
+            \item Category 2a, no operator produces \textit{has\_badge}, so entry is impossible
+            \item Category 2c, \textit{enter\_facility} deletes \textit{outside} with no way to restore it
+            \item Each category marks a distinct measurement target, the taxonomy organizes by analysis, not exclusive cause
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.1}
+\end{frame}
+
 \begin{frame}[noframenumbering]{Backup, Trust and Travel full reachability}
     \hypertarget{bk:trust-travel}{}
     \begin{exampleblock}{Six reachable states}

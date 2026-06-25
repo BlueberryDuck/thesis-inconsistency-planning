@@ -2,6 +2,8 @@
 
 % BUDGET: ~90s
 \begin{frame}{Every profile pairs a goal-level count with a structural count}
+    Each profile reports two things at once, how many goals are affected and how dense the conflict beneath them is.
+
     \begin{exampleblock}{Diagnostic profile shape}
         \[
             \mathcal{I}(\Pi, h) = (\mathcal{I}^{\text{scope}}(\Pi, h),\ \mathcal{I}^{\text{struct}}(\Pi, h))
@@ -11,7 +13,7 @@
     \begin{block}{Two components, one parameter}
         \begin{itemize}
             \item Scope counts goal propositions exhibiting the phenomenon
-            \item Structure counts the underlying artifacts, such as unreachable propositions, mutex pairs, sequencing pairs
+            \item Structure counts the underlying conflict artifacts
             \item Horizon $h \in \mathbb{N}$ bounds the reachability used to detect both counts
             \item Same shape instantiated by three measures $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
         \end{itemize}
@@ -59,7 +61,7 @@
             \item Goals $g_1, g_2$ are mutex when each is individually reachable in $S^h_{\text{reach}}$ but no state holds both
             \item Scope counts goal propositions in at least one mutex pair
             \item Structure counts unordered mutex pairs $\{g_1, g_2\} \subseteq G$
-            \item A complete clique gives $\mathcal{I}^{\text{struct}}_{\text{MX}} = \binom{|G|}{2}$
+            \item Light Switch is 1 isolated pair, Traffic Light a complete clique with $\binom{3}{2} = 3$
         \end{itemize}
     \end{block}
 
@@ -111,6 +113,7 @@
 % BUDGET: ~60s
 \begin{frame}{Each scenario leaves a distinct profile signature}
     \begin{center}
+        \small
         \begin{tabular}{l cc cc cc}
             \toprule
             Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
@@ -127,10 +130,12 @@
         \end{tabular}
     \end{center}
 
-    \begin{itemize}
-        \item Locked Door and Bank Vault share scope 1, differ in cascade depth
-        \item Trust and Travel and Rival Alliances share mutex, separate by sequencing direction
-    \end{itemize}
+    \begin{block}{What the signatures separate}
+        \begin{itemize}
+            \item Locked Door and Bank Vault share scope 1, differ in cascade depth
+            \item Trust and Travel and Rival Alliances share mutex, separate by sequencing direction
+        \end{itemize}
+    \end{block}
 
     \sectioncitebk{bk:rival-alliances}{Thesis \S4.3.4}
 \end{frame}

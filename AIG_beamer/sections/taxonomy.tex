@@ -1,21 +1,16 @@
 \section{Taxonomy and design}
 
 % BUDGET: ~60s
-\begin{frame}{Three diagnostic measures, three taxonomic categories}
-    \begin{exampleblock}{Categories addressed in this thesis}
-        \begin{itemize}
-            \item Category 1, operator-induced mutex \quad $\Rightarrow\ \mathcal{I}_{\text{MX}}$
-            \item Category 2a, missing producers \quad $\Rightarrow\ \mathcal{I}_{\text{UR}}$
-            \item Category 2c, action-based exclusions \quad $\Rightarrow\ \mathcal{I}_{\text{GS}}$
-        \end{itemize}
-    \end{exampleblock}
+\begin{frame}{A taxonomy of unsolvability guides the measure design}
+    \input{figures/fig_taxonomy}
 
-    \begin{block}{Out of scope}
+    \begin{block}{Scope and overlap}
         \begin{itemize}
-            \item Category 2b, circular dependencies, falls under generic unreachability
-            \item Category 3, resource constraints, requires numeric fluents
+            \item $\mathcal{I}_{\text{MX}}$ for Category 1, $\mathcal{I}_{\text{GS}}$ for 2c, $\mathcal{I}_{\text{UR}}$ for unreachability across Category 2
+            \item Dedicated 2b diagnosis needs graph analysis, Category 3 needs numeric fluents
+            \item Categories overlap rather than partition, one problem may exhibit several
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S4.1}
+    \sectioncitebk{bk:overlap}{Thesis \S4.1}
 \end{frame}

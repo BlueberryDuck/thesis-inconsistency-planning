@@ -32,18 +32,17 @@
 
 % BUDGET: ~90s
 \begin{frame}{Witness absence under brave reasoning is a universal proof}
-    \begin{exampleblock}{Two witness atoms for goal pairs}
+    \begin{block}{Two witness atoms for goal pairs}
         \begin{itemize}
             \item \texttt{coexist\_witness($g_1$, $g_2$)} derived when some trace reaches a state with both goals
             \item \texttt{g2\_after\_g1\_witness($g_1$, $g_2$)} derived when some trace reaches $g_1$ then $g_2$
         \end{itemize}
-    \end{exampleblock}
+    \end{block}
 
-    \begin{block}{Brave gives the right semantics}
+    \begin{block}{Why brave is the right mode}
         \begin{itemize}
-            \item $\text{BRAVE}(\Pi) = \bigcup_{S \in \text{AS}(\Pi)} S$, one answer set per trace
-            \item Witness $\in \text{BRAVE}$ iff \emph{some} trace satisfies the condition; absence iff \emph{no} trace does, the mutex/sequencing definition
-            \item Cautious uses $\bigcap$, requires \emph{every} trace to have the witness, wrong quantifier for non-existence claims
+            \item A witness is in the brave union iff \emph{some} trace satisfies the condition, and absent iff \emph{no} trace does, exactly the mutex/sequencing definition
+            \item Cautious would require \emph{every} trace to carry the witness, the wrong quantifier for a non-existence claim
         \end{itemize}
     \end{block}
 
