@@ -2,6 +2,14 @@
 
 % BUDGET: ~90s
 \begin{frame}{No measure satisfies Planning Consistency alone}
+    \begin{block}{Three planning-adapted postulates}
+        \begin{itemize}
+            \item Planning Consistency, $\mathcal{I}(\Pi, h) = 0$ iff $\Pi$ solvable at sufficient $h$
+            \item Operator Monotonicity reverses sign, adding operators cannot raise $\mathcal{I}$
+            \item Goal Monotonicity keeps classical sign, adding goals cannot lower $\mathcal{I}$
+        \end{itemize}
+    \end{block}
+
     \begin{center}
         \begin{tabular}{l cc cc cc}
             \toprule
@@ -15,14 +23,6 @@
             \bottomrule
         \end{tabular}
     \end{center}
-
-    \begin{block}{Three planning-adapted postulates}
-        \begin{itemize}
-            \item Planning Consistency, $\mathcal{I}(\Pi, h) = 0$ iff $\Pi$ solvable at sufficient $h$
-            \item Operator Monotonicity reverses sign, adding operators cannot raise $\mathcal{I}$
-            \item Goal Monotonicity keeps classical sign, adding goals cannot lower $\mathcal{I}$
-        \end{itemize}
-    \end{block}
 
     \sectioncitebk{bk:postulates}{Thesis \S4.5.1}
 \end{frame}

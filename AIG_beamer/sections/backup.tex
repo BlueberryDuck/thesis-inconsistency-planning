@@ -371,3 +371,34 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
 
     \sectioncite{Thesis \S4.6.2}
 \end{frame}
+
+\begin{frame}[noframenumbering]{Backup, the six isolated test scenarios}
+    \hypertarget{bk:signatures}{}
+    \begin{center}
+        \footnotesize
+        \begin{tabular}{l cc cc cc}
+            \toprule
+            Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
+            \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+                             & scope                                         & struct                                        & scope                                         & struct & scope & struct \\
+            \midrule
+            Locked Door      & 1                                             & 3                                             & 0                                             & 0      & 0     & 0      \\
+            Bank Vault       & 1                                             & 7                                             & 0                                             & 0      & 0     & 0      \\
+            Light Switch     & 0                                             & 0                                             & 2                                             & 1      & 0     & 0      \\
+            Traffic Light    & 0                                             & 0                                             & 3                                             & 3      & 0     & 0      \\
+            Trust and Travel & 0                                             & 0                                             & 2                                             & 1      & 2     & 1      \\
+            Rival Alliances  & 0                                             & 0                                             & 2                                             & 1      & 2     & 2      \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+    \begin{block}{What the signatures separate}
+        \begin{itemize}
+            \item Locked Door and Bank Vault share scope 1, differ in cascade depth
+            \item Light Switch isolated pair against Traffic Light complete clique
+            \item Trust and Travel and Rival Alliances share mutex, separate by sequencing direction
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.3.4, \S4.4}
+\end{frame}

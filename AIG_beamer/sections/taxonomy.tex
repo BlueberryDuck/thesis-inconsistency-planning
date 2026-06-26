@@ -6,11 +6,22 @@
 
     \begin{block}{Scope and overlap}
         \begin{itemize}
-            \item $\mathcal{I}_{\text{MX}}$ for Category 1, $\mathcal{I}_{\text{GS}}$ for 2c, $\mathcal{I}_{\text{UR}}$ for unreachability across Category 2
-            \item Dedicated 2b diagnosis needs graph analysis, Category 3 needs numeric fluents
+            \item $\mathcal{I}_{\text{MX}}$ for Category 1, $\mathcal{I}_{\text{GS}}$ for Category 2c, $\mathcal{I}_{\text{UR}}$ for unreachability across Category 2
+            \item Category 2b diagnosis needs graph analysis, Category 3 needs numeric fluents
             \item Categories overlap rather than partition, one problem may exhibit several
         \end{itemize}
     \end{block}
 
     \sectioncitebk{bk:overlap}{Thesis \S4.1}
+\end{frame}
+
+% BUDGET: ~75s
+\begin{frame}{One rover problem instantiates three categories}
+    The Rover Mission carries one flaw per cluster, and the categories overlap rather than partition.
+
+    \begin{center}
+        \input{figures/fig_rover_graph}
+    \end{center}
+
+    \sectioncite{Constructed running example}
 \end{frame}

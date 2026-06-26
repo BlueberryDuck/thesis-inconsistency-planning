@@ -1,0 +1,60 @@
+\begin{tikzpicture}[
+        scale=0.7, transform shape,
+        prop/.style={circle, draw, thick, font=\small, align=center, inner sep=1.5pt},
+        missing/.style={prop, dashed},
+        initial/.style={prop, double},
+        goal/.style={prop, fill=black!16},
+        initgoal/.style={prop, double, fill=black!16},
+        del/.style={->, dashed, red!70!black, thick},
+        oplbl/.style={font=\footnotesize\itshape},
+        clbl/.style={font=\footnotesize, text=black!60},
+        legnode/.style={circle, draw, thick, minimum size=3.6mm, inner sep=0pt},
+        leglbl/.style={font=\footnotesize, anchor=west},
+        >={Stealth[length=1.5mm]},
+    ]
+    % --- Cluster A: drill chain (UR) ---
+    \node[initial] (arm)      at (-1.1, 0) {arm\_\\deployed};
+    \node[missing] (drillbit) at (1.1, 0)  {drill\_\\bit};
+    \node[prop]    (hole)     at (0, -1.9) {hole\_\\drilled};
+    \node[goal]    (soil)     at (0, -3.8) {soil\_\\sampled};
+    \draw[->, thick] (arm)      -- (hole);
+    \draw[->, thick] (drillbit) -- (hole);
+    \node[oplbl] at (0, -0.85) {drill};
+    \draw[->, thick] (hole)     -- node[oplbl, right] {sample} (soil);
+    \node[clbl] at (0, -5.2) {Cat 2a, unreachable};
+
+    % --- Cluster B: dish toggle (MX, reversible) ---
+    \node[initgoal] (earth) at (4.3, 0)    {aimed\_\\earth};
+    \node[goal]     (probe) at (4.3, -3.0) {aimed\_\\probe};
+    \draw[->, thick] (earth) to[bend left=45] node[oplbl, right] {aim\_probe} (probe);
+    \draw[->, thick] (probe) to[bend left=45] node[oplbl, left]  {aim\_earth} (earth);
+    \draw[del, <->] (earth) -- node[oplbl, right, black] {del} (probe);
+    \node[clbl] at (4.3, -5.2) {Cat 1, reversible mutex};
+
+    % --- Cluster C: surface / orbit (MX + GS) ---
+    \node[initial] (surface)  at (8.4, 0)     {on\_\\surface};
+    \node[prop]    (airborne) at (10.7, 0)    {airborne};
+    \node[goal]    (orbit)    at (12.9, 0)    {in\_\\orbit};
+    \node[initial] (comms)    at (8.4, -3.0)  {comms};
+    \node[goal]    (mapped)   at (10.9, -3.0) {mapped};
+    \draw[->, thick] (surface)  to[bend left=20] node[oplbl, above] {ascend}  (airborne);
+    \draw[->, thick] (airborne) to[bend left=20] node[oplbl, below] {descend} (surface);
+    \draw[->, thick] (airborne) -- node[oplbl, above] {deploy} (orbit);
+    \draw[->, thick] (surface)  -- node[oplbl, left]  {map} (mapped);
+    \draw[->, thick] (comms)    -- node[oplbl, below] {map} (mapped);
+    \draw[del] (airborne) to[bend left=28] node[oplbl, black, right] {del comms, mapped} (mapped);
+    \node[clbl] at (10.6, -5.2) {Cat 2c, mutex + sequencing};
+
+    % --- Legend (symbol samples) ---
+    \node[legnode, double]        at (3.4, -6.15) {};
+    \node[leglbl]                 at (3.7, -6.15) {initial};
+    \node[legnode, fill=black!16] at (5.7, -6.15) {};
+    \node[leglbl]                 at (6.0, -6.15) {goal};
+    \node[legnode, dashed]        at (7.5, -6.15) {};
+    \node[leglbl]                 at (7.8, -6.15) {no producer};
+
+    \draw[->, thick] (3.25, -6.8) -- (4.0, -6.8);
+    \node[leglbl] at (4.15, -6.8) {precondition $\to$ effect};
+    \draw[del] (7.95, -6.8) -- (8.7, -6.8);
+    \node[leglbl] at (8.85, -6.8) {delete};
+\end{tikzpicture}

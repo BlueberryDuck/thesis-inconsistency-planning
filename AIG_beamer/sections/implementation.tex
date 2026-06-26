@@ -18,6 +18,8 @@
         \end{tikzpicture}
     \end{center}
 
+    \begin{center}\small The Rover Mission runs end to end to $(1,3,4,2,2,1)$.\end{center}
+
     \begin{block}{Key choice}
         \begin{itemize}
             \item \texttt{--enum-mode=brave} unions atoms true in at least one answer set
@@ -36,6 +38,7 @@
         \begin{itemize}
             \item \texttt{coexist\_witness($g_1$, $g_2$)} derived when some trace reaches a state with both goals
             \item \texttt{g2\_after\_g1\_witness($g_1$, $g_2$)} derived when some trace reaches $g_1$ then $g_2$
+            \item Rover, neither witness fires for \textit{mapped} and \textit{in\_orbit}, so they are mutex and \textit{in\_orbit} blocks \textit{mapped}
         \end{itemize}
     \end{block}
 

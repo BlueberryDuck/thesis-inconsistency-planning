@@ -1,0 +1,18 @@
+\begin{tikzpicture}[
+        scale=0.78, transform shape,
+        prop/.style={circle, draw, thick, font=\small, align=center, inner sep=1.5pt},
+        missing/.style={prop, dashed},
+        initial/.style={prop, double},
+        goal/.style={prop, fill=black!16},
+        oplbl/.style={font=\footnotesize\itshape},
+        >={Stealth[length=1.5mm]},
+    ]
+    \node[initial] (arm)      at (0, 0)      {arm\_\\deployed};
+    \node[missing] (drillbit) at (2.8, 0)    {drill\_\\bit};
+    \node[prop]    (hole)     at (0, -2.4)   {hole\_\\drilled};
+    \node[goal]    (soil)     at (2.8, -2.4) {soil\_\\sampled};
+    \draw[->, thick] (arm)      -- (hole);
+    \draw[->, thick] (drillbit) -- (hole);
+    \node[oplbl] at (0.5, -1.3) {drill};
+    \draw[->, thick] (hole) -- node[oplbl, below] {sample} (soil);
+\end{tikzpicture}

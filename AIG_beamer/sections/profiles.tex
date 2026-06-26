@@ -2,8 +2,6 @@
 
 % BUDGET: ~90s
 \begin{frame}{Every profile pairs a goal-level count with a structural count}
-    Each profile reports two things at once, how many goals are affected and how dense the conflict beneath them is.
-
     \begin{exampleblock}{Diagnostic profile shape}
         \[
             \mathcal{I}(\Pi, h) = (\mathcal{I}^{\text{scope}}(\Pi, h),\ \mathcal{I}^{\text{struct}}(\Pi, h))
@@ -12,130 +10,76 @@
 
     \begin{block}{Two components, one parameter}
         \begin{itemize}
-            \item Scope counts goal propositions exhibiting the phenomenon
-            \item Structure counts the underlying conflict artifacts
-            \item Horizon $h \in \mathbb{N}$ bounds the reachability used to detect both counts
-            \item Same shape instantiated by three measures $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
+            \item Scope counts the affected goal propositions, structure the conflict artifacts beneath them
+            \item Horizon $h \in \mathbb{N}$ bounds the reachability behind both counts
+            \item Three measures share this shape, the Unreachability Profile $\mathcal{I}_{\text{UR}}$, the Goal Mutex Profile $\mathcal{I}_{\text{MX}}$, and the Goal Sequencing Conflict Profile $\mathcal{I}_{\text{GS}}$
         \end{itemize}
     \end{block}
 
     \sectioncitebk{bk:normalization}{Thesis \S4.4, \S4.6}
 \end{frame}
 
-% BUDGET: ~90s
-\begin{frame}{$\mathcal{I}_{\text{UR}}$ counts blocked goals and the cascade behind them}
-    \begin{exampleblock}{Locked Door at convergence}
-        $S_{\text{reach}} = \{\{\text{at\_door}\}\}$, so 1 goal is blocked and 3 propositions are unreachable.
-        \[
-            \mathcal{I}_{\text{UR}}(\Pi) = (1, 3)
-        \]
-    \end{exampleblock}
+% BUDGET: ~60s
+\begin{frame}{$\mathcal{I}_{\text{UR}}$ counts goals the horizon never reaches}
+    A goal proposition is unreachable when no state within horizon $h$ contains it. The scope variant counts these blocked goals, the structure variant counts every unreachable proposition, and the gap between them is the depth of the broken dependency chain.
 
     \begin{block}{Definition at horizon $h$}
-        \begin{itemize}
-            \item Scope counts goal propositions absent from every state in $S^h_{\text{reach}}$
-            \item Structure counts all propositions absent from every state in $S^h_{\text{reach}}$
-            \item Difference structure $-$ scope reveals cascading dependency depth
-        \end{itemize}
+        \begin{align*}
+            \mathcal{I}^{\text{scope}}_{\text{UR}}(\Pi, h)  & = |\{g \in G \mid \nexists s \in S^h_{\text{reach}} : g \in s\}| \\
+            \mathcal{I}^{\text{struct}}_{\text{UR}}(\Pi, h) & = |\{p \in P \mid \nexists s \in S^h_{\text{reach}} : p \in s\}|
+        \end{align*}
     \end{block}
 
     \sectioncitebk{bk:bank-vault}{Thesis \S4.4.3}
 \end{frame}
 
-% BUDGET: ~90s
-\begin{frame}{$\mathcal{I}_{\text{MX}}$ separates isolated pairs from dense cliques}
-    \begin{exampleblock}{Two scenarios, two profiles}
-        \centering
-        \begin{tabular}{lcc}
-            \toprule
-            Scenario      & $S_{\text{reach}}$                                        & $\mathcal{I}_{\text{MX}}(\Pi)$ \\
-            \midrule
-            Light Switch  & $\{\{\text{off}\}, \{\text{on}\}\}$                       & $(2, 1)$                       \\
-            Traffic Light & $\{\{\text{red}\}, \{\text{green}\}, \{\text{yellow}\}\}$ & $(3, 3)$                       \\
-            \bottomrule
-        \end{tabular}
-    \end{exampleblock}
+% BUDGET: ~60s
+\begin{frame}{$\mathcal{I}_{\text{MX}}$ counts goals that never coexist}
+    Two goals are mutex at horizon $h$, written $\text{mutex}_h(g_1, g_2)$, when each is reachable on its own but no reachable state holds both. The scope variant counts the goals caught in some mutex, the structure variant counts the unordered pairs.
 
     \begin{block}{Definition at horizon $h$}
-        \begin{itemize}
-            \item Goals $g_1, g_2$ are mutex when each is individually reachable in $S^h_{\text{reach}}$ but no state holds both
-            \item Scope counts goal propositions in at least one mutex pair
-            \item Structure counts unordered mutex pairs $\{g_1, g_2\} \subseteq G$
-            \item Light Switch is 1 isolated pair, Traffic Light a complete clique with $\binom{3}{2} = 3$
-        \end{itemize}
+        \begin{align*}
+            \mathcal{I}^{\text{scope}}_{\text{MX}}(\Pi, h)  & = |\{g \in G \mid \exists g' \in G,\ g \neq g' : \text{mutex}_h(g, g')\}|          \\
+            \mathcal{I}^{\text{struct}}_{\text{MX}}(\Pi, h) & = |\{\{g_1, g_2\} \mid g_1, g_2 \in G,\ g_1 \neq g_2,\ \text{mutex}_h(g_1, g_2)\}|
+        \end{align*}
     \end{block}
 
     \sectioncite{Thesis \S4.4.4}
 \end{frame}
 
-% BUDGET: ~90s
-\begin{frame}{$\mathcal{I}_{\text{GS}}$ measures the direction that mutex erases}
-    \begin{exampleblock}{Trust and Travel at convergence}
-        $S_{\text{reach}}$ contains $\{\text{at\_local}, \text{trust}, \text{partnership}\}$ and $\{\text{at\_local}, \text{opportunity}\}$, never both goals.
-        \[
-            \mathcal{I}_{\text{GS}}(\Pi) = (2, 1) \qquad \text{ordered pair } (\text{opportunity}, \text{partnership})
-        \]
-        Travel deletes \textit{trust} irreversibly, so opportunity-states cannot reach partnership-states. The reverse direction is not blocked.
-    \end{exampleblock}
+% BUDGET: ~60s
+\begin{frame}{$\mathcal{I}_{\text{GS}}$ counts goals blocked in one direction}
+    An ordered pair $(g_1, g_2)$ is a sequencing conflict at horizon $h$, written $\text{sc}_h(g_1, g_2)$, when both goals are reachable yet no trace $\sigma_0, \ldots, \sigma_k$ with $k \leq h$ achieves $g_1$ and then $g_2$. The scope variant counts the goals involved, the structure variant counts the ordered pairs, so the blocking direction is preserved.
 
     \begin{block}{Definition at horizon $h$}
-        \begin{itemize}
-            \item $(g_1, g_2)$ is a sequencing conflict when both are individually reachable yet no trace $\sigma_0, \ldots, \sigma_k$ achieves $g_1$ then $g_2$ within $k \leq h$
-            \item Scope counts goals appearing in any ordered conflict pair
-            \item Structure counts ordered pairs, so direction matters
-        \end{itemize}
+        \begin{align*}
+            \mathcal{I}^{\text{scope}}_{\text{GS}}(\Pi, h)  & = |\{g \in G \mid \exists g' \in G : \text{sc}_h(g, g') \text{ or } \text{sc}_h(g', g)\}| \\
+            \mathcal{I}^{\text{struct}}_{\text{GS}}(\Pi, h) & = |\{(g_1, g_2) \mid g_1, g_2 \in G,\ g_1 \neq g_2,\ \text{sc}_h(g_1, g_2)\}|
+        \end{align*}
     \end{block}
 
     \sectioncitebk{bk:trust-travel}{Thesis \S4.4.5}
 \end{frame}
 
-% BUDGET: ~60s
-\begin{frame}{Sequencing implies mutex, unreachability sits aside}
-    \begin{exampleblock}{Containment at horizon $h$}
+% BUDGET: ~75s
+\begin{frame}{One problem, three diagnoses}
+    The same Rover Mission, now read by the three measures at convergence.
+
+    \begin{exampleblock}{Rover Mission profile}
         \[
-            \{ (g_1, g_2) \text{ in } \mathcal{I}_{\text{GS}} \} \;\subsetneq\; \{ \{g_1, g_2\} \text{ in } \mathcal{I}_{\text{MX}} \}
+            (\mathcal{I}_{\text{UR}},\ \mathcal{I}_{\text{MX}},\ \mathcal{I}_{\text{GS}}) = ((1, 3),\ (4, 2),\ (2, 1))
         \]
-        Unreachable goals participate in neither.
     \end{exampleblock}
 
-    \begin{block}{What containment means for the diagnostic}
+    \begin{block}{Each measure isolates one flaw}
         \begin{itemize}
-            \item Every sequencing conflict is also a mutex pair
-            \item Light Switch is mutex without sequencing, reversible toggles
-            \item Trust and Travel is mutex with sequencing, irreversible travel
-            \item An unreachable goal blocks the chain before any pair test fires
+            \item $\mathcal{I}_{\text{UR}} = (1, 3)$, the drill chain, one blocked goal over three unreachable propositions
+            \item $\mathcal{I}_{\text{MX}} = (4, 2)$, two mutex pairs, the dish and the surface-orbit conflict
+            \item $\mathcal{I}_{\text{GS}} = (2, 1)$, only the surface-orbit pair, the reversible dish has no direction
         \end{itemize}
     \end{block}
 
-    \sectioncitebk{bk:seq-implies-mx}{Thesis \S4.5.2}
-\end{frame}
+    {\small $\mathcal{I}_{\text{GS}}$ refines $\mathcal{I}_{\text{MX}}$ by direction, $\mathcal{I}_{\text{UR}}$ is orthogonal, so the three are complementary.}
 
-% BUDGET: ~60s
-\begin{frame}{Each scenario leaves a distinct profile signature}
-    \begin{center}
-        \small
-        \begin{tabular}{l cc cc cc}
-            \toprule
-            Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
-            \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-                             & scope                                         & struct                                        & scope                                         & struct & scope & struct \\
-            \midrule
-            Locked Door      & 1                                             & 3                                             & 0                                             & 0      & 0     & 0      \\
-            Bank Vault       & 1                                             & 7                                             & 0                                             & 0      & 0     & 0      \\
-            Light Switch     & 0                                             & 0                                             & 2                                             & 1      & 0     & 0      \\
-            Traffic Light    & 0                                             & 0                                             & 3                                             & 3      & 0     & 0      \\
-            Trust and Travel & 0                                             & 0                                             & 2                                             & 1      & 2     & 1      \\
-            Rival Alliances  & 0                                             & 0                                             & 2                                             & 1      & 2     & 2      \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-
-    \begin{block}{What the signatures separate}
-        \begin{itemize}
-            \item Locked Door and Bank Vault share scope 1, differ in cascade depth
-            \item Trust and Travel and Rival Alliances share mutex, separate by sequencing direction
-        \end{itemize}
-    \end{block}
-
-    \sectioncitebk{bk:rival-alliances}{Thesis \S4.3.4}
+    \sectioncitebkk{bk:signatures}{bk:seq-implies-mx}{Constructed running example}
 \end{frame}

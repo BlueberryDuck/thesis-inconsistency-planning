@@ -17,10 +17,10 @@
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{A STRIPS problem $\langle P,O,I,G\rangle$, and a Locked Door with no plan}
+\begin{frame}{A STRIPS problem $\langle P,O,I,G\rangle$, and a rover with no plan}
     \begin{columns}[T]
         \begin{column}{0.58\textwidth}
-            \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$ [Bylander, 1994]}
+            \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$}
                 \begin{itemize}
                     \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
                     \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$, applicable when $\text{precond}(o) \subseteq s$
@@ -28,22 +28,22 @@
                 \end{itemize}
             \end{block}
 
-            \begin{exampleblock}{Scenario 1 Locked Door}
-                \small
-                $P = \{\text{at\_door}, \text{has\_key}, \text{door\_unlocked}, \text{in\_room}\}$\\
-                $O = \{\text{unlock}, \text{enter}\}$,\quad
-                $I = \{\text{at\_door}\}$,\quad $G = \{\text{in\_room}\}$
+            \begin{exampleblock}{Rover Mission, the drill subproblem}
+                \footnotesize
+                $P = \{\text{arm\_deployed}, \text{drill\_bit}, \text{hole\_drilled}, \text{soil\_sampled}\}$\\
+                $O = \{\text{drill}, \text{sample}\}$,\quad
+                $I = \{\text{arm\_deployed}\}$,\quad $G = \{\text{soil\_sampled}\}$
             \end{exampleblock}
         \end{column}
         \begin{column}{0.42\textwidth}
             \begin{center}
-                \input{figures/fig_dependency_graph}
+                \input{figures/fig_rover_drill}
             \end{center}
-            \alert{\small No operator produces \textit{has\_key} $\Rightarrow$ unsolvable.}
+            \alert{\small No operator produces \textit{drill\_bit} \\ $\Rightarrow$ unsolvable.}
         \end{column}
     \end{columns}
 
-    \sectioncite{Thesis \S2.2}
+    \sectioncite{Bylander 1994 \quad Thesis \S2.2}
 \end{frame}
 
 % BUDGET: ~75s
