@@ -1,7 +1,7 @@
 \section{Foundations refresher}
 
 % BUDGET: ~60s
-\begin{frame}{From binary inconsistency to a numerical score $\mathcal{I}(K)$}
+\begin{frame}{Inconsistency measure $\mathcal{I}(K)$}
     \begin{block}{Inconsistency measure $\mathcal{I} : \mathbb{K} \to \mathbb{R}_{\geq 0}$ [Thimm, 2019]}
         \begin{itemize}
             \item Higher value means more inconsistency, $\mathcal{I}(K) = 0$ iff $K$ consistent
@@ -10,64 +10,45 @@
         \end{itemize}
     \end{block}
 
-    \begin{exampleblock}{Knowledge base value}
+    \begin{exampleblock}{Contension $\mathcal{I}_c$}
         $K = \{a \land b,\ \neg a,\ \neg b\}$ forces $a$ and $b$ to ``both'', so $\mathcal{I}_c(K) = 2$.
     \end{exampleblock}
     \sectioncite{Thesis \S2.1}
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{A STRIPS problem $\langle P,O,I,G\rangle$, and a rover with no plan}
+\begin{frame}{Classical planning problem $\Pi = \langle P, O, I, G \rangle$}
+    \begin{block}{\acs{STRIPS} notation $\Pi = \langle P, O, I, G \rangle$ [Bylander 1994]}
+        \footnotesize
+        \begin{itemize}
+            \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
+            \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$, applicable when $\text{precond}(o) \subseteq s$, with result $\text{RESULT}(s, o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$
+            \item Plan: applicable sequence from $I$ reaching a state $\supseteq G$
+        \end{itemize}
+    \end{block}
     \begin{columns}[T]
-        \begin{column}{0.58\textwidth}
-            \begin{block}{\acs{STRIPS} problem $\Pi = \langle P, O, I, G \rangle$}
-                \begin{itemize}
-                    \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
-                    \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$, applicable when $\text{precond}(o) \subseteq s$
-                    \item Plan: applicable sequence from $I$ reaching a state $\supseteq G$
-                \end{itemize}
-            \end{block}
-
+        \begin{column}{0.6\textwidth}
             \begin{exampleblock}{Rover Mission, the drill subproblem}
                 \footnotesize
-                $P = \{\text{arm\_deployed}, \text{drill\_bit}, \text{hole\_drilled}, \text{soil\_sampled}\}$\\
-                $O = \{\text{drill}, \text{sample}\}$,\quad
-                $I = \{\text{arm\_deployed}\}$,\quad $G = \{\text{soil\_sampled}\}$
+                $P = \{\text{arm\_deployed},\ \text{drill\_bit},\ \text{hole\_drilled},\ \text{soil\_sampled}\}$ \\[2pt]
+                $O = \{\ \text{drill} = \langle \{\text{arm\_deployed}, \text{drill\_bit}\},\ \{\text{hole\_drilled}\},\ \emptyset \rangle,$ \\[1pt]
+                $\hphantom{O = \{\ } \text{sample} = \langle \{\text{hole\_drilled}\},\ \{\text{soil\_sampled}\},\ \emptyset \rangle\ \}$ \\[2pt]
+                $I = \{\text{arm\_deployed}\}, \qquad G = \{\text{soil\_sampled}\}$
             \end{exampleblock}
         \end{column}
-        \begin{column}{0.42\textwidth}
-            \begin{center}
-                \input{figures/fig_rover_drill}
-            \end{center}
-            \alert{\small No operator produces \textit{drill\_bit} \\ $\Rightarrow$ unsolvable.}
+        \begin{column}{0.4\textwidth}
+            \vspace*{-0.2em}
+            \centering
+            \input{figures/fig_rover_drill}
         \end{column}
     \end{columns}
 
-    \sectioncite{Bylander 1994 \quad Thesis \S2.2}
-\end{frame}
-
-% BUDGET: ~75s
-\begin{frame}{Horizon $h$ bounds reachability and converges at $h^*$}
-    \begin{block}{Horizon-bounded reachable states}
-        \[
-            S^h_{\text{reach}} = \{s \mid s \text{ reachable from } I \text{ in at most } h \text{ operator applications}\}
-        \]
-    \end{block}
-
-    \begin{block}{Convergence makes the bound faithful}
-        \begin{itemize}
-            \item Reachability must be bounded to stay computable, $h$ caps the operator applications
-            \item Monotone chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at $h^* \leq 2^{|P|}$
-            \item At $h \geq h^*$ the bound is exact, so detected conflicts are genuine, not short-horizon artifacts
-            \item $h^*$ is worst-case exponential, so the evaluation fixes $h = 20$
-        \end{itemize}
-    \end{block}
-
-    \sectioncitebk{bk:horizon}{Thesis \S4.4.2}
+    \vspace{0.5em}
+    \sectioncite{Thesis \S2.2}
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{Each answer set is a trace and brave reasoning unions them}
+\begin{frame}{Answer Set Programming (ASP)}
     The measures test reachability over the state space, the kind of declarative search \ac{ASP} is built for.
 
     \begin{block}{Logic program [Dimopoulos et al., 1997]}
