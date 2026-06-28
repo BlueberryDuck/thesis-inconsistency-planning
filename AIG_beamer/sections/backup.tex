@@ -132,25 +132,25 @@
     \sectioncite{Thesis \S4.5.2}
 \end{frame}
 
-\begin{frame}[noframenumbering,fragile]{Backup, witness rules in ASP}
+\begin{frame}[noframenumbering,fragile]{Backup, state-space exploration encoding}
     \hypertarget{bk:asp-listing}{}
-    \scriptsize
-    \begin{verbatim}
-% True reachability of a proposition
-true_reachable(P) :- holds(P, T), prop(P).
+    \begin{lstlisting}[style=asp]
+time(0..horizon).
+holds(P, 0) :- init(P).
+% Applicability, positive and negative preconditions
+neg_precond_violated(O, T) :- neg_precond(O, P), holds(P, T).
+applicable(O, T) :- operator(O), time(T), T < horizon,
+    not neg_precond_violated(O, T), holds(P, T) : precond(O, P).
+% One operator per step, each choice a distinct trace
+{ apply(O, T) : applicable(O, T) } 1 :- time(T), T < horizon.
+% State transition with frame axiom
+deleted(P, T) :- apply(O, T), delete(O, P).
+holds(P, T+1) :- apply(O, T), add(O, P).
+holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
+    \end{lstlisting}
+    The choice rule branches into one answer set per execution trace. The frame axiom carries propositions forward unless an operator deletes them.
 
-% Coexistence witness for a goal pair
-coexist_witness(G1, G2) :- goal(G1), goal(G2), G1 < G2,
-    holds(G1, T), holds(G2, T), time(T).
-
-% Sequencing witness, G2 after G1
-g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
-    holds(G1, T1), holds(G2, T2), T2 >= T1.
-\end{verbatim}
-    \normalsize
-    Brave reasoning unions these atoms across answer sets. An atom missing under brave means no trace satisfies the condition.
-
-    \sectioncite{Thesis \S5.3.3}
+    \sectioncite{Thesis \S5.3.2}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, per-domain results breakdown}
@@ -178,15 +178,53 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
 \begin{frame}[noframenumbering]{Backup, PSPACE-completeness proof sketch}
     \hypertarget{bk:pspace-proof}{}
     \begin{block}{Membership of $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ in PSPACE}
+        \footnotesize
         \begin{itemize}
-            \item Nondeterministically guess an operator trace from $I$ in polynomial space, accept when $g$ appears
-            \item Acyclic paths have length $\leq 2^{|P|}$, so a polynomial-bit step counter suffices
+            \item Guess an operator trace from $I$ in polynomial space, accept when $g$ appears
             \item NPSPACE $=$ PSPACE by Savitch, iterating over $|G|$ goals stays polynomial
         \end{itemize}
     \end{block}
 
     \begin{block}{Hardness via reduction from PlanSat}
+        \footnotesize
         From $\Pi = \langle P, O, I, G \rangle$, build $\Pi' = \langle P \cup \{g^*\},\ O \cup \{o^*\},\ I,\ \{g^*\} \rangle$ with $o^* = \langle G, \{g^*\}, \emptyset \rangle$. Then $g^*$ is reachable iff $\Pi$ has a plan, so $\text{UPPER}_{\mathcal{I}_{\text{UR}}}$ at $k = 0$ decides PlanSat.
+    \end{block}
+
+    \begin{block}{Extends to MX, GS, and the other problems}
+        \footnotesize
+        \begin{itemize}
+            \item For $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$ a similar reduction makes the only path to $g_2$ delete $g_1$, so the pair is mutex or sequenced iff $\Pi$ is unsolvable
+            \item LOWER is the complement of UPPER, EXACT checks both bounds, VALUE binary-searches UPPER, all staying in PSPACE or FPSPACE
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.3}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, PSPACE flattens the propositional multi-tier landscape}
+    \hypertarget{bk:pspace-compare}{}
+    \begin{exampleblock}{Decision-problem complexity, planning versus propositional $\mathcal{I}_c$}
+        \centering
+        \footnotesize
+        \begin{tabular}{lll}
+            \toprule
+            Problem & Planning measures & Propositional $\mathcal{I}_c$ [Thimm and Wallner, 2016] \\
+            \midrule
+            UPPER   & PSPACE-complete   & NP-complete                                             \\
+            LOWER   & PSPACE-complete   & coNP-complete                                           \\
+            EXACT   & PSPACE-complete   & $D^p$-complete                                          \\
+            VALUE   & FPSPACE           & FP$^{\text{NP}[\log n]}$-complete                       \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Why the tiers collapse}
+        \footnotesize
+        \begin{itemize}
+            \item Propositionally the base problem is satisfiability, NP-complete, so the measures stack into tiers above it
+            \item For planning the base is PlanSat, already PSPACE-complete, a far larger ceiling
+            \item PSPACE $=$ co-PSPACE collapses UPPER, LOWER, and EXACT, VALUE follows by polynomially many calls, so the gaps between measures vanish
+        \end{itemize}
     \end{block}
 
     \sectioncite{Thesis \S4.5.3}
@@ -241,7 +279,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
     \hypertarget{bk:grounding}{}
     \begin{exampleblock}{Two scalability walls}
         \begin{itemize}
-            \item 7 of 15 \ac{IPC} domains never complete grounding within 120\,s
+            \item 7 of 15 IPC domains never complete grounding within 120\,s
             \item Among compatible domains, 90 of 158 instances time out, 57\%
         \end{itemize}
     \end{exampleblock}
@@ -311,7 +349,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
         \begin{itemize}
             \item 80 tests across 8 categories, full suite runs in under one second
             \item 11 test scenarios match expected profiles exactly
-            \item Categories cover scenarios, hierarchy, library \ac{API}, end-to-end \ac{PDDL}
+            \item Categories cover scenarios, hierarchy, library API, end-to-end PDDL
         \end{itemize}
     \end{exampleblock}
 
@@ -354,6 +392,34 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
     \sectioncite{Thesis \S4.5.1, \S6.3.6, \S7.4}
 \end{frame}
 
+\begin{frame}[noframenumbering]{Backup, adding an operator can raise $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$}
+    \hypertarget{bk:op-mono-ce}{}
+    \begin{exampleblock}{One construction breaks both, $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$}
+        \footnotesize
+        Start with $O = \{\,\textit{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\}\rangle\,\}$, then add $\textit{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\}\rangle$.\\[2pt]
+        \centering
+        \begin{tabular}{lcc}
+            \toprule
+                                      & before add & after add \\
+            \midrule
+            $\mathcal{I}_{\text{MX}}$ & $(0, 0)$   & $(2, 1)$  \\
+            $\mathcal{I}_{\text{GS}}$ & $(0, 0)$   & $(2, 2)$  \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Why the value rises, and why $\mathcal{I}_{\text{UR}}$ is immune}
+        \footnotesize
+        \begin{itemize}
+            \item Before, $g_2$ is unreachable, so no mutex pair and no sequencing conflict can form
+            \item The added operator makes $g_2$ reachable but deletes $a$, which nothing re-adds, so no reachable state holds both goals
+            \item This operator-induced mutex, with neither order achievable, raises $\mathcal{I}$, while $\mathcal{I}_{\text{UR}}$ only falls as $S^h_{\text{reach}}$ grows
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.1}
+\end{frame}
+
 \begin{frame}[noframenumbering]{Backup, absolute counts instead of normalized measures}
     \hypertarget{bk:normalization}{}
     \begin{exampleblock}{Relative measures exist [Besnard and Grant, 2020]}
@@ -365,7 +431,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
             \item Severity is not proportional to size, 2 conflicting goals among 100 may be easier to repair than a complete clique on 3
             \item Every denominator choice encodes an assumption about problem structure
             \item The profiles already carry relative information, scope against structure within each measure
-            \item Future work calibrates normalization against the \ac{IPC} benchmark distribution
+            \item Future work calibrates normalization against the IPC benchmark distribution
         \end{itemize}
     \end{block}
 

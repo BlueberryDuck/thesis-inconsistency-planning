@@ -1,16 +1,17 @@
 \section{Postulates and complexity}
 
 % BUDGET: ~90s
-\begin{frame}{No measure satisfies Planning Consistency alone}
+\begin{frame}{Postulates for planning-adapted inconsistency measures}
     \begin{block}{Three planning-adapted postulates}
         \begin{itemize}
             \item Planning Consistency, $\mathcal{I}(\Pi, h) = 0$ iff $\Pi$ solvable at sufficient $h$
-            \item Operator Monotonicity reverses sign, adding operators cannot raise $\mathcal{I}$
-            \item Goal Monotonicity keeps classical sign, adding goals cannot lower $\mathcal{I}$
+            \item Operator Monotonicity, more operators open new paths and can only lower $\mathcal{I}$
+            \item Goal Monotonicity, more goals add requirements and can only raise $\mathcal{I}$
         \end{itemize}
     \end{block}
 
     \begin{center}
+        \footnotesize
         \begin{tabular}{l cc cc cc}
             \toprule
                                   & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                                              \\
@@ -24,34 +25,24 @@
         \end{tabular}
     \end{center}
 
-    \sectioncitebk{bk:postulates}{Thesis \S4.5.1}
+    {\small No single measure satisfies Planning Consistency. Characterizing every failure needs multiple measures together.}
+
+    \sectioncitebkk{bk:postulates}{bk:op-mono-ce}{Thesis \S4.5.1}
 \end{frame}
 
-% BUDGET: ~90s
-\begin{frame}{PSPACE absorbs the multi-tier complexity landscape}
-    \begin{block}{Decision-problem complexity for each $\mathcal{I} \in \{\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}\}$}
-        \centering
-        \footnotesize
-        \begin{tabular}{lll}
-            \toprule
-            Problem & Planning        & Propositional $\mathcal{I}_c$ [Thimm and Wallner, 2016] \\
-            \midrule
-            UPPER   & PSPACE-complete & NP-complete                                             \\
-            LOWER   & PSPACE-complete & coNP-complete                                           \\
-            EXACT   & PSPACE-complete & $D^p$-complete                                          \\
-            VALUE   & FPSPACE         & FP$^{\text{NP}[\log n]}$-complete                       \\
-            \bottomrule
-        \end{tabular}
+% BUDGET: ~60s
+\begin{frame}{Complexity of planning-adapted inconsistency measures}
+    \begin{block}{Complexity}
+        Every decision problem for $\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}$ is PSPACE-complete, the value problems lie in FPSPACE.
     \end{block}
 
-    \begin{block}{Why the landscape flattens}
+    \begin{block}{Why}
         \begin{itemize}
-            \item Propositional landscape spans three tiers, $\mathcal{I}_c$ shows the lowest
-            \item Reachability over the state space is already PSPACE-complete [Bylander, 1994]
-            \item PSPACE $=$ co-PSPACE collapses UPPER, LOWER, and EXACT into one class
-            \item VALUE follows by polynomially many PSPACE calls
+            \item Each measure is reachability analysis over the state space
+            \item Plan existence is already PSPACE-complete [Bylander, 1994], and PSPACE is closed under complement and polynomial composition
+            \item So thresholds and counting cannot escape PSPACE, computing the profile costs no more than deciding solvability
         \end{itemize}
     \end{block}
 
-    \sectioncitebk{bk:pspace-proof}{Thesis \S4.5.3}
+    \sectioncitebkk{bk:pspace-proof}{bk:pspace-compare}{Thesis \S4.5.3}
 \end{frame}

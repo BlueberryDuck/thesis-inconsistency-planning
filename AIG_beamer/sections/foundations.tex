@@ -18,7 +18,7 @@
 
 % BUDGET: ~90s
 \begin{frame}{Classical planning problem $\Pi = \langle P, O, I, G \rangle$}
-    \begin{block}{\acs{STRIPS} notation $\Pi = \langle P, O, I, G \rangle$ [Bylander 1994]}
+    \begin{block}{STRIPS notation $\Pi = \langle P, O, I, G \rangle$ [Bylander 1994]}
         \footnotesize
         \begin{itemize}
             \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
@@ -37,19 +37,21 @@
             \end{exampleblock}
         \end{column}
         \begin{column}{0.4\textwidth}
-            \vspace*{-0.2em}
+            \vspace*{-0.5em}
             \centering
             \input{figures/fig_rover_drill}
         \end{column}
     \end{columns}
 
-    \vspace{0.5em}
+    \vspace{-0.2em}
+    {\small A PDDL Domain and Problem translate to such a $\Pi$, the input the implementation accepts.}
+
     \sectioncite{Thesis \S2.2}
 \end{frame}
 
 % BUDGET: ~90s
 \begin{frame}{Answer Set Programming (ASP)}
-    The measures test reachability over the state space, the kind of declarative search \ac{ASP} is built for.
+    The measures test reachability over the state space, the kind of declarative search ASP is built for.
 
     \begin{block}{Logic program [Dimopoulos et al., 1997]}
         \begin{itemize}

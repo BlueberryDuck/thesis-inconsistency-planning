@@ -1,31 +1,33 @@
 \section{Implementation}
 
 % BUDGET: ~90s
-\begin{frame}{Brave reasoning replaces exponential trace enumeration}
+\begin{frame}{Implementation Overview}
     \begin{center}
         \begin{tikzpicture}[
                 node distance=14mm,
                 box/.style={rectangle, draw, rounded corners, thick, minimum height=10mm, align=center, inner sep=3pt, font=\scriptsize},
                 arr/.style={-stealth, thick}
             ]
-            \node[box]               (pddl) {PDDL\\ domain + problem};
-            \node[box, right=of pddl] (asp) {ASP facts\\ (lifted)};
-            \node[box, right=of asp]  (wit) {Witness atoms\\ (brave union)};
-            \node[box, right=of wit] (prof) {Profile\\ $\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}$};
-            \draw[arr] (pddl) -- node[above, font=\scriptsize]{\textit{plasp}} (asp);
-            \draw[arr] (asp)  -- node[above, font=\scriptsize]{brave} (wit);
-            \draw[arr] (wit)  -- node[above, font=\scriptsize]{extract} (prof);
+            \node[box]                (pddl) {PDDL\\ domain + problem};
+            \node[box, right=of pddl] (asp)  {ASP facts};
+            \node[box, right=of asp]  (wit)  {Witness atoms};
+            \node[box, right=of wit]  (prof) {Profile\\ $\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}$};
+            \draw[arr] (pddl) -- (asp);
+            \draw[arr] (asp)  -- (wit);
+            \draw[arr] (wit)  -- (prof);
         \end{tikzpicture}
     \end{center}
 
-    \begin{center}\small The Rover Mission runs end to end to $(1,3,4,2,2,1)$.\end{center}
-
-    \begin{block}{Key choice}
+    \begin{block}{Implementation Pipeline}
         \begin{itemize}
-            \item \texttt{--enum-mode=brave} unions atoms true in at least one answer set
-            \item Each answer set is one execution trace, and brave captures all without enumeration
-            \item Witness atoms record whether goal pairs coexist or sequence
-            \item Absence of a witness under brave proves no trace satisfies the condition
+            \item \textbf{Translate}
+                  \begin{itemize}
+                      \item Custom preprocessing strips \texttt{:costs}
+                      \item First a prototype grounder blew up combinatorially, \\instead \textit{plasp} now lifts PDDL to ASP
+                      \item A bridge maps onto the internal predicates
+                  \end{itemize}
+            \item \textbf{Explore}: the reachability encoding derives the reachable states under Clingo brave, unioning every execution trace in a single solve
+            \item \textbf{Extract}: set operations over the witness atoms produce the six measure values, the diagnostic profile
         \end{itemize}
     \end{block}
 
@@ -33,21 +35,23 @@
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{Witness absence under brave reasoning is a universal proof}
-    \begin{block}{Two witness atoms for goal pairs}
-        \begin{itemize}
-            \item \texttt{coexist\_witness($g_1$, $g_2$)} derived when some trace reaches a state with both goals
-            \item \texttt{g2\_after\_g1\_witness($g_1$, $g_2$)} derived when some trace reaches $g_1$ then $g_2$
-            \item Rover, neither witness fires for \textit{mapped} and \textit{in\_orbit}, so they are mutex and \textit{in\_orbit} blocks \textit{mapped}
-        \end{itemize}
+\begin{frame}[fragile]{Witness Extraction and Profile Construction}
+    The reachability encoding derives \texttt{holds(P, T)}, true when proposition $P$ holds at step $T$. One witness rule per measure reads it.
+
+    \begin{block}{Witness rules}
+        \begin{lstlisting}[style=asp]
+% True reachability: P in some reachable state
+true_reachable(P) :- holds(P, T), prop(P).
+% Coexistence: G1 and G2 hold in one state
+coexist_witness(G1, G2) :- goal(G1), goal(G2), G1 < G2,
+    holds(G1, T), holds(G2, T), time(T).
+% Sequencing: G2 reachable after G1
+g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
+    holds(G1, T1), holds(G2, T2), T2 >= T1.
+        \end{lstlisting}
     \end{block}
 
-    \begin{block}{Why brave is the right mode}
-        \begin{itemize}
-            \item A witness is in the brave union iff \emph{some} trace satisfies the condition, and absent iff \emph{no} trace does, exactly the mutex/sequencing definition
-            \item Cautious would require \emph{every} trace to carry the witness, the wrong quantifier for a non-existence claim
-        \end{itemize}
-    \end{block}
+    {\small Brave unions these across traces, so a \emph{missing} witness is a universal proof that \emph{no} trace satisfies the condition. Eleven scenarios reproduced exactly, 80 tests green.}
 
-    \sectioncitebk{bk:asp-listing}{Thesis \S5.3.3}
+    \sectioncitebkk{bk:asp-listing}{bk:validation}{Thesis \S5.3.3, \S5.6}
 \end{frame}

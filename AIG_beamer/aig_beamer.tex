@@ -17,6 +17,22 @@
 \usepackage{amssymb}            % Math symbols
 \usepackage{acronym}            % Acronym management
 \usepackage{booktabs}           % Professional table rules
+\usepackage{listings}           % ASP code listings, matching thesis \S5
+\lstset{
+    basicstyle=\scriptsize\ttfamily,
+    keywordstyle=\bfseries,
+    commentstyle=\itshape\color{gray},
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true,
+}
+\lstdefinestyle{asp}{
+    language={},
+    alsoletter={\#,_},
+    morekeywords={not, true, false, \#show, \#const, \#minimize, \#maximize},
+    keywordstyle=\bfseries,
+    morecomment=[l]{\%},
+}
 \usepackage{hyperref}           % Hyperlinks for backup slides
 \hypersetup{hidelinks}
 
@@ -38,15 +54,6 @@ University of Hagen, Germany}
 %========================================================================
 \logo{\includegraphics[width=3cm]{figures/logoaig2025_transparent.png}}
 %========================================================================
-
-% Acronym definitions
-\acrodef{API}{application programming interface}
-\acrodef{ASP}{Answer Set Programming}
-\acrodef{CLI}{command-line interface}
-\acrodef{IPC}{International Planning Competition}
-\acrodef{PDDL}{Planning Domain Definition Language}
-\acrodef{SAT}{Boolean Satisfiability}
-\acrodef{STRIPS}{Stanford Research Institute Problem Solver}
 
 % Footer cite helper
 \newcommand{\sectioncite}[1]{\hfill {\scriptsize \textcolor{gray}{#1}}}
