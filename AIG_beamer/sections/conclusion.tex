@@ -3,36 +3,27 @@
 % BUDGET: ~90s
 \begin{frame}{Conclusion}
     \begin{columns}[t]
-        \begin{column}{0.33\textwidth}
+        \begin{column}{0.48\textwidth}
             \begin{block}{Contributions}
                 \begin{itemize}
-                    \item Three planning-native profiles $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
-                    \item ASP brave-reasoning pipeline with witness atoms
-                    \item 68 of 158 instances diagnosed across three granularity levels
+                    \item RQ1, three planning-native profiles $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
+                    \item RQ2, ASP brave-reasoning pipeline where a missing witness atom proves unsatisfiability
+                    \item RQ3, 68 of 158 instances diagnosed, distinguishing structurally different unsolvability categories
                 \end{itemize}
             \end{block}
         \end{column}
-        \begin{column}{0.33\textwidth}
-            \begin{block}{Limits}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Limitations and future work}
                 \begin{itemize}
-                    \item Grounding bottleneck times out on 57\% of instances
-                    \item Pairwise blind spot on $k$-tuple unsatisfiability
-                    \item Only two solvable instances available for specificity check
-                \end{itemize}
-            \end{block}
-        \end{column}
-        \begin{column}{0.33\textwidth}
-            \begin{block}{Directions}
-                \begin{itemize}
-                    \item $k$-tuple extension beyond pairwise tests
-                    \item MaxSAT or symbolic encodings for scalability
-                    \item Adaptive horizon via iterative deepening
+                    \item Grounding bottleneck, 57\% time out \\ $\to$ lifted or MaxSAT encodings
+                    \item Horizon dependence, no sufficient $h$ \\ $\to$ adaptive iterative deepening
+                    \item Pairwise blind spot on $k$-tuples \\ $\to$ extend mutex and sequencing
+                    \item Diagnosis only, not repair \\ $\to$ minimal-modification repair
                 \end{itemize}
             \end{block}
         \end{column}
     \end{columns}
 
     \vfill
-    \only<2->{\hfill\textit{Thanks!}}
-    \sectioncitebk{bk:grounding}{Thesis \S7}
+    \only<2->{\hfill\textit{Thank you!}}
 \end{frame}

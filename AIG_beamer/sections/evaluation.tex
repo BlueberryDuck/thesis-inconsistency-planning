@@ -23,64 +23,86 @@
 
 % BUDGET: ~90s
 \begin{frame}{Evaluation results}
-    \begin{columns}[t]
-        \begin{column}{0.5\textwidth}
-            \begin{exampleblock}{Coverage by domain}
-                \centering\small
-                \begin{tabular}{lrr}
-                    \toprule
-                    Domain              & OK / total        & coverage      \\
-                    \midrule
-                    diagnosis           & 18 / 20           & 90\%          \\
-                    3unsat              & 20 / 30           & 67\%          \\
-                    bottleneck          & 12 / 25           & 48\%          \\
-                    cave-diving         & 9 / 25            & 36\%          \\
-                    pegsol-row5         & 3 / 15            & 20\%          \\
-                    document-transfer   & 3 / 20            & 15\%          \\
-                    chessboard-pebbling & 3 / 23            & 13\%          \\
-                    \midrule
-                    \textbf{Total}      & \textbf{68 / 158} & \textbf{43\%} \\
-                    \bottomrule
-                \end{tabular}
-            \end{exampleblock}
-        \end{column}
-        \begin{column}{0.5\textwidth}
-            \begin{block}{Category classification of the 68}
-                \begin{itemize}
-                    \item Category 2a unreachability, 25 instances across four domains
-                    \item Category 2c sequencing, 13 instances across two domains
-                    \item Zero pure 2c-mutex, consistent with sequencing $\subset$ mutex
-                    \item 30 classified consistent, 20 of those from \textit{3unsat} as a known blind spot
-                \end{itemize}
-            \end{block}
-        \end{column}
-    \end{columns}
-
-    \sectioncitebkk{bk:per-domain}{bk:validation}{Thesis \S6.2}
-\end{frame}
-
-% BUDGET: ~90s
-\begin{frame}{Three case studies}
-    \begin{exampleblock}{Three case studies}
+    \begin{exampleblock}{Coverage of the seven compatible domains}
         \centering\small
-        \begin{tabular}{llll}
+        \begin{tabular}{l c ccc c}
             \toprule
-            Instances        & Variant                                   & Value                  & Reading                          \\
+                                &                   & \multicolumn{3}{c}{instances with $\mathcal{I} > 0$} &                                         \\
+            \cmidrule(lr){3-5}
+            Domain              & OK / total        & UR                                                   & MX          & GS          & consistent  \\
             \midrule
-            prob06 vs prob05 & $\mathcal{I}^{\text{scope}}_{\text{UR}}$  & 1 vs 49                & 14\% vs 88\% of goals blocked    \\
-            prob10 vs prob16 & $\mathcal{I}^{\text{struct}}_{\text{MX}}$ & 1 vs $\binom{8}{2}=28$ & single pair vs complete clique   \\
-            \textit{3unsat}  & all variants                              & 0                      & pairwise tests miss triple-unsat \\
+            diagnosis           & 18 / 20           & 18                                                   & 2           & 2           & 0           \\
+            3unsat              & 20 / 30           & 0                                                    & 0           & 0           & 20          \\
+            bottleneck          & 12 / 25           & 0                                                    & 10          & 10          & 2           \\
+            cave-diving         & 9 / 25            & 1                                                    & 0           & 0           & 8           \\
+            pegsol-row5         & 3 / 15            & 3                                                    & 0           & 0           & 0           \\
+            document-transfer   & 3 / 20            & 3                                                    & 0           & 0           & 0           \\
+            chessboard-pebbling & 3 / 23            & 0                                                    & 3           & 3           & 0           \\
+            \midrule
+            \textbf{Total}      & \textbf{68 / 158} & \textbf{25}                                          & \textbf{15} & \textbf{15} & \textbf{30} \\
             \bottomrule
         \end{tabular}
     \end{exampleblock}
 
-    \begin{block}{What the diagnostic delivers}
+    {\footnotesize Timing each implementation phase shows that coverage is mostly compute-bound, solving dominates six of seven domains, grounding only the operator-heavy ones.}
+
+    \sectioncitebkk{bk:per-domain}{bk:validation}{Thesis \S6.2}
+\end{frame}
+
+% BUDGET: ~60s
+\begin{frame}{Selected case studies}
+    \begin{columns}[t]
+        \begin{column}{0.31\textwidth}
+            \begin{exampleblock}{Scope grades severity}
+                \textit{diagnosis} prob06 vs prob05 \\[4pt]
+                $\mathcal{I}^{\text{scope}}_{\text{UR}} = 1$ vs $49$ \\[4pt]
+                14\% vs 88\% of goals unreachable
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.31\textwidth}
+            \begin{exampleblock}{Structure grades density}
+                \textit{diagnosis} prob10 vs prob16 \\[4pt]
+                $\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$ vs $28$ \\[4pt]
+                single pair vs clique, $28 = \binom{8}{2}$ proven bound
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.31\textwidth}
+            \begin{exampleblock}{Pairwise blind spot}
+                \textit{3unsat}, all measures $0$ \\[4pt]
+                every goal pair coexists \\[4pt]
+                no assignment satisfies all, pairwise misses the triple
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+
+    \vfill
+    {\footnotesize The measures grade severity and density, and expose where pairwise analysis stops.}
+
+    \sectioncitebk{bk:3unsat}{Thesis \S6.3}
+\end{frame}
+
+% BUDGET: ~75s
+\begin{frame}{Soundness-coverage tradeoff}
+    \begin{exampleblock}{\textit{diagnosis} prob10 across three horizons}
+        \centering\footnotesize
+        \begin{tabular}{rccc l}
+            \toprule
+            $h$ & $\mathcal{I}^{\text{scope}}_{\text{UR}}$ & $\mathcal{I}^{\text{scope}}_{\text{MX}}$ & $\mathcal{I}^{\text{scope}}_{\text{GS}}$ & Reading                             \\
+            \midrule
+            10  & 19                                       & 0                                        & 0                                        & conflicting goals not yet reachable \\
+            20  & 14                                       & 2                                        & 2                                        & apparent mutex and sequencing       \\
+            30  & 11                                       & 0                                        & 0                                        & longer trace resolves the conflict  \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{The tradeoff}
         \begin{itemize}
-            \item Scope grades severity at the goal level
-            \item Structure grades density of the underlying conflict graph
-            \item $k$-tuple blind spot, every pair coexists yet no state holds all three
+            \item Soundness side, unreachability falls monotonically, mutex and sequencing do not, so short horizons give false positives
+            \item Coverage side, each time step grows the ground program, fewer instances complete
+            \item $h = 20$ balances the two, no single optimum, no solvable instance reports a conflict
         \end{itemize}
     \end{block}
 
-    \sectioncitebk{bk:3unsat}{Thesis \S6.3}
+    \sectioncitebk{bk:horizon}{Thesis \S6.4}
 \end{frame}

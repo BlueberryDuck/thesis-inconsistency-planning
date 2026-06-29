@@ -275,27 +275,6 @@ holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
     \sectioncite{Thesis \S1.1, \S3}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Backup, grounding bottleneck and solve cost}
-    \hypertarget{bk:grounding}{}
-    \begin{exampleblock}{Two scalability walls}
-        \begin{itemize}
-            \item 7 of 15 IPC domains never complete grounding within 120\,s
-            \item Among compatible domains, 90 of 158 instances time out, 57\%
-        \end{itemize}
-    \end{exampleblock}
-
-    \begin{block}{Phase split on the 70 completing instances}
-        \begin{itemize}
-            \item Solving dominates in 6 of 7 domains, grounding dominates only on \textit{pegsol-row5}
-            \item \textit{document-transfer} prob06 spends 0.12\,s grounding and 18.8\,s solving, ratio 154
-            \item Solve cost reflects combinatorial brave search across delete effects, $O(|O| \times h)$ grounding bound stays separate
-            \item Future work, lifted ASP solving or MaxSAT to attack both phases independently
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S6.5}
-\end{frame}
-
 \begin{frame}[noframenumbering]{Backup, Bank Vault deepens the unreachability cascade}
     \hypertarget{bk:bank-vault}{}
     \begin{exampleblock}{Two unreachability profiles at convergence}
