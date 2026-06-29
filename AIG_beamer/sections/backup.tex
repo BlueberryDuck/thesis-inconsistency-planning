@@ -51,7 +51,7 @@
     \hypertarget{bk:enriched}{}
     \begin{exampleblock}{The Rover dish toggle under two encodings}
         \footnotesize
-        Precondition-only \quad $K_{\text{dish}} = \{\text{aimed\_earth},\ \text{aimed\_probe},\ \text{aimed\_probe} \rightarrow \text{aimed\_earth},\ \text{aimed\_earth} \rightarrow \text{aimed\_probe}\}$\\[4pt]
+        Precondition-only \quad $K_{\text{dish}} = \{\text{aimed\_earth},\ \text{aimed\_probe},\ \text{aimed\_probe} \rightarrow \text{aimed\_earth},\ \text{aimed\_earth} \rightarrow \text{aimed\_probe}\}$\\[2pt]
         Enriched \quad $K^+_{\text{dish}} = K_{\text{dish}} \cup \{\text{aimed\_probe} \rightarrow \neg\text{aimed\_earth},\ \text{aimed\_earth} \rightarrow \neg\text{aimed\_probe}\}$
     \end{exampleblock}
 
@@ -60,7 +60,7 @@
             \item Precondition-only is classically consistent, $v(\text{aimed\_earth}) = v(\text{aimed\_probe}) = T$, the mutex is invisible and $\mathcal{I}_c = 0$
             \item The delete-effect rule $p \rightarrow \neg d$ makes it inconsistent, so the mutex is now represented
             \item Yet $v(\text{aimed\_probe}) = B$, $v(\text{aimed\_earth}) = T$ satisfies every formula, so $\mathcal{I}_c = 1$
-            \item $B$ absorbs the conflict at one proposition, the same flat score as the unreachable drill chain
+            \item $B$ absorbs the conflict at one proposition, the same flat score as the drill chain
         \end{itemize}
     \end{block}
 
@@ -74,8 +74,7 @@
 \begin{frame}[noframenumbering]{Backup, one problem, three structural categories}
     \hypertarget{bk:overlap}{}
     \begin{exampleblock}{The Rover Mission carries one failure per cluster}
-        $G = \{\text{soil\_sampled}, \text{aimed\_earth}, \text{aimed\_probe}, \text{in\_orbit}, \text{mapped}\}$\\[3pt]
-        Three independent subsystems contribute a structurally different failure to the same goal set.
+        $G = \{\text{soil\_sampled}, \text{aimed\_earth}, \text{aimed\_probe}, \text{in\_orbit}, \text{mapped}\}$, three independent subsystems each contributing a structurally different failure.
     \end{exampleblock}
 
     \begin{block}{Three categories in one problem}
@@ -97,6 +96,7 @@
 \begin{frame}[noframenumbering]{Backup, Bank Vault deepens the unreachability cascade}
     \hypertarget{bk:bank-vault}{}
     \begin{exampleblock}{Two unreachability profiles at convergence}
+        \small
         \centering
         \begin{tabular}{lccc}
             \toprule
@@ -110,10 +110,9 @@
 
     \begin{block}{The drill chain is the shallow case, Bank Vault the deep one}
         \begin{itemize}
-            \item The drill chain has one missing root \textit{drill\_bit}, blocking \textit{hole\_drilled} then \textit{soil\_sampled}, scope 1 over structure 3
-            \item Bank Vault has three roots \textit{key1}, \textit{key2}, \textit{admin\_appr} with no producers, three blocked chains converging on \textit{in\_vault}
-            \item Same scope value, the structure count grows with the number and length of converging blocked chains
-            \item $\mathcal{I}^{\text{struct}}_{\text{UR}}$ separates a single short cascade from a deep multi-root one
+            \item Drill chain, missing root \textit{drill\_bit} blocks \textit{hole\_drilled} then \textit{soil\_sampled}
+            \item Bank Vault, three producerless roots feed three chains into \textit{in\_vault}
+            \item Same scope, structure grows with chain count and length
         \end{itemize}
     \end{block}
 
@@ -142,17 +141,14 @@
 \begin{frame}[noframenumbering]{Backup, symmetric sequencing raises the structure count}
     \hypertarget{bk:rival-alliances}{}
     \begin{exampleblock}{Rival Alliances, both orders fail}
-        \[
-            S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\},\ \{\text{neutral\_A}, \text{allied\_A}\},\ \{\text{neutral\_B}, \text{allied\_B}\}\}
-        \]
-        $G = \{\text{allied\_A}, \text{allied\_B}\}$, each \textit{ally} operator deletes the rival's neutral precondition irreversibly.
+        $G = \{\text{allied\_A}, \text{allied\_B}\}$, each \textit{ally} operator deletes the rival's neutral precondition irreversibly, so the two goals never coexist.
     \end{exampleblock}
 
     \begin{block}{Structure value separates symmetric from one-directional}
         \begin{itemize}
-            \item The Rover orbit chain is one-directional, only $(\text{in\_orbit}, \text{mapped})$ fails, $\mathcal{I}_{\text{GS}} = (2, 1)$
-            \item Rival Alliances fails both ways, $(\text{allied\_A}, \text{allied\_B})$ and $(\text{allied\_B}, \text{allied\_A})$, $\mathcal{I}_{\text{GS}} = (2, 2)$
-            \item Same scope of two affected goals, the structure count distinguishes one blocked order from two
+            \item Rover orbit chain, one-directional, only $(\text{in\_orbit}, \text{mapped})$ fails, $\mathcal{I}_{\text{GS}} = (2, 1)$
+            \item Rival Alliances, both $(\text{allied\_A}, \text{allied\_B})$ and $(\text{allied\_B}, \text{allied\_A})$ fail, $\mathcal{I}_{\text{GS}} = (2, 2)$
+            \item Same scope of two goals, the structure count distinguishes one blocked order from two
             \item Symmetric exclusion signals a harder repair, neither goal can be deferred to rescue the other
         \end{itemize}
     \end{block}
@@ -163,7 +159,7 @@
 \begin{frame}[noframenumbering]{Backup, the isolated scenarios behind the running example}
     \hypertarget{bk:signatures}{}
     \begin{center}
-        \footnotesize
+        \scriptsize
         \begin{tabular}{l cc cc cc}
             \toprule
             Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
@@ -183,12 +179,7 @@
     \end{center}
 
     \begin{block}{The Rover Mission composes three canonical patterns}
-        \begin{itemize}
-            \item Drill chain $=$ Locked Door unreachability, $(1, 3)$ on $\mathcal{I}_{\text{UR}}$
-            \item Dish toggle $=$ Light Switch reversible mutex, $(2, 1)$ on $\mathcal{I}_{\text{MX}}$
-            \item Orbit chain $=$ Trust and Travel irreversible mutex and one-directional sequencing, $(2, 1)$ on $\mathcal{I}_{\text{MX}}$ and $(2, 1)$ on $\mathcal{I}_{\text{GS}}$
-            \item Per-measure counts add to $(1, 3, 4, 2, 2, 1)$
-        \end{itemize}
+        Drill chain $=$ Locked Door, dish toggle $=$ Light Switch, orbit chain $=$ Trust and Travel. The per-measure counts add to $(1, 3, 4, 2, 2, 1)$.
     \end{block}
 
     \sectioncite{Thesis \S4.3.4, \S4.4}
@@ -272,9 +263,8 @@
 
     \begin{block}{Proof sketch and counterexample}
         \begin{itemize}
-            \item Sequencing gives both individually achievable, and no trace has $g_1$ at $\sigma_i$ and $g_2$ at $\sigma_j$ with $i \leq j$
-            \item The $i = j$ case is the mutex condition, no reachable state holds both
-            \item Combined with achievability, this is the mutex definition
+            \item Sequencing makes both achievable, yet no trace has $g_1$ at $\sigma_i$, $g_2$ at $\sigma_j$, $i \leq j$
+            \item The $i = j$ case is the mutex condition, which with achievability is the mutex definition
             \item On the Rover the sequencing pair $(\text{in\_orbit}, \text{mapped})$ is also one of the two mutex pairs, as the proposition predicts
             \item Converse fails on the dish toggle, $\{\text{aimed\_earth}, \text{aimed\_probe}\}$ is mutex yet reversible, so neither order is a sequencing conflict
         \end{itemize}
