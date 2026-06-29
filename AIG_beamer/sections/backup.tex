@@ -11,6 +11,42 @@
     \vfill
 \end{frame}
 
+%========================================================================
+% Motivation / Foundations -- related work (Thesis \S1, \S3)
+%========================================================================
+
+\begin{frame}[noframenumbering]{Backup, comparison vs Eriksson and Goebelbecker}
+    \hypertarget{bk:eriksson-goebel}{}
+    \begin{center}
+        \scriptsize
+        \begin{tabular}{lll}
+            \toprule
+            Approach                                        & Output                                                                                & Diagnostic shape         \\
+            \midrule
+            Dead-state certificates [Eriksson et al., 2018] & solvable or unsolvable                                                                & binary, no severity      \\
+            Excuses [G\"obelbecker et al., 2010]            & minimal repair edits                                                                  & prescriptive             \\
+            Explanations [Sreedharan et al., 2019]          & unreachable-goal accounts                                                             & qualitative, per case    \\
+            This thesis                                     & profile $(\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}})$ & quantitative, structural \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+    \begin{block}{Complementary roles}
+        \begin{itemize}
+            \item $\mathcal{I}_{\text{GS}}$ recovers a quantitative form of dead-state analysis
+            \item $\mathcal{I}_{\text{UR}}$ flags where add-producer excuses apply, $\mathcal{I}_{\text{GS}}$ where add-reversal excuses do
+            \item Goal-level mutex over $S^h_{\text{reach}}$ differs from Graphplan's level-based proposition mutex [Blum and Furst, 1997]
+            \item Measures stay descriptive, leaving repair decisions to domain experts
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S1.1, \S3}
+\end{frame}
+
+%========================================================================
+% Limitations of a propositional encoding (Thesis \S4.2)
+%========================================================================
+
 \begin{frame}[noframenumbering]{Backup, enriching the encoding still scores $1$}
     \hypertarget{bk:enriched}{}
     \begin{exampleblock}{Light Switch under two encodings}
@@ -30,6 +66,10 @@
     \sectioncite{Thesis \S4.2}
 \end{frame}
 
+%========================================================================
+% Taxonomy of unsolvable planning problems (Thesis \S4.1)
+%========================================================================
+
 \begin{frame}[noframenumbering]{Backup, one problem, three structural categories}
     \hypertarget{bk:overlap}{}
     \begin{exampleblock}{Security facility goal}
@@ -47,6 +87,36 @@
     \end{block}
 
     \sectioncite{Thesis \S4.1}
+\end{frame}
+
+%========================================================================
+% Planning-native measures -- scenarios and normalization (Thesis \S4.3, \S4.4, \S4.6)
+%========================================================================
+
+\begin{frame}[noframenumbering]{Backup, Bank Vault deepens the unreachability cascade}
+    \hypertarget{bk:bank-vault}{}
+    \begin{exampleblock}{Two unreachability profiles at convergence}
+        \centering
+        \begin{tabular}{lccc}
+            \toprule
+            Scenario    & $|P|$ & $\mathcal{I}_{\text{UR}}(\Pi)$ & cascade depth \\
+            \midrule
+            Locked Door & 4     & $(1, 3)$                       & 2             \\
+            Bank Vault  & 8     & $(1, 7)$                       & 6             \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Three parallel chains converge on \textit{in\_vault}}
+        \begin{itemize}
+            \item Root preconditions \textit{key1}, \textit{key2}, and \textit{admin\_appr} all lack producers
+            \item Three blocked intermediates cascade off the three missing roots
+            \item Same scope value as Locked Door, three times the cascade depth
+            \item Structure $-$ scope grows with the number of converging blocked chains
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.3.1 Scenario~2}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, Trust and Travel full reachability}
@@ -69,49 +139,126 @@
     \sectioncite{Thesis \S4.3.3 Scenario~5}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Backup, 3unsat and the $k$-tuple blind spot}
-    \hypertarget{bk:3unsat}{}
-    \begin{exampleblock}{Pairwise coexistence with no triple-satisfying state}
+\begin{frame}[noframenumbering]{Backup, Rival Alliances exhibits symmetric sequencing}
+    \hypertarget{bk:rival-alliances}{}
+    \begin{exampleblock}{Three-state reachability of Scenario 6}
         \[
-            G = \{g_1, g_2, g_3\}, \qquad
-            S_{\text{reach}} \supseteq \{\{g_1, g_2\}, \{g_2, g_3\}, \{g_1, g_3\}\}
+            S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\},\ \{\text{neutral\_A}, \text{allied\_A}\},\ \{\text{neutral\_B}, \text{allied\_B}\}\}
         \]
-        Every pair is reachable together, yet no state satisfies all three.
+        $G = \{\text{allied\_A}, \text{allied\_B}\}$, the two goals never coexist.
     \end{exampleblock}
 
-    \begin{block}{Consequence for the measures}
+    \begin{block}{Profile contrast with Trust and Travel}
         \begin{itemize}
-            \item All goals individually reachable, so $\mathcal{I}_{\text{UR}}(\Pi) = (0, 0)$
-            \item No mutex pair exists in $S_{\text{reach}}$, so $\mathcal{I}_{\text{MX}}(\Pi) = (0, 0)$
-            \item No ordered sequencing failure either, so $\mathcal{I}_{\text{GS}}(\Pi) = (0, 0)$
-            \item All 20 completed \textit{3unsat} instances confirm this at every tested horizon
-            \item Future work extends to $k$-tuple analysis for $|G| \geq 3$ failures
+            \item Each \textit{ally} operator deletes the rival's neutral precondition, irreversibly
+            \item Both $(\text{allied\_A}, \text{allied\_B})$ and $(\text{allied\_B}, \text{allied\_A})$ are sequencing conflicts
+            \item Rival Alliances $\mathcal{I}_{\text{GS}}(\Pi) = (2, 2)$ vs Trust and Travel $(2, 1)$
+            \item Structure value separates symmetric exclusion from unidirectional blocking
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S6.3.6, \S7.4}
+    \sectioncite{Thesis \S4.3.3 Scenario~6}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Backup, horizon sensitivity}
-    \hypertarget{bk:horizon}{}
-    \begin{exampleblock}{Solvable cave-diving \texttt{satprob01} across horizons}
-        \begin{itemize}
-            \item At $h = 10$, $\mathcal{I}_{\text{MX}}(\Pi) = (3, 2)$ and $\mathcal{I}_{\text{GS}}(\Pi) = (3, 4)$, classified 2c-sequencing
-            \item At $h = 20$, every profile is zero, classified consistent
-        \end{itemize}
-    \end{exampleblock}
+\begin{frame}[noframenumbering]{Backup, the six isolated test scenarios}
+    \hypertarget{bk:signatures}{}
+    \begin{center}
+        \footnotesize
+        \begin{tabular}{l cc cc cc}
+            \toprule
+            Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
+            \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+                             & scope                                         & struct                                        & scope                                         & struct & scope & struct \\
+            \midrule
+            Locked Door      & 1                                             & 3                                             & 0                                             & 0      & 0     & 0      \\
+            Bank Vault       & 1                                             & 7                                             & 0                                             & 0      & 0     & 0      \\
+            Light Switch     & 0                                             & 0                                             & 2                                             & 1      & 0     & 0      \\
+            Traffic Light    & 0                                             & 0                                             & 3                                             & 3      & 0     & 0      \\
+            Trust and Travel & 0                                             & 0                                             & 2                                             & 1      & 2     & 1      \\
+            Rival Alliances  & 0                                             & 0                                             & 2                                             & 1      & 2     & 2      \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
 
-    \begin{block}{Soundness-coverage tradeoff}
+    \begin{block}{What the signatures separate}
         \begin{itemize}
-            \item Short $h$ misses long witness traces, producing spurious conflicts
-            \item Identical artifacts appear on solvable and unsolvable cave-diving instances at $h = 10$
-            \item $h = 20$ chosen because no observed solvable instance produces conflicts
-            \item Longer $h$ adds grounding cost and reduces coverage
-            \item Same $h$-parameterization as $\text{LTL}_{\text{ff}}$ measures [Corea et al., 2024; Kuhlmann, 2025]
+            \item Locked Door and Bank Vault share scope 1, differ in cascade depth
+            \item Light Switch isolated pair against Traffic Light complete clique
+            \item Trust and Travel and Rival Alliances share mutex, separate by sequencing direction
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S6.4}
+    \sectioncite{Thesis \S4.3.4, \S4.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, absolute counts instead of normalized measures}
+    \hypertarget{bk:normalization}{}
+    \begin{exampleblock}{Relative measures exist [Besnard and Grant, 2020]}
+        Dividing by $|G|$, $|P|$, or the maximal conflict count would yield percentage-style scores comparable across problem sizes.
+    \end{exampleblock}
+
+    \begin{block}{Why the profiles stay absolute}
+        \begin{itemize}
+            \item Severity is not proportional to size, 2 conflicting goals among 100 may be easier to repair than a complete clique on 3
+            \item Every denominator choice encodes an assumption about problem structure
+            \item The profiles already carry relative information, scope against structure within each measure
+            \item Future work calibrates normalization against the IPC benchmark distribution
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.6.2}
+\end{frame}
+
+%========================================================================
+% Postulates and complexity (Thesis \S4.5)
+%========================================================================
+
+\begin{frame}[noframenumbering]{Backup, postulate choice and the combined measure}
+    \hypertarget{bk:postulates}{}
+    \begin{exampleblock}{Does the combined profile satisfy Planning Consistency?}
+        \begin{itemize}
+            \item No. \textit{3unsat} instances are unsolvable yet all six values stay zero at every horizon
+            \item For $|G| \leq 2$ the converse holds, all measures zero implies solvable
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Why these three postulates}
+        \begin{itemize}
+            \item Classical postulates assume formula structure, planning has goals, operators, and states
+            \item Adding operators can resolve conflicts, so Monotonicity reverses sign
+            \item Modified postulates and the multi-measure approach follow the ASP precedent [Ulbricht et al., 2016]
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.1, \S6.3.6, \S7.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, adding an operator can raise $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$}
+    \hypertarget{bk:op-mono-ce}{}
+    \begin{exampleblock}{One construction breaks both, $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$}
+        \footnotesize
+        Start with $O = \{\,\textit{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\}\rangle\,\}$, then add $\textit{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\}\rangle$.\\[2pt]
+        \centering
+        \begin{tabular}{lcc}
+            \toprule
+                                      & before add & after add \\
+            \midrule
+            $\mathcal{I}_{\text{MX}}$ & $(0, 0)$   & $(2, 1)$  \\
+            $\mathcal{I}_{\text{GS}}$ & $(0, 0)$   & $(2, 2)$  \\
+            \bottomrule
+        \end{tabular}
+    \end{exampleblock}
+
+    \begin{block}{Why the value rises, and why $\mathcal{I}_{\text{UR}}$ is immune}
+        \footnotesize
+        \begin{itemize}
+            \item Before, $g_2$ is unreachable, so no mutex pair and no sequencing conflict can form
+            \item The added operator makes $g_2$ reachable but deletes $a$, which nothing re-adds, so no reachable state holds both goals
+            \item This operator-induced mutex, with neither order achievable, raises $\mathcal{I}$, while $\mathcal{I}_{\text{UR}}$ only falls as $S^h_{\text{reach}}$ grows
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S4.5.1}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, sequencing implies mutex}
@@ -130,49 +277,6 @@
     \end{block}
 
     \sectioncite{Thesis \S4.5.2}
-\end{frame}
-
-\begin{frame}[noframenumbering,fragile]{Backup, state-space exploration encoding}
-    \hypertarget{bk:asp-listing}{}
-    \begin{lstlisting}[style=asp]
-time(0..horizon).
-holds(P, 0) :- init(P).
-% Applicability, positive and negative preconditions
-neg_precond_violated(O, T) :- neg_precond(O, P), holds(P, T).
-applicable(O, T) :- operator(O), time(T), T < horizon,
-    not neg_precond_violated(O, T), holds(P, T) : precond(O, P).
-% One operator per step, each choice a distinct trace
-{ apply(O, T) : applicable(O, T) } 1 :- time(T), T < horizon.
-% State transition with frame axiom
-deleted(P, T) :- apply(O, T), delete(O, P).
-holds(P, T+1) :- apply(O, T), add(O, P).
-holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
-    \end{lstlisting}
-    The choice rule branches into one answer set per execution trace. The frame axiom carries propositions forward unless an operator deletes them.
-
-    \sectioncite{Thesis \S5.3.2}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, per-domain results breakdown}
-    \hypertarget{bk:per-domain}{}
-    \begin{center}
-        \scriptsize
-        \begin{tabular}{lcll}
-            \toprule
-            Domain              & OK / total & Classification         & Notable pattern                             \\
-            \midrule
-            diagnosis           & 18 / 20    & all Cat 2a             & UR severity 14\% to 88\%                    \\
-            bottleneck          & 12 / 25    & 10 Cat 2c-seq, 2 cons. & MX varies with bottleneck position          \\
-            cave-diving         & 9 / 25     & 1 Cat 2a, 8 cons.      & global constraint outside pairwise scope    \\
-            document-transfer   & 3 / 20     & all Cat 2a             & up to 19 of 19 goals unreachable            \\
-            pegsol-row5         & 3 / 15     & all Cat 2a             & one unreachable goal each                   \\
-            chessboard-pebbling & 3 / 23     & all Cat 2c-seq         & identical $(3, 2, 3, 2)$ regardless of grid \\
-            3unsat              & 20 / 30    & all consistent         & $k$-tuple blind spot, horizon-independent   \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-
-    \sectioncite{Thesis \S6.2}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, PSPACE-completeness proof sketch}
@@ -230,6 +334,10 @@ holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
     \sectioncite{Thesis \S4.5.3}
 \end{frame}
 
+%========================================================================
+% Implementation (Thesis \S5)
+%========================================================================
+
 \begin{frame}[noframenumbering]{Backup, why ASP over SAT and MaxSAT}
     \hypertarget{bk:asp-vs-sat}{}
     \begin{block}{Reasons in favor of ASP}
@@ -247,79 +355,25 @@ holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
     \sectioncite{Thesis \S5, \S7.4}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Backup, comparison vs Eriksson and Goebelbecker}
-    \hypertarget{bk:eriksson-goebel}{}
-    \begin{center}
-        \scriptsize
-        \begin{tabular}{lll}
-            \toprule
-            Approach                                        & Output                                                                                & Diagnostic shape         \\
-            \midrule
-            Dead-state certificates [Eriksson et al., 2018] & solvable or unsolvable                                                                & binary, no severity      \\
-            Excuses [G\"obelbecker et al., 2010]            & minimal repair edits                                                                  & prescriptive             \\
-            Explanations [Sreedharan et al., 2019]          & unreachable-goal accounts                                                             & qualitative, per case    \\
-            This thesis                                     & profile $(\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}})$ & quantitative, structural \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
+\begin{frame}[noframenumbering,fragile]{Backup, state-space exploration encoding}
+    \hypertarget{bk:asp-listing}{}
+    \begin{lstlisting}[style=asp]
+time(0..horizon).
+holds(P, 0) :- init(P).
+% Applicability, positive and negative preconditions
+neg_precond_violated(O, T) :- neg_precond(O, P), holds(P, T).
+applicable(O, T) :- operator(O), time(T), T < horizon,
+    not neg_precond_violated(O, T), holds(P, T) : precond(O, P).
+% One operator per step, each choice a distinct trace
+{ apply(O, T) : applicable(O, T) } 1 :- time(T), T < horizon.
+% State transition with frame axiom
+deleted(P, T) :- apply(O, T), delete(O, P).
+holds(P, T+1) :- apply(O, T), add(O, P).
+holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
+    \end{lstlisting}
+    The choice rule branches into one answer set per execution trace. The frame axiom carries propositions forward unless an operator deletes them.
 
-    \begin{block}{Complementary roles}
-        \begin{itemize}
-            \item $\mathcal{I}_{\text{GS}}$ recovers a quantitative form of dead-state analysis
-            \item $\mathcal{I}_{\text{UR}}$ flags where add-producer excuses apply, $\mathcal{I}_{\text{GS}}$ where add-reversal excuses do
-            \item Goal-level mutex over $S^h_{\text{reach}}$ differs from Graphplan's level-based proposition mutex [Blum and Furst, 1997]
-            \item Measures stay descriptive, leaving repair decisions to domain experts
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S1.1, \S3}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, Bank Vault deepens the unreachability cascade}
-    \hypertarget{bk:bank-vault}{}
-    \begin{exampleblock}{Two unreachability profiles at convergence}
-        \centering
-        \begin{tabular}{lccc}
-            \toprule
-            Scenario    & $|P|$ & $\mathcal{I}_{\text{UR}}(\Pi)$ & cascade depth \\
-            \midrule
-            Locked Door & 4     & $(1, 3)$                       & 2             \\
-            Bank Vault  & 8     & $(1, 7)$                       & 6             \\
-            \bottomrule
-        \end{tabular}
-    \end{exampleblock}
-
-    \begin{block}{Three parallel chains converge on \textit{in\_vault}}
-        \begin{itemize}
-            \item Root preconditions \textit{key1}, \textit{key2}, and \textit{admin\_appr} all lack producers
-            \item Three blocked intermediates cascade off the three missing roots
-            \item Same scope value as Locked Door, three times the cascade depth
-            \item Structure $-$ scope grows with the number of converging blocked chains
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S4.3.1 Scenario~2}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, Rival Alliances exhibits symmetric sequencing}
-    \hypertarget{bk:rival-alliances}{}
-    \begin{exampleblock}{Three-state reachability of Scenario 6}
-        \[
-            S_{\text{reach}} = \{\{\text{neutral\_A}, \text{neutral\_B}\},\ \{\text{neutral\_A}, \text{allied\_A}\},\ \{\text{neutral\_B}, \text{allied\_B}\}\}
-        \]
-        $G = \{\text{allied\_A}, \text{allied\_B}\}$, the two goals never coexist.
-    \end{exampleblock}
-
-    \begin{block}{Profile contrast with Trust and Travel}
-        \begin{itemize}
-            \item Each \textit{ally} operator deletes the rival's neutral precondition, irreversibly
-            \item Both $(\text{allied\_A}, \text{allied\_B})$ and $(\text{allied\_B}, \text{allied\_A})$ are sequencing conflicts
-            \item Rival Alliances $\mathcal{I}_{\text{GS}}(\Pi) = (2, 2)$ vs Trust and Travel $(2, 1)$
-            \item Structure value separates symmetric exclusion from unidirectional blocking
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S4.3.3 Scenario~6}
+    \sectioncite{Thesis \S5.3.2}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, 80 automated tests verify the pipeline}
@@ -351,99 +405,73 @@ holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
     \sectioncite{Thesis \S5.6}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Backup, postulate choice and the combined measure}
-    \hypertarget{bk:postulates}{}
-    \begin{exampleblock}{Does the combined profile satisfy Planning Consistency?}
-        \begin{itemize}
-            \item No. \textit{3unsat} instances are unsolvable yet all six values stay zero at every horizon
-            \item For $|G| \leq 2$ the converse holds, all measures zero implies solvable
-        \end{itemize}
-    \end{exampleblock}
+%========================================================================
+% Evaluation (Thesis \S6)
+%========================================================================
 
-    \begin{block}{Why these three postulates}
-        \begin{itemize}
-            \item Classical postulates assume formula structure, planning has goals, operators, and states
-            \item Adding operators can resolve conflicts, so Monotonicity reverses sign
-            \item Modified postulates and the multi-measure approach follow the ASP precedent [Ulbricht et al., 2016]
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S4.5.1, \S6.3.6, \S7.4}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, adding an operator can raise $\mathcal{I}_{\text{MX}}$ and $\mathcal{I}_{\text{GS}}$}
-    \hypertarget{bk:op-mono-ce}{}
-    \begin{exampleblock}{One construction breaks both, $P = \{a, g_1, g_2\}$, $I = \{a\}$, $G = \{g_1, g_2\}$}
-        \footnotesize
-        Start with $O = \{\,\textit{reach\_g1} = \langle \{a\}, \{g_1\}, \{a\}\rangle\,\}$, then add $\textit{reach\_g2} = \langle \{a\}, \{g_2\}, \{a\}\rangle$.\\[2pt]
-        \centering
-        \begin{tabular}{lcc}
-            \toprule
-                                      & before add & after add \\
-            \midrule
-            $\mathcal{I}_{\text{MX}}$ & $(0, 0)$   & $(2, 1)$  \\
-            $\mathcal{I}_{\text{GS}}$ & $(0, 0)$   & $(2, 2)$  \\
-            \bottomrule
-        \end{tabular}
-    \end{exampleblock}
-
-    \begin{block}{Why the value rises, and why $\mathcal{I}_{\text{UR}}$ is immune}
-        \footnotesize
-        \begin{itemize}
-            \item Before, $g_2$ is unreachable, so no mutex pair and no sequencing conflict can form
-            \item The added operator makes $g_2$ reachable but deletes $a$, which nothing re-adds, so no reachable state holds both goals
-            \item This operator-induced mutex, with neither order achievable, raises $\mathcal{I}$, while $\mathcal{I}_{\text{UR}}$ only falls as $S^h_{\text{reach}}$ grows
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S4.5.1}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, absolute counts instead of normalized measures}
-    \hypertarget{bk:normalization}{}
-    \begin{exampleblock}{Relative measures exist [Besnard and Grant, 2020]}
-        Dividing by $|G|$, $|P|$, or the maximal conflict count would yield percentage-style scores comparable across problem sizes.
-    \end{exampleblock}
-
-    \begin{block}{Why the profiles stay absolute}
-        \begin{itemize}
-            \item Severity is not proportional to size, 2 conflicting goals among 100 may be easier to repair than a complete clique on 3
-            \item Every denominator choice encodes an assumption about problem structure
-            \item The profiles already carry relative information, scope against structure within each measure
-            \item Future work calibrates normalization against the IPC benchmark distribution
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S4.6.2}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, the six isolated test scenarios}
-    \hypertarget{bk:signatures}{}
+\begin{frame}[noframenumbering]{Backup, per-domain results breakdown}
+    \hypertarget{bk:per-domain}{}
     \begin{center}
-        \footnotesize
-        \begin{tabular}{l cc cc cc}
+        \scriptsize
+        \begin{tabular}{lcll}
             \toprule
-            Scenario         & \multicolumn{2}{c}{$\mathcal{I}_{\text{UR}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{MX}}$} & \multicolumn{2}{c}{$\mathcal{I}_{\text{GS}}$}                           \\
-            \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-                             & scope                                         & struct                                        & scope                                         & struct & scope & struct \\
+            Domain              & OK / total & Classification         & Notable pattern                             \\
             \midrule
-            Locked Door      & 1                                             & 3                                             & 0                                             & 0      & 0     & 0      \\
-            Bank Vault       & 1                                             & 7                                             & 0                                             & 0      & 0     & 0      \\
-            Light Switch     & 0                                             & 0                                             & 2                                             & 1      & 0     & 0      \\
-            Traffic Light    & 0                                             & 0                                             & 3                                             & 3      & 0     & 0      \\
-            Trust and Travel & 0                                             & 0                                             & 2                                             & 1      & 2     & 1      \\
-            Rival Alliances  & 0                                             & 0                                             & 2                                             & 1      & 2     & 2      \\
+            diagnosis           & 18 / 20    & all Cat 2a             & UR severity 14\% to 88\%                    \\
+            bottleneck          & 12 / 25    & 10 Cat 2c-seq, 2 cons. & MX varies with bottleneck position          \\
+            cave-diving         & 9 / 25     & 1 Cat 2a, 8 cons.      & global constraint outside pairwise scope    \\
+            document-transfer   & 3 / 20     & all Cat 2a             & up to 19 of 19 goals unreachable            \\
+            pegsol-row5         & 3 / 15     & all Cat 2a             & one unreachable goal each                   \\
+            chessboard-pebbling & 3 / 23     & all Cat 2c-seq         & identical $(3, 2, 3, 2)$ regardless of grid \\
+            3unsat              & 20 / 30    & all consistent         & $k$-tuple blind spot, horizon-independent   \\
             \bottomrule
         \end{tabular}
     \end{center}
 
-    \begin{block}{What the signatures separate}
+    \sectioncite{Thesis \S6.2}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, 3unsat and the $k$-tuple blind spot}
+    \hypertarget{bk:3unsat}{}
+    \begin{exampleblock}{Pairwise coexistence with no triple-satisfying state}
+        \[
+            G = \{g_1, g_2, g_3\}, \qquad
+            S_{\text{reach}} \supseteq \{\{g_1, g_2\}, \{g_2, g_3\}, \{g_1, g_3\}\}
+        \]
+        Every pair is reachable together, yet no state satisfies all three.
+    \end{exampleblock}
+
+    \begin{block}{Consequence for the measures}
         \begin{itemize}
-            \item Locked Door and Bank Vault share scope 1, differ in cascade depth
-            \item Light Switch isolated pair against Traffic Light complete clique
-            \item Trust and Travel and Rival Alliances share mutex, separate by sequencing direction
+            \item All goals individually reachable, so $\mathcal{I}_{\text{UR}}(\Pi) = (0, 0)$
+            \item No mutex pair exists in $S_{\text{reach}}$, so $\mathcal{I}_{\text{MX}}(\Pi) = (0, 0)$
+            \item No ordered sequencing failure either, so $\mathcal{I}_{\text{GS}}(\Pi) = (0, 0)$
+            \item All 20 completed \textit{3unsat} instances confirm this at every tested horizon
+            \item Future work extends to $k$-tuple analysis for $|G| \geq 3$ failures
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S4.3.4, \S4.4}
+    \sectioncite{Thesis \S6.3.6, \S7.4}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Backup, horizon sensitivity}
+    \hypertarget{bk:horizon}{}
+    \begin{exampleblock}{Solvable cave-diving \texttt{satprob01} across horizons}
+        \begin{itemize}
+            \item At $h = 10$, $\mathcal{I}_{\text{MX}}(\Pi) = (3, 2)$ and $\mathcal{I}_{\text{GS}}(\Pi) = (3, 4)$, classified 2c-sequencing
+            \item At $h = 20$, every profile is zero, classified consistent
+        \end{itemize}
+    \end{exampleblock}
+
+    \begin{block}{Soundness-coverage tradeoff}
+        \begin{itemize}
+            \item Short $h$ misses long witness traces, producing spurious conflicts
+            \item Identical artifacts appear on solvable and unsolvable cave-diving instances at $h = 10$
+            \item $h = 20$ chosen because no observed solvable instance produces conflicts
+            \item Longer $h$ adds grounding cost and reduces coverage
+            \item Same $h$-parameterization as $\text{LTL}_{\text{ff}}$ measures [Corea et al., 2024; Kuhlmann, 2025]
+        \end{itemize}
+    \end{block}
+
+    \sectioncite{Thesis \S6.4}
 \end{frame}
