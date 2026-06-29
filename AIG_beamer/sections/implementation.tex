@@ -23,7 +23,7 @@
             \item \textbf{Translate}
                   \begin{itemize}
                       \item Custom preprocessing strips \texttt{:costs}
-                      \item First a prototype grounder blew up combinatorially, \\instead \textit{plasp} now lifts PDDL to ASP
+                      \item A first prototype grounded eagerly and did not scale, \\\textit{plasp} now lifts PDDL to ASP and defers grounding to Clingo
                       \item A bridge maps onto the internal predicates
                   \end{itemize}
             \item \textbf{Explore}: the reachability encoding derives the reachable states under Clingo brave, unioning every execution trace in a single solve
@@ -51,7 +51,7 @@ g2_after_g1_witness(G1, G2) :- goal(G1), goal(G2), G1 != G2,
         \end{lstlisting}
     \end{block}
 
-    {\small Brave unions these across traces, so a \emph{missing} witness is a universal proof that \emph{no} trace satisfies the condition. Eleven scenarios reproduced exactly, 80 tests green.}
+    {\small Brave unions these across traces, so a \emph{missing} witness is a universal proof that \emph{no} trace satisfies the condition. Eleven hand-crafted scenarios reproduce their expected profiles exactly.}
 
     \sectioncitebkk{bk:asp-listing}{bk:validation}{Thesis \S5.3.3, \S5.6}
 \end{frame}

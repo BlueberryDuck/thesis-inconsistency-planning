@@ -6,24 +6,26 @@
         \begin{itemize}
             \item Higher value means more inconsistency, $\mathcal{I}(K) = 0$ iff $K$ consistent
             \item Rationality postulates such as Monotonicity and Free Formula Independence pin down sensible measures
-            \item Contension $\mathcal{I}_c$ [Grant and Hunter, 2011] counts atoms forced to ``both true and false'', not formulas
+            \item Contension $\mathcal{I}_c$ [Grant and Hunter, 2011] counts the atoms it must assign the truth value $B$, both true and false
         \end{itemize}
     \end{block}
 
     \begin{exampleblock}{Contension $\mathcal{I}_c$}
-        $K = \{a \land b,\ \neg a,\ \neg b\}$ forces $a$ and $b$ to ``both'', so $\mathcal{I}_c(K) = 2$.
+        $K = \{a \land b,\ \neg a,\ \neg b\}$ forces $a$ and $b$ to $B$, so $\mathcal{I}_c(K) = 2$.
     \end{exampleblock}
     \sectioncite{Thesis \S2.1}
 \end{frame}
 
-% BUDGET: ~90s
-\begin{frame}{Classical planning problem $\Pi = \langle P, O, I, G \rangle$}
+% BUDGET: ~60s
+\begin{frame}{Classical planning}
+    \small A PDDL Domain and Problem translate to a STRIPS tuple $\Pi = \langle P, O, I, G \rangle$.
+
     \begin{block}{STRIPS notation $\Pi = \langle P, O, I, G \rangle$ [Bylander 1994]}
         \footnotesize
         \begin{itemize}
             \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
-            \item Operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$, applicable when $\text{precond}(o) \subseteq s$, with result $\text{RESULT}(s, o) = (s \setminus \text{delete}(o)) \cup \text{add}(o)$
-            \item Plan: applicable sequence from $I$ reaching a state $\supseteq G$
+            \item Each operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$
+            \item Plan is an applicable operator sequence from $I$ reaching a state $\supseteq G$. Unsolvable means none exists
         \end{itemize}
     \end{block}
     \begin{columns}[T]
@@ -43,28 +45,22 @@
         \end{column}
     \end{columns}
 
-    \vspace{-0.2em}
-    {\small A PDDL Domain and Problem translate to such a $\Pi$, the input the implementation accepts.}
-
     \sectioncite{Thesis \S2.2}
 \end{frame}
 
-% BUDGET: ~90s
+% BUDGET: ~60s
 \begin{frame}{Answer Set Programming (ASP)}
-    The measures test reachability over the state space, the kind of declarative search ASP is built for.
-
-    \begin{block}{Logic program [Dimopoulos et al., 1997]}
+    \begin{block}{Execution traces and reasoning modes}
         \begin{itemize}
-            \item Rule form $a \leftarrow b_1, \ldots, b_m, \mathbf{not}\ c_1, \ldots, \mathbf{not}\ c_n$
-            \item An answer set is a minimal stable model under default negation
-            \item Brave reasoning unions all answer sets, cautious intersects them [Eiter and Gottlob, 1995]
+            \item Each answer set of the encoding is one execution trace, a state sequence from $I$
+            \item Brave reasoning unions the answer sets, an atom holds if some trace produces it
+            \item Cautious reasoning intersects them, an atom holds only if every trace produces it [Eiter and Gottlob, 1995]
         \end{itemize}
     \end{block}
 
-    \begin{exampleblock}{Two answer sets, one program}
-        Rules \quad $p \leftarrow \mathbf{not}\ q.$ \quad $q \leftarrow \mathbf{not}\ p.$\\[2pt]
-        Two answer sets $\{p\}$ and $\{q\}$. \quad
-        $\text{BRAVE} = \{p, q\}$, \quad $\text{CAUTIOUS} = \emptyset$.
+    \begin{exampleblock}{Brave and cautious over two traces}
+        Trace 1 makes $\{a, b\}$ reachable, trace 2 makes $\{a, c\}$ reachable. \\[2pt]
+        $\text{BRAVE} = \{a, b, c\}$ reachable by some trace, \quad $\text{CAUTIOUS} = \{a\}$ by every trace.
     \end{exampleblock}
 
     \sectioncite{Thesis \S2.4}

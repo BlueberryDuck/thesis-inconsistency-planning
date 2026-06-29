@@ -1,4 +1,4 @@
-\section{Postulates and complexity}
+\section{Postulates}
 
 % BUDGET: ~90s
 \begin{frame}{Postulates for planning-adapted inconsistency measures}
@@ -25,24 +25,7 @@
         \end{tabular}
     \end{center}
 
-    {\small No single measure satisfies Planning Consistency. Characterizing every failure needs multiple measures together.}
+    {\small No single measure satisfies Planning Consistency. Need multiple measures together to quantify all aspects of inconsistency.}
 
     \sectioncitebkk{bk:postulates}{bk:op-mono-ce}{Thesis \S4.5.1}
-\end{frame}
-
-% BUDGET: ~60s
-\begin{frame}{Complexity of planning-adapted inconsistency measures}
-    \begin{block}{Complexity}
-        Every decision problem for $\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}}$ is PSPACE-complete, the value problems lie in FPSPACE.
-    \end{block}
-
-    \begin{block}{Why}
-        \begin{itemize}
-            \item Each measure is reachability analysis over the state space
-            \item Plan existence is already PSPACE-complete [Bylander, 1994], and PSPACE is closed under complement and polynomial composition
-            \item So thresholds and counting cannot escape PSPACE, computing the profile costs no more than deciding solvability
-        \end{itemize}
-    \end{block}
-
-    \sectioncitebkk{bk:pspace-proof}{bk:pspace-compare}{Thesis \S4.5.3}
 \end{frame}

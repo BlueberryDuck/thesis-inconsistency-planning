@@ -51,34 +51,15 @@
 
 % BUDGET: ~60s
 \begin{frame}{Selected case studies}
-    \begin{columns}[t]
-        \begin{column}{0.31\textwidth}
-            \begin{exampleblock}{Scope grades severity}
-                \textit{diagnosis} prob06 vs prob05 \\[4pt]
-                $\mathcal{I}^{\text{scope}}_{\text{UR}} = 1$ vs $49$ \\[4pt]
-                14\% vs 88\% of goals unreachable
-            \end{exampleblock}
-        \end{column}
-        \begin{column}{0.31\textwidth}
-            \begin{exampleblock}{Structure grades density}
-                \textit{diagnosis} prob10 vs prob16 \\[4pt]
-                $\mathcal{I}^{\text{struct}}_{\text{MX}} = 1$ vs $28$ \\[4pt]
-                single pair vs clique, $28 = \binom{8}{2}$ proven bound
-            \end{exampleblock}
-        \end{column}
-        \begin{column}{0.31\textwidth}
-            \begin{exampleblock}{Pairwise blind spot}
-                \textit{3unsat}, all measures $0$ \\[4pt]
-                every goal pair coexists \\[4pt]
-                no assignment satisfies all, pairwise misses the triple
-            \end{exampleblock}
-        \end{column}
-    \end{columns}
+    \begin{exampleblock}{Scope grades severity}
+        \textit{diagnosis} prob06 has 1 of 7 goals unreachable, prob05 49 of 56. The scope value $\mathcal{I}^{\text{scope}}_{\text{UR}}$ counts the unreachable goals, separating a mild defect from a near-total one.
+    \end{exampleblock}
 
-    \vfill
-    {\footnotesize The measures grade severity and density, and expose where pairwise analysis stops.}
+    \begin{exampleblock}{Structure grades density}
+        \textit{diagnosis} prob10 has a single mutex pair, prob16 a full clique on 8 goals. The structure value $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counts conflicting pairs, 1 against the upper bound $\binom{8}{2} = 28$, separating an isolated conflict from a dense one.
+    \end{exampleblock}
 
-    \sectioncitebk{bk:3unsat}{Thesis \S6.3}
+    \sectioncite{Thesis \S6.3}
 \end{frame}
 
 % BUDGET: ~75s
@@ -98,9 +79,9 @@
 
     \begin{block}{The tradeoff}
         \begin{itemize}
-            \item Soundness side, unreachability falls monotonically, mutex and sequencing do not, so short horizons give false positives
+            \item Soundness side, unreachability falls monotonically, mutex and sequencing do not, so short horizons can give false positives
             \item Coverage side, each time step grows the ground program, fewer instances complete
-            \item $h = 20$ balances the two, no single optimum, no solvable instance reports a conflict
+            \item $h = 20$ balances the two, no optimal horizon for all instances
         \end{itemize}
     \end{block}
 

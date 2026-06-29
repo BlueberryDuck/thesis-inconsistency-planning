@@ -1,9 +1,7 @@
-\section{Diagnostic profiles and measures}
+\section{Planning-adapted measures}
 
 % BUDGET: ~75s
 \begin{frame}{Reachable states and horizon-bounded reachability}
-    All six measures are computed over horizon-bounded reachability, the horizon $h$ avoiding the worst-case exponential blowup of full reachability.
-
     \begin{block}{Reachable states}
         $S^0_{\text{reach}} = \{I\}$ \\[2pt]
         $S^{i+1}_{\text{reach}} = S^i_{\text{reach}} \cup \{\text{RESULT}(s, o) \mid s \in S^i_{\text{reach}},\ o \in O,\ \text{precond}(o) \subseteq s\}$
@@ -13,27 +11,25 @@
         \small
         \begin{itemize}
             \item Ascending chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at $h^* \leq 2^{|P|}$, each step only adds states
-            \item At $h \geq h^*$ the bound is exact, so detected conflicts are genuine, not short-horizon artifacts
             \item $h^*$ is worst-case exponential, so the evaluation bounds it at $h = 20$
         \end{itemize}
     \end{block}
+
+    All six measures are computed over horizon-bounded reachability, the horizon $h$ avoiding the worst-case exponential blowup of full reachability.
 
     \sectioncitebk{bk:horizon}{Thesis \S4.4.2}
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{Diagnostic profiles and measures}
-    \begin{exampleblock}{Diagnostic profile}
+\begin{frame}{Profiles pair scope with structure}
+    \begin{block}{Diagnostic profile}
         \[
             \mathcal{I}(\Pi, h) = (\mathcal{I}^{\text{scope}}(\Pi, h),\ \mathcal{I}^{\text{struct}}(\Pi, h))
         \]
-    \end{exampleblock}
-
-    \begin{block}{Diagnostic measures}
         \begin{itemize}
-            \item Scope measures count the affected goal propositions, structure measures count the underlying structural relationships
+            \item Scope counts the affected goal propositions, structure counts the underlying structural relationships
             \item Horizon $h \in \mathbb{N}$ bounds the reachability behind both counts
-            \item Three profiles share this shape, the Unreachability Profile $\mathcal{I}_{\text{UR}}$, the Goal Mutex Profile $\mathcal{I}_{\text{MX}}$, and the Goal Sequencing Conflict Profile $\mathcal{I}_{\text{GS}}$
+            \item The Unreachability Profile $\mathcal{I}_{\text{UR}}$, Goal Mutex Profile $\mathcal{I}_{\text{MX}}$, and Goal Sequencing Conflict Profile $\mathcal{I}_{\text{GS}}$ share this shape
         \end{itemize}
     \end{block}
 
@@ -42,7 +38,7 @@
 
 % BUDGET: ~60s
 \begin{frame}{$\mathcal{I}_{\text{UR}}$ counts unreachable propositions}
-    A goal proposition is unreachable when no state within horizon $h$ contains it.
+    A goal proposition is unreachable at horizon $h$ when no reachable state contains it.
 
     \begin{columns}[T]
         \begin{column}{0.6\textwidth}
@@ -61,7 +57,7 @@
         \end{column}
     \end{columns}
 
-    {\small One blocked goal over three unreachable propositions.}
+    One affected goal over three unreachable propositions.
 
     \sectioncitebk{bk:bank-vault}{Thesis \S4.4.3}
 \end{frame}
@@ -89,14 +85,14 @@
         \end{column}
     \end{columns}
 
-    {\small Two mutex pairs over four goals.}
+    Four affected goals over two mutex pairs.
 
     \sectioncite{Thesis \S4.4.4}
 \end{frame}
 
 % BUDGET: ~60s
 \begin{frame}{$\mathcal{I}_{\text{GS}}$ counts sequencing conflicts}
-    An ordered pair $(g_1, g_2)$ is a sequencing conflict at horizon $h$, written $\text{sc}_h(g_1, g_2)$, when both goals are reachable yet no trace $\sigma_0, \ldots, \sigma_k$ with $k \leq h$ achieves $g_1$ and then $g_2$.
+    An ordered pair $(g_1, g_2)$ is a sequencing conflict at horizon $h$, written $\text{sc}_h(g_1, g_2)$, when each is reachable on its own but no execution trace achieves $g_1$ before $g_2$.
 
     \begin{columns}[T]
         \begin{column}{0.6\textwidth}
@@ -117,21 +113,22 @@
         \end{column}
     \end{columns}
 
-    {\small One ordered pair, the reversible dish has no direction.}
+    Two affected goals over one sequencing conflict.
 
     \sectioncitebk{bk:trust-travel}{Thesis \S4.4.5}
 \end{frame}
 
 % BUDGET: ~45s
 \begin{frame}{Diagnostic profile of the Rover Mission}
+    \begin{center}
+        \input{figures/fig_rover_graph_bare}
+    \end{center}
+
     \begin{exampleblock}{Diagnostic profile of the Rover Mission}
         \[
             (\mathcal{I}_{\text{UR}},\ \mathcal{I}_{\text{MX}},\ \mathcal{I}_{\text{GS}}) = ((1, 3),\ (4, 2),\ (2, 1))
         \]
-        Diagnostic profile of the Rover Mission shows one unreachable goal, two mutex pairs, and one sequencing conflict.
     \end{exampleblock}
-
-    {$\mathcal{I}_{\text{UR}}$ and $\mathcal{I}_{\text{MX}}$ read the reachable states $S^h_{\text{reach}}$, $\mathcal{I}_{\text{GS}}$ reads their traces where order lives, so only $\mathcal{I}_{\text{GS}}$ carries direction and the three stay complementary.}
 
     \sectioncitebkk{bk:signatures}{bk:seq-implies-mx}{Constructed running example}
 \end{frame}

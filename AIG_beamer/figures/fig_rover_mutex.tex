@@ -4,19 +4,15 @@
         goal/.style={prop, fill=black!16},
         initgoal/.style={prop, double, fill=black!16},
         mutex/.style={<->, dashed, red!70!black, thick},
-        oplbl/.style={font=\footnotesize\itshape},
-        clbl/.style={font=\footnotesize, text=black!60},
         >={Stealth[length=1.5mm]},
     ]
     % Pair 1: dish toggle (reversible mutex)
     \node[initgoal] (earth) at (0, 0)    {aimed\_\\earth};
     \node[goal]     (probe) at (0, -2.3) {aimed\_\\probe};
-    \draw[mutex] (earth) -- node[oplbl, right, black] {del} (probe);
-    \node[clbl] at (0, -3.15) {reversible};
+    \draw[mutex] (earth) -- (probe);
 
     % Pair 2: orbit / mapped (irreversible mutex)
     \node[goal] (orbit)  at (3.3, 0)    {in\_\\orbit};
     \node[goal] (mapped) at (3.3, -2.3) {mapped};
-    \draw[mutex] (orbit) -- node[oplbl, right, black] {del comms} (mapped);
-    \node[clbl] at (3.3, -3.15) {irreversible};
+    \draw[mutex] (orbit) -- (mapped);
 \end{tikzpicture}

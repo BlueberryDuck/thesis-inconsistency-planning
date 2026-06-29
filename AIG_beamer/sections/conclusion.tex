@@ -3,19 +3,19 @@
 % BUDGET: ~90s
 \begin{frame}{Conclusion}
     \begin{columns}[t]
-        \begin{column}{0.48\textwidth}
+        \begin{column}{0.5\textwidth}
             \begin{block}{Contributions}
                 \begin{itemize}
-                    \item RQ1, three planning-native profiles $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
-                    \item RQ2, ASP brave-reasoning pipeline where a missing witness atom proves unsatisfiability
+                    \item RQ1, six planning-native measures across three profiles $\mathcal{I}_{\text{UR}}$, $\mathcal{I}_{\text{MX}}$, $\mathcal{I}_{\text{GS}}$
+                    \item RQ2, ASP brave-reasoning pipeline where a missing witness atom proves no trace satisfies the condition
                     \item RQ3, 68 of 158 instances diagnosed, distinguishing structurally different unsolvability categories
                 \end{itemize}
             \end{block}
         \end{column}
-        \begin{column}{0.48\textwidth}
+        \begin{column}{0.5\textwidth}
             \begin{block}{Limitations and future work}
                 \begin{itemize}
-                    \item Grounding bottleneck, 57\% time out \\ $\to$ lifted or MaxSAT encodings
+                    \item Timing bottleneck, 57\% time out \\ $\to$ lifted or MaxSAT encodings
                     \item Horizon dependence, no sufficient $h$ \\ $\to$ adaptive iterative deepening
                     \item Pairwise blind spot on $k$-tuples \\ $\to$ extend mutex and sequencing
                     \item Diagnosis only, not repair \\ $\to$ minimal-modification repair

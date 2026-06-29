@@ -1,36 +1,18 @@
 \section{Motivation}
 
-% BUDGET: ~60s
+% BUDGET: ~75s
 \begin{frame}{Planners report ``unsolvable'' without explaining why}
     \begin{exampleblock}{A rover mission}
-        A Mars rover is sent up with five mission goals, among them sample the soil, image in two directions, map the surface, and reach orbit. No plan achieves all five, so the planner returns \textbf{Unsolvable}. Which goals fail, and how severe is each conflict?
+        A Mars rover carries five mission goals, among them sample the soil, image in two directions, map the surface, and reach orbit. No plan achieves all five, so the planner returns \textbf{Unsolvable}. Which goals fail, and how severe is each conflict?
     \end{exampleblock}
 
     \begin{alertblock}{The diagnostic gap}
         \begin{itemize}
-            \item Planners excel when a plan exists
-            \item Binary failure report when none does
-            \item No location, no severity, no structural explanation
+            \item Planners give a binary verdict with no location, no severity, no structure
+            \item Dead-state certificates [Eriksson et al., 2018] confirm unsolvability
+            \item Excuses [G\"obelbecker et al., 2010] prescribe a repair
+            \item None quantify how inconsistent the instance is
         \end{itemize}
     \end{alertblock}
-    \sectioncite{Thesis \S1.1}
-\end{frame}
-
-% BUDGET: ~60s
-\begin{frame}{Existing tools certify or repair, never quantify}
-    \begin{block}{Unsolvability has real cost}
-        \begin{itemize}
-            \item Planner runtime wasted on instances with no plan
-            \item Model errors must be located before redeployment
-            \item Safety-critical specs need revision when no plan exists
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{Prior diagnostics fall short}
-        \begin{itemize}
-            \item Dead-state certificates [Eriksson et al., 2018] yield a binary judgment
-            \item Excuses [G\"obelbecker et al., 2010] prescribe a repair, not a diagnosis
-        \end{itemize}
-    \end{block}
     \sectioncitebk{bk:eriksson-goebel}{Thesis \S1, \S3}
 \end{frame}

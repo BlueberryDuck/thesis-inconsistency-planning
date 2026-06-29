@@ -1,55 +1,53 @@
-\section{Why naive encoding fails}
+\section{Propositional encoding and measures}
 
 % BUDGET: ~90s
 \begin{frame}{A propositional encoding of the drill chain works\dots}
-    The goal is asserted as a fact, then preconditions are traced back until the chain hits a proposition no operator produces.
+    To build a propositional encoding from a planning problem, use the following rules:
+    \begin{itemize}
+        \item Each goal becomes a fact
+        \item Each produced proposition implies its operator's preconditions and the negation of its delete effects
+        \item The closed-world assumption negates every proposition that no operator produces and that is absent from $I$
+    \end{itemize}
 
     \begin{columns}[T]
         \begin{column}{0.6\textwidth}
-            \begin{exampleblock}{Precondition encoding $K_{\text{drill}}$}
+            \begin{exampleblock}{Propositional Encoding $K_{\text{drill}}$}
                 \footnotesize
                 $K_{\text{drill}} = \{\ \text{soil\_sampled},$ \hfill {\scriptsize\textcolor{gray}{goal}} \\[2pt]
                 $\hphantom{K_{\text{drill}} = \{\ } \text{soil\_sampled} \rightarrow \text{hole\_drilled},$ \hfill {\scriptsize\textcolor{gray}{sample precond.}} \\[2pt]
                 $\hphantom{K_{\text{drill}} = \{\ } \text{hole\_drilled} \rightarrow \text{arm\_deployed} \land \text{drill\_bit},$ \hfill {\scriptsize\textcolor{gray}{drill precond.}} \\[2pt]
-                $\hphantom{K_{\text{drill}} = \{\ } \neg \text{drill\_bit}\ \}$ \hfill {\scriptsize\textcolor{gray}{closed world assumption}}
+                $\hphantom{K_{\text{drill}} = \{\ } \neg \text{drill\_bit}\ \}$ \hfill {\scriptsize\textcolor{gray}{closed world assumption}} \\[4pt]
+                $\mathcal{I}_c(K_{\text{drill}}) = 1$, forcing \textit{drill\_bit} to $B$
             \end{exampleblock}
         \end{column}
         \begin{column}{0.4\textwidth}
-            \vspace*{-0.2em}
             \centering
             \input{figures/fig_rover_drill}
         \end{column}
     \end{columns}
 
-    \begin{block}{Contension measure $\mathcal{I}_c$}
-        \begin{itemize}
-            \item $\neg\textit{drill\_bit}$ blocks the chain, forcing $v(\textit{drill\_bit}) = B$, so $\mathcal{I}_c(K_{\text{drill}}) = 1$
-        \end{itemize}
-    \end{block}
-
     \sectioncite{Thesis \S4.2}
 \end{frame}
 
-% BUDGET: ~90s
-\begin{frame}{\dots\ but either misses the conflict or flattens it to $\mathcal{I}_c = 1$}
-    \begin{exampleblock}{$\mathcal{I}_c$ under two encodings, neither informative}
+% BUDGET: ~60s
+\begin{frame}{\dots\ but flattens every conflict to $\mathcal{I}_c = 1$}
+    \begin{exampleblock}{$\mathcal{I}_c$ across three structurally distinct failures}
         \centering
-        \begin{tabular}{lcc}
+        \begin{tabular}{lc}
             \toprule
-            Planning failure                        & precondition & delete-enriched \\
+            Planning failure                        & $\mathcal{I}_c$ \\
             \midrule
-            Goal with no producer                   & $1$          & $1$             \\
-            Two goals that never hold together      & $0$          & $1$             \\
-            A goal that irreversibly blocks another & $0$          & $1$             \\
+            Goal with no producer                   & $1$             \\
+            Two goals that never hold together      & $1$             \\
+            A goal that irreversibly blocks another & $1$             \\
             \bottomrule
         \end{tabular}
     \end{exampleblock}
 
-    \begin{block}{Why neither helps}
+    \begin{block}{Why the score is uninformative}
         \begin{itemize}
-            \item Without delete effects, operator-induced conflicts read as a false $0$
-            \item With them, $B$ collapses each conflict to a flat $1$
-            \item Structural information about the conflict is lost, so $\mathcal{I}_c$ cannot distinguish between them
+            \item $B$ absorbs each conflict at a single proposition, scoring a flat $1$
+            \item Structural information is lost, so $\mathcal{I}_c$ cannot tell these failures apart
         \end{itemize}
     \end{block}
 

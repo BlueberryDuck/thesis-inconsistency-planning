@@ -4,8 +4,8 @@
         goal/.style={prop, fill=black!16},
         initgoal/.style={prop, double, fill=black!16},
         noconf/.style={<->, dashed, black!40, thick},
-        blocked/.style={->, red!70!black, thick},
-        ok/.style={->, examplegreen!80!black, thick},
+        unachievable/.style={->, red!70!black, thick},
+        achievable/.style={->, examplegreen!80!black, thick},
         oplbl/.style={font=\footnotesize\itshape},
         clbl/.style={font=\footnotesize, text=black!60},
         >={Stealth[length=1.5mm]},
@@ -14,12 +14,12 @@
     \node[initgoal] (earth) at (0, 0)    {aimed\_\\earth};
     \node[goal]     (probe) at (0, -2.3) {aimed\_\\probe};
     \draw[noconf] (earth) -- (probe);
-    \node[clbl] at (0, -3.15) {reversible: no order};
+    \node[clbl] at (0, -3.15) {reversible, no order};
 
-    % Conflict: orbit before mapped is blocked, reverse order works
+    % Conflict: orbit before mapped is unachievable, reverse order works
     \node[goal] (orbit)  at (3.6, 0)    {in\_\\orbit};
     \node[goal] (mapped) at (3.6, -2.3) {mapped};
-    \draw[blocked] (orbit) to[bend left=22] node[oplbl, right, black] {blocked} (mapped);
-    \draw[ok]      (mapped) to[bend left=22] node[oplbl, left] {ok} (orbit);
+    \draw[unachievable] (orbit) to[bend left=22] node[oplbl, right, black] {unachievable} (mapped);
+    \draw[achievable]      (mapped) to[bend left=22] node[oplbl, left] {achievable} (orbit);
     \node[clbl] at (3.6, -3.15) {(in\_orbit, mapped)};
 \end{tikzpicture}

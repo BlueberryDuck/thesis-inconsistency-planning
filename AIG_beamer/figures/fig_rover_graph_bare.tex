@@ -1,0 +1,41 @@
+\begin{tikzpicture}[
+        scale=0.7, transform shape,
+        prop/.style={circle, draw, thick, font=\small, align=center, inner sep=1.5pt},
+        missing/.style={prop, dashed},
+        initial/.style={prop, double},
+        goal/.style={prop, fill=black!16},
+        initgoal/.style={prop, double, fill=black!16},
+        del/.style={->, dashed, red!70!black, thick},
+        oplbl/.style={font=\footnotesize\itshape},
+        >={Stealth[length=1.5mm]},
+    ]
+    % --- Cluster A: drill chain (UR) ---
+    \node[initial] (arm)      at (-1.1, 0) {arm\_\\deployed};
+    \node[missing] (drillbit) at (1.1, 0)  {drill\_\\bit};
+    \node[prop]    (hole)     at (0, -1.9) {hole\_\\drilled};
+    \node[goal]    (soil)     at (0, -3.8) {soil\_\\sampled};
+    \draw[->, thick] (arm)      -- (hole);
+    \draw[->, thick] (drillbit) -- (hole);
+    \node[oplbl] at (0, -0.85) {drill};
+    \draw[->, thick] (hole)     -- node[oplbl, right] {sample} (soil);
+
+    % --- Cluster B: dish toggle (MX, reversible) ---
+    \node[initgoal] (earth) at (4.3, 0)    {aimed\_\\earth};
+    \node[goal]     (probe) at (4.3, -3.0) {aimed\_\\probe};
+    \draw[->, thick] (earth) to[bend left=45] node[oplbl, right] {aim\_probe} (probe);
+    \draw[->, thick] (probe) to[bend left=45] node[oplbl, left]  {aim\_earth} (earth);
+    \draw[del, <->] (earth) -- node[oplbl, right, black] {del} (probe);
+
+    % --- Cluster C: surface / orbit (MX + GS) ---
+    \node[initial] (surface)  at (8.4, 0)     {on\_\\surface};
+    \node[prop]    (airborne) at (10.7, 0)    {airborne};
+    \node[goal]    (orbit)    at (12.9, 0)    {in\_\\orbit};
+    \node[initial] (comms)    at (8.4, -3.0)  {comms};
+    \node[goal]    (mapped)   at (10.9, -3.0) {mapped};
+    \draw[->, thick] (surface)  to[bend left=20] node[oplbl, above] {ascend}  (airborne);
+    \draw[->, thick] (airborne) to[bend left=20] node[oplbl, below] {descend} (surface);
+    \draw[->, thick] (airborne) -- node[oplbl, above] {deploy} (orbit);
+    \draw[->, thick] (surface)  -- node[oplbl, left]  {map} (mapped);
+    \draw[->, thick] (comms)    -- node[oplbl, below] {map} (mapped);
+    \draw[del] (airborne) to[bend left=28] node[oplbl, black, right] {del comms, mapped} (mapped);
+\end{tikzpicture}
