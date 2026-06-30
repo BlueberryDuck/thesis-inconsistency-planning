@@ -18,50 +18,15 @@
 
 % BUDGET: ~60s
 \begin{frame}{Classical planning}
-    \small A PDDL Domain and Problem translate to a STRIPS tuple $\Pi = \langle P, O, I, G \rangle$.
+    A PDDL Domain and Problem translate to a STRIPS tuple $\Pi = \langle P, O, I, G \rangle$.
 
     \begin{block}{STRIPS notation $\Pi = \langle P, O, I, G \rangle$ [Bylander 1994]}
-        \footnotesize
         \begin{itemize}
             \item $P$ propositions, $O$ operators, $I \subseteq P$ initial state, $G \subseteq P$ goal
             \item Each operator $o = \langle \text{precond}(o), \text{add}(o), \text{delete}(o) \rangle$
             \item Plan is an applicable operator sequence from $I$ reaching a state $\supseteq G$. Unsolvable means none exists
         \end{itemize}
     \end{block}
-    \begin{columns}[T]
-        \begin{column}{0.6\textwidth}
-            \begin{exampleblock}{Rover Mission, the drill subproblem}
-                \footnotesize
-                $P = \{\text{arm\_deployed},\ \text{drill\_bit},\ \text{hole\_drilled},\ \text{soil\_sampled}\}$ \\[2pt]
-                $O = \{\ \text{drill} = \langle \{\text{arm\_deployed}, \text{drill\_bit}\},\ \{\text{hole\_drilled}\},\ \emptyset \rangle,$ \\[1pt]
-                $\hphantom{O = \{\ } \text{sample} = \langle \{\text{hole\_drilled}\},\ \{\text{soil\_sampled}\},\ \emptyset \rangle\ \}$ \\[2pt]
-                $I = \{\text{arm\_deployed}\}, \qquad G = \{\text{soil\_sampled}\}$
-            \end{exampleblock}
-        \end{column}
-        \begin{column}{0.4\textwidth}
-            \vspace*{-0.5em}
-            \centering
-            \input{figures/fig_rover_drill}
-        \end{column}
-    \end{columns}
 
     \sectioncite{Thesis \S2.2}
-\end{frame}
-
-% BUDGET: ~60s
-\begin{frame}{Answer Set Programming (ASP)}
-    \begin{block}{Execution traces and reasoning modes}
-        \begin{itemize}
-            \item Each answer set of the encoding is one execution trace, a state sequence from $I$
-            \item Brave reasoning unions the answer sets, an atom holds if some trace produces it
-            \item Cautious reasoning intersects them, an atom holds only if every trace produces it [Eiter and Gottlob, 1995]
-        \end{itemize}
-    \end{block}
-
-    \begin{exampleblock}{Brave and cautious over two traces}
-        Trace 1 makes $\{a, b\}$ reachable, trace 2 makes $\{a, c\}$ reachable. \\[2pt]
-        $\text{BRAVE} = \{a, b, c\}$ reachable by some trace, \quad $\text{CAUTIOUS} = \{a\}$ by every trace.
-    \end{exampleblock}
-
-    \sectioncite{Thesis \S2.4}
 \end{frame}

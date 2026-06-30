@@ -14,11 +14,11 @@
         \begin{itemize}
             \item IPC 2016 Unsolvability [Muise and Lipovetzky, 2016], 15 domains, 6 compatible
             \item Eriksson [Eriksson, 2019] adds \textit{3unsat} as the 7th compatible domain
-            \item Two compatible solvable instances also run as sanity check
+            \item Two compatible solvable instances also run to confirm $\mathcal{I} = 0$
         \end{itemize}
     \end{block}
 
-    \sectioncitebk{bk:horizon}{Thesis \S6.1}
+    \sectioncite{Thesis \S6.1}
 \end{frame}
 
 % BUDGET: ~90s
@@ -46,17 +46,19 @@
 
     {\footnotesize Timing each implementation phase shows that coverage is mostly compute-bound, solving dominates six of seven domains, grounding only the operator-heavy ones.}
 
-    \sectioncitebkk{bk:per-domain}{bk:validation}{Thesis \S6.2}
+    \sectioncitebk{bk:validation}{Thesis \S6.2}
 \end{frame}
 
 % BUDGET: ~60s
 \begin{frame}{Selected case studies}
     \begin{exampleblock}{Scope grades severity}
-        \textit{diagnosis} prob06 has 1 of 7 goals unreachable, prob05 49 of 56. The scope value $\mathcal{I}^{\text{scope}}_{\text{UR}}$ counts the unreachable goals, separating a mild defect from a near-total one.
+        Across \textit{diagnosis}, $\mathcal{I}^{\text{scope}}_{\text{UR}}$ ranges from 1 of 7 unreachable goals to 49 of 56. \\
+        Differentiating a mild defect from a near-total one.
     \end{exampleblock}
 
     \begin{exampleblock}{Structure grades density}
-        \textit{diagnosis} prob10 has a single mutex pair, prob16 a full clique on 8 goals. The structure value $\mathcal{I}^{\text{struct}}_{\text{MX}}$ counts conflicting pairs, 1 against the upper bound $\binom{8}{2} = 28$, separating an isolated conflict from a dense one.
+        Across \textit{diagnosis}, $\mathcal{I}^{\text{struct}}_{\text{MX}}$ ranges from 1 mutex pair to all $\binom{8}{2} = 28$ pairs among 8 goals. \\
+        Differentiating an isolated conflict from a dense one.
     \end{exampleblock}
 
     \sectioncite{Thesis \S6.3}
@@ -85,5 +87,5 @@
         \end{itemize}
     \end{block}
 
-    \sectioncitebk{bk:horizon}{Thesis \S6.4}
+    \sectioncite{Thesis \S6.4}
 \end{frame}

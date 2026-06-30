@@ -1,7 +1,7 @@
 \section{Implementation}
 
 % BUDGET: ~90s
-\begin{frame}{Implementation Overview}
+\begin{frame}{Implementation Pipeline}
     \begin{center}
         \begin{tikzpicture}[
                 node distance=14mm,
@@ -22,16 +22,16 @@
         \begin{itemize}
             \item \textbf{Translate}
                   \begin{itemize}
-                      \item Custom preprocessing strips \texttt{:costs}
-                      \item A first prototype grounded eagerly and did not scale, \\\textit{plasp} now lifts PDDL to ASP and defers grounding to Clingo
-                      \item A bridge maps onto the internal predicates
+                      \item Preprocessing to increase compatibility with plasp
+                      \item A first prototype grounded eagerly and did not scale, \\\textit{plasp} now lifts PDDL to ASP and defers grounding to Clingo, both Potassco tools
+                      \item A bridge maps onto the internal representation for reachability encoding
                   \end{itemize}
             \item \textbf{Explore}: the reachability encoding derives the reachable states under Clingo brave, unioning every execution trace in a single solve
             \item \textbf{Extract}: set operations over the witness atoms produce the six measure values, the diagnostic profile
         \end{itemize}
     \end{block}
 
-    \sectioncitebk{bk:asp-vs-sat}{Thesis \S5.1}
+    \sectioncitebkk{bk:asp-reasoning}{bk:asp-vs-sat}{Thesis \S5.1}
 \end{frame}
 
 % BUDGET: ~90s

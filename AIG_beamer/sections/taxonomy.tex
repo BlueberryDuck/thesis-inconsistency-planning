@@ -1,27 +1,13 @@
-\section{Taxonomy of unsolvable planning problems}
+\section{Structural causes of unsolvability}
 
-% BUDGET: ~60s
-\begin{frame}{Taxonomy of unsolvable planning problems}
-    \input{figures/fig_taxonomy}
+% BUDGET: ~90s
+\begin{frame}{Structural causes of unsolvability}
+    The Rover Mission example carries one failure per category, and the categories overlap rather than partition.
 
-    \begin{block}{Scope and overlap}
-        \begin{itemize}
-            \item State reachability is the common basis for Categories 1, 2a, and 2c
-            \item Category 2b diagnosis needs graph analysis, Category 3 needs numeric fluents
-            \item Categories overlap rather than partition, one problem may exhibit several types
-        \end{itemize}
-    \end{block}
-
-    \sectioncitebk{bk:overlap}{Thesis \S4.1}
-\end{frame}
-
-% BUDGET: ~75s
-\begin{frame}{Rover Mission example illustrates the taxonomy}
-    The Rover Mission carries one failure per cluster, and the categories overlap rather than partition.
-
+    \vspace*{-0.4em}
     \begin{center}
-        \input{figures/fig_rover_graph}
+        \scalebox{0.93}{\input{figures/fig_rover_graph}}
     \end{center}
 
-    \sectioncite{Constructed running example}
+    \sectioncitebk{bk:taxonomy-tree}{Thesis \S4.1}
 \end{frame}

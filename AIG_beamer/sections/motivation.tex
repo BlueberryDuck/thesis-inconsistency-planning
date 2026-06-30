@@ -1,18 +1,18 @@
 \section{Motivation}
 
 % BUDGET: ~75s
-\begin{frame}{Planners report ``unsolvable'' without explaining why}
+\begin{frame}{Motivation}
     \begin{exampleblock}{A rover mission}
         A Mars rover carries five mission goals, among them sample the soil, image in two directions, map the surface, and reach orbit. No plan achieves all five, so the planner returns \textbf{Unsolvable}. Which goals fail, and how severe is each conflict?
     \end{exampleblock}
 
     \begin{alertblock}{The diagnostic gap}
         \begin{itemize}
-            \item Planners give a binary verdict with no location, no severity, no structure
+            \item Planners give a binary answer, no further information about severity or structure
             \item Dead-state certificates [Eriksson et al., 2018] confirm unsolvability
             \item Excuses [G\"obelbecker et al., 2010] prescribe a repair
             \item None quantify how inconsistent the instance is
         \end{itemize}
     \end{alertblock}
-    \sectioncitebk{bk:eriksson-goebel}{Thesis \S1, \S3}
+    \sectioncite{Thesis \S1, \S3}
 \end{frame}

@@ -12,55 +12,57 @@
 \end{frame}
 
 %========================================================================
-% Motivation / Foundations -- related work (Thesis \S1, \S3)
-%========================================================================
-
-\begin{frame}[noframenumbering]{Backup, comparison vs Eriksson and Goebelbecker}
-    \hypertarget{bk:eriksson-goebel}{}
-    \begin{center}
-        \scriptsize
-        \begin{tabular}{lll}
-            \toprule
-            Approach                                        & Output                                                                                & Diagnostic shape         \\
-            \midrule
-            Dead-state certificates [Eriksson et al., 2018] & solvable or unsolvable                                                                & binary, no severity      \\
-            Excuses [G\"obelbecker et al., 2010]            & minimal repair edits                                                                  & prescriptive             \\
-            Explanations [Sreedharan et al., 2019]          & unreachable-goal accounts                                                             & qualitative, per case    \\
-            This thesis                                     & profile $(\mathcal{I}_{\text{UR}}, \mathcal{I}_{\text{MX}}, \mathcal{I}_{\text{GS}})$ & quantitative, structural \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-
-    \begin{block}{Complementary roles}
-        \begin{itemize}
-            \item $\mathcal{I}_{\text{GS}}$ recovers a quantitative form of dead-state analysis
-            \item $\mathcal{I}_{\text{UR}}$ flags where add-producer excuses apply, $\mathcal{I}_{\text{GS}}$ where add-reversal excuses do
-            \item Goal-level mutex over $S^h_{\text{reach}}$ differs from Graphplan's level-based proposition mutex [Blum and Furst, 1997]
-            \item Measures stay descriptive, leaving repair decisions to domain experts
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S1.1, \S3}
-\end{frame}
-
-%========================================================================
 % Limitations of a propositional encoding (Thesis \S4.2)
 %========================================================================
 
-\begin{frame}[noframenumbering]{Backup, enriching the encoding still scores $1$}
-    \hypertarget{bk:enriched}{}
-    \begin{exampleblock}{The Rover dish toggle under two encodings}
-        \footnotesize
-        Precondition-only \quad $K_{\text{dish}} = \{\text{aimed\_earth},\ \text{aimed\_probe},\ \text{aimed\_probe} \rightarrow \text{aimed\_earth},\ \text{aimed\_earth} \rightarrow \text{aimed\_probe}\}$\\[2pt]
-        Enriched \quad $K^+_{\text{dish}} = K_{\text{dish}} \cup \{\text{aimed\_probe} \rightarrow \neg\text{aimed\_earth},\ \text{aimed\_earth} \rightarrow \neg\text{aimed\_probe}\}$
+\begin{frame}[noframenumbering]{Backup, a propositional encoding of the drill chain works\dots}
+    \hypertarget{bk:naive-drill}{}
+    To build a propositional encoding from a planning problem, use the following rules:
+    \begin{itemize}
+        \item Each goal becomes a fact
+        \item Each produced proposition implies its operator's preconditions and the negation of its delete effects
+        \item The closed-world assumption negates every proposition that no operator produces and that is absent from $I$
+    \end{itemize}
+
+    \begin{columns}[T]
+        \begin{column}{0.6\textwidth}
+            \begin{exampleblock}{Propositional Encoding $K_{\text{drill}}$}
+                \footnotesize
+                $K_{\text{drill}} = \{\ \text{soil\_sampled},$ \hfill {\scriptsize\textcolor{gray}{goal}} \\[2pt]
+                $\hphantom{K_{\text{drill}} = \{\ } \text{soil\_sampled} \rightarrow \text{hole\_drilled},$ \hfill {\scriptsize\textcolor{gray}{sample precond.}} \\[2pt]
+                $\hphantom{K_{\text{drill}} = \{\ } \text{hole\_drilled} \rightarrow \text{arm\_deployed} \land \text{drill\_bit},$ \hfill {\scriptsize\textcolor{gray}{drill precond.}} \\[2pt]
+                $\hphantom{K_{\text{drill}} = \{\ } \neg \text{drill\_bit}\ \}$ \hfill {\scriptsize\textcolor{gray}{closed world assumption}} \\[4pt]
+                $\mathcal{I}_c(K_{\text{drill}}) = 1$, forcing \textit{drill\_bit} to $B$
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \centering
+            \input{figures/fig_rover_drill}
+        \end{column}
+    \end{columns}
+
+    \sectioncite{Thesis \S4.2}
+\end{frame}
+
+\begin{frame}[noframenumbering]{\dots\ but flattens every conflict to $\mathcal{I}_c = 1$}
+    \hypertarget{bk:naive-flat}{}
+    \begin{exampleblock}{$\mathcal{I}_c$ across three structurally distinct conflicts}
+        \centering
+        \begin{tabular}{lc}
+            \toprule
+            Planning failure                        & $\mathcal{I}_c$ \\
+            \midrule
+            Goal with no producer                   & $1$             \\
+            Two goals that never hold together      & $1$             \\
+            A goal that irreversibly blocks another & $1$             \\
+            \bottomrule
+        \end{tabular}
     \end{exampleblock}
 
-    \begin{block}{Detection without information}
+    \begin{block}{Why the score is uninformative}
         \begin{itemize}
-            \item Precondition-only is classically consistent, $v(\text{aimed\_earth}) = v(\text{aimed\_probe}) = T$, the mutex is invisible and $\mathcal{I}_c = 0$
-            \item The delete-effect rule $p \rightarrow \neg d$ makes it inconsistent, so the mutex is now represented
-            \item Yet $v(\text{aimed\_probe}) = B$, $v(\text{aimed\_earth}) = T$ satisfies every formula, so $\mathcal{I}_c = 1$
-            \item $B$ absorbs the conflict at one proposition, the same flat score as the drill chain
+            \item $B$ absorbs each conflict at a single proposition, scoring a flat $1$
+            \item Structural information is lost, so $\mathcal{I}_c$ cannot tell these failures apart
         \end{itemize}
     \end{block}
 
@@ -71,18 +73,14 @@
 % Taxonomy of unsolvable planning problems (Thesis \S4.1)
 %========================================================================
 
-\begin{frame}[noframenumbering]{Backup, one problem, three structural categories}
-    \hypertarget{bk:overlap}{}
-    \begin{exampleblock}{The Rover Mission carries one failure per cluster}
-        $G = \{\text{soil\_sampled}, \text{aimed\_earth}, \text{aimed\_probe}, \text{in\_orbit}, \text{mapped}\}$, three independent subsystems each contributing a structurally different failure.
-    \end{exampleblock}
-
-    \begin{block}{Three categories in one problem}
+\begin{frame}[noframenumbering]{Backup, the full taxonomy and what is in scope}
+    \hypertarget{bk:taxonomy-tree}{}
+    \input{figures/fig_taxonomy}
+    \begin{block}{Scope and overlap}
         \begin{itemize}
-            \item Category 2a, the drill chain, no operator produces \textit{drill\_bit}, so \textit{soil\_sampled} is unreachable
-            \item Category 1, the dish toggle, \textit{aimed\_earth} and \textit{aimed\_probe} are operator-induced reversible mutex
-            \item Category 2c, the orbit chain, \textit{ascend} deletes \textit{mapped} with no way to restore it
-            \item The orbit chain is at once a mutex and a sequencing conflict, so the categories overlap rather than partition
+            \item State reachability is the common basis for Categories 1, 2a, and 2c
+            \item Category 2b diagnosis needs graph analysis, Category 3 needs numeric fluents
+            \item Categories overlap rather than partition, one problem may exhibit several types
         \end{itemize}
     \end{block}
 
@@ -93,67 +91,21 @@
 % Planning-native measures -- scenarios and normalization (Thesis \S4.3, \S4.4, \S4.6)
 %========================================================================
 
-\begin{frame}[noframenumbering]{Backup, Bank Vault deepens the unreachability cascade}
-    \hypertarget{bk:bank-vault}{}
-    \begin{exampleblock}{Two unreachability profiles at convergence}
-        \small
-        \centering
-        \begin{tabular}{lccc}
-            \toprule
-            Scenario    & $|P|$ & $\mathcal{I}_{\text{UR}}(\Pi)$ & cascade depth \\
-            \midrule
-            Rover drill & 4     & $(1, 3)$                       & 2             \\
-            Bank Vault  & 8     & $(1, 7)$                       & 6             \\
-            \bottomrule
-        \end{tabular}
-    \end{exampleblock}
+\begin{frame}[noframenumbering]{Backup, reachable states and the horizon bound}
+    \hypertarget{bk:reachability}{}
+    \begin{block}{Reachable states}
+        $S^0_{\text{reach}} = \{I\}$ \\[2pt]
+        $S^{i+1}_{\text{reach}} = S^i_{\text{reach}} \cup \{\text{RESULT}(s, o) \mid s \in S^i_{\text{reach}},\ o \in O,\ \text{precond}(o) \subseteq s\}$
+    \end{block}
 
-    \begin{block}{The drill chain is the shallow case, Bank Vault the deep one}
+    \begin{block}{Horizon bound}
         \begin{itemize}
-            \item Drill chain, missing root \textit{drill\_bit} blocks \textit{hole\_drilled} then \textit{soil\_sampled}
-            \item Bank Vault, three producerless roots feed three chains into \textit{in\_vault}
-            \item Same scope, structure grows with chain count and length
+            \item Ascending chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at $h^* \leq 2^{|P|}$, each step only adds states
+            \item $h^*$ is worst-case exponential, so the evaluation bounds it at $h = 20$
         \end{itemize}
     \end{block}
 
-    \sectioncite{Thesis \S4.3.1 Scenario~2}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, the orbit chain sequencing in full}
-    \hypertarget{bk:trust-travel}{}
-    \begin{exampleblock}{Why $(\text{in\_orbit}, \text{mapped})$ is one-directional}
-        \small
-        \textit{map} needs \textit{on\_surface} and \textit{comms}, \textit{ascend} reaches \textit{airborne} but deletes \textit{comms} and \textit{mapped}, \textit{deploy} then reaches \textit{in\_orbit}.
-    \end{exampleblock}
-
-    \begin{block}{Mapped before orbit works, orbit before mapped does not}
-        \begin{itemize}
-            \item \textit{mapped} is reachable from the initial state, and \textit{in\_orbit} is reachable after \textit{ascend} then \textit{deploy}
-            \item Achieving \textit{mapped} first then ascending leaves a trace with \textit{mapped} at an earlier step than \textit{in\_orbit}, so that order is achievable
-            \item Once \textit{in\_orbit} holds, \textit{comms} is gone, so \textit{map} can never fire again and \textit{mapped} is unreachable afterwards
-            \item Only the ordered pair $(\text{in\_orbit}, \text{mapped})$ fails, giving $\mathcal{I}_{\text{GS}}(\Pi) = (2, 1)$
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Constructed running example}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, symmetric sequencing raises the structure count}
-    \hypertarget{bk:rival-alliances}{}
-    \begin{exampleblock}{Rival Alliances, both orders fail}
-        $G = \{\text{allied\_A}, \text{allied\_B}\}$, each \textit{ally} operator deletes the rival's neutral precondition irreversibly, so the two goals never coexist.
-    \end{exampleblock}
-
-    \begin{block}{Structure value separates symmetric from one-directional}
-        \begin{itemize}
-            \item Rover orbit chain, one-directional, only $(\text{in\_orbit}, \text{mapped})$ fails, $\mathcal{I}_{\text{GS}} = (2, 1)$
-            \item Rival Alliances, both $(\text{allied\_A}, \text{allied\_B})$ and $(\text{allied\_B}, \text{allied\_A})$ fail, $\mathcal{I}_{\text{GS}} = (2, 2)$
-            \item Same scope of two goals, the structure count distinguishes one blocked order from two
-            \item Symmetric exclusion signals a harder repair, neither goal can be deferred to rescue the other
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S4.3.3 Scenario~6}
+    \sectioncite{Thesis \S4.4.2}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Backup, the isolated scenarios behind the running example}
@@ -195,8 +147,8 @@
         \begin{itemize}
             \item Severity is not proportional to size, 2 conflicting goals among 100 may be easier to repair than a complete clique on 3
             \item Every denominator choice encodes an assumption about problem structure
-            \item The profiles already carry relative information, scope against structure within each measure
-            \item Future work calibrates normalization against the IPC benchmark distribution
+            \item Profiles carry relative information, scope against structure within each measure
+            \item Future work could calibrate normalization against the IPC benchmark distribution
         \end{itemize}
     \end{block}
 
@@ -209,13 +161,6 @@
 
 \begin{frame}[noframenumbering]{Backup, postulate choice and the combined measure}
     \hypertarget{bk:postulates}{}
-    \begin{exampleblock}{Does the combined profile satisfy Planning Consistency?}
-        \begin{itemize}
-            \item No. \textit{3unsat} instances are unsolvable yet all six values stay zero at every horizon
-            \item For $|G| \leq 2$ the converse holds, all measures zero implies solvable
-        \end{itemize}
-    \end{exampleblock}
-
     \begin{block}{Why these three postulates}
         \begin{itemize}
             \item Classical postulates assume formula structure, planning has goals, operators, and states
@@ -332,6 +277,24 @@
 % Implementation (Thesis \S5)
 %========================================================================
 
+\begin{frame}[noframenumbering]{Backup, ASP reasoning modes, brave and cautious}
+    \hypertarget{bk:asp-reasoning}{}
+    \begin{block}{Execution traces and reasoning modes}
+        \begin{itemize}
+            \item Each answer set of the encoding is one execution trace, a state sequence from $I$
+            \item Brave reasoning unions the answer sets, an atom holds if some trace produces it
+            \item Cautious reasoning intersects them, an atom holds only if every trace produces it [Eiter and Gottlob, 1995]
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Brave and cautious over two traces}
+        Trace 1 makes $\{a, b\}$ reachable, trace 2 makes $\{a, c\}$ reachable. \\[2pt]
+        $\text{BRAVE} = \{a, b, c\}$ reachable by some trace, \quad $\text{CAUTIOUS} = \{a\}$ by every trace.
+    \end{exampleblock}
+
+    \sectioncite{Thesis \S2.4}
+\end{frame}
+
 \begin{frame}[noframenumbering]{Backup, why ASP over SAT and MaxSAT}
     \hypertarget{bk:asp-vs-sat}{}
     \begin{block}{Reasons in favor of ASP}
@@ -403,28 +366,6 @@ holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
 % Evaluation (Thesis \S6)
 %========================================================================
 
-\begin{frame}[noframenumbering]{Backup, per-domain results breakdown}
-    \hypertarget{bk:per-domain}{}
-    \begin{center}
-        \scriptsize
-        \begin{tabular}{lcll}
-            \toprule
-            Domain              & OK / total & Classification         & Notable pattern                              \\
-            \midrule
-            diagnosis           & 18 / 20    & all Cat 2a             & 2 show $h{=}20$ mutex artifacts, UR 14--88\% \\
-            3unsat              & 20 / 30    & all consistent         & $k$-tuple blind spot, horizon-independent    \\
-            bottleneck          & 12 / 25    & 10 Cat 2c-seq, 2 cons. & MX varies with bottleneck position           \\
-            cave-diving         & 9 / 25     & 1 Cat 2a, 8 cons.      & global constraint outside pairwise scope     \\
-            pegsol-row5         & 3 / 15     & all Cat 2a             & one unreachable goal each                    \\
-            document-transfer   & 3 / 20     & all Cat 2a             & up to 19 of 19 goals unreachable             \\
-            chessboard-pebbling & 3 / 23     & all Cat 2c-seq         & identical $(3, 2, 3, 2)$ regardless of grid  \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-
-    \sectioncite{Thesis \S6.2}
-\end{frame}
-
 \begin{frame}[noframenumbering]{Backup, 3unsat and the $k$-tuple blind spot}
     \hypertarget{bk:3unsat}{}
     \begin{exampleblock}{Pairwise coexistence with no triple-satisfying state}
@@ -446,26 +387,4 @@ holds(P, T+1) :- holds(P, T), not deleted(P, T), time(T), T < horizon.
     \end{block}
 
     \sectioncite{Thesis \S6.3.6, \S7.4}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Backup, horizon sensitivity}
-    \hypertarget{bk:horizon}{}
-    \begin{exampleblock}{Solvable cave-diving \texttt{satprob01} across horizons}
-        \begin{itemize}
-            \item At $h = 10$, $\mathcal{I}_{\text{MX}}(\Pi) = (3, 2)$ and $\mathcal{I}_{\text{GS}}(\Pi) = (3, 4)$, classified 2c-sequencing
-            \item At $h = 20$, every profile is zero, classified consistent
-        \end{itemize}
-    \end{exampleblock}
-
-    \begin{block}{Soundness-coverage tradeoff}
-        \begin{itemize}
-            \item Short $h$ misses long witness traces, producing spurious conflicts
-            \item Identical artifacts appear on solvable and unsolvable cave-diving instances at $h = 10$
-            \item $h = 20$ chosen because no observed solvable instance produces conflicts
-            \item Longer $h$ adds grounding cost and reduces coverage
-            \item Same $h$-parameterization as $\text{LTL}_{\text{ff}}$ measures [Corea et al., 2024; Kuhlmann, 2025]
-        \end{itemize}
-    \end{block}
-
-    \sectioncite{Thesis \S6.4}
 \end{frame}

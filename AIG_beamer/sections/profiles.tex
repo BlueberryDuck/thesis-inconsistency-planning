@@ -1,28 +1,23 @@
 \section{Planning-native measures}
 
-% BUDGET: ~75s
-\begin{frame}{Reachable states and horizon-bounded reachability}
-    \begin{block}{Reachable states}
-        $S^0_{\text{reach}} = \{I\}$ \\[2pt]
-        $S^{i+1}_{\text{reach}} = S^i_{\text{reach}} \cup \{\text{RESULT}(s, o) \mid s \in S^i_{\text{reach}},\ o \in O,\ \text{precond}(o) \subseteq s\}$
-    \end{block}
+% BUDGET: ~45s
+\begin{frame}{Horizon-bounded reachability}
+    All six measures are computed over $S^h_{\text{reach}}$.
 
-    \begin{block}{Horizon-bounded reachability}
-        \small
+    \begin{block}{Reachable states $S^h_{\text{reach}}$}
         \begin{itemize}
-            \item Ascending chain $S^0_{\text{reach}} \subseteq S^1_{\text{reach}} \subseteq \cdots$ converges at $h^* \leq 2^{|P|}$, each step only adds states
-            \item $h^*$ is worst-case exponential, so the evaluation bounds it at $h = 20$
+            \item $S^h_{\text{reach}}$ collects every state reachable from $I$ within $h$ operator applications
+            \item The set only grows with $h$ and eventually converges, but full convergence is worst-case exponential in $|P|$
+            \item The evaluation caps exploration at $h = 20$, trading completeness for tractability
         \end{itemize}
     \end{block}
 
-    All six measures are computed over horizon-bounded reachability, the horizon $h$ avoiding the worst-case exponential blowup of full reachability.
-
-    \sectioncitebk{bk:horizon}{Thesis \S4.4.2}
+    \sectioncitebk{bk:reachability}{Thesis \S4.4.2}
 \end{frame}
 
 % BUDGET: ~90s
-\begin{frame}{Profiles pair scope with structure}
-    \begin{block}{Diagnostic profile}
+\begin{frame}{Diagnostic profile}
+    \begin{block}{Diagnostic profile $\mathcal{I}(\Pi, h)$}
         \[
             \mathcal{I}(\Pi, h) = (\mathcal{I}^{\text{scope}}(\Pi, h),\ \mathcal{I}^{\text{struct}}(\Pi, h))
         \]
@@ -37,7 +32,7 @@
 \end{frame}
 
 % BUDGET: ~60s
-\begin{frame}{$\mathcal{I}_{\text{UR}}$ counts unreachable propositions}
+\begin{frame}{Unreachability Profile $\mathcal{I}_{\text{UR}}$}
     A goal proposition is unreachable at horizon $h$ when no reachable state contains it.
 
     \begin{columns}[T]
@@ -59,11 +54,11 @@
 
     One affected goal over three unreachable propositions.
 
-    \sectioncitebk{bk:bank-vault}{Thesis \S4.4.3}
+    \sectioncite{Thesis \S4.4.3}
 \end{frame}
 
 % BUDGET: ~60s
-\begin{frame}{$\mathcal{I}_{\text{MX}}$ counts mutually exclusive goals}
+\begin{frame}{Goal Mutex Profile $\mathcal{I}_{\text{MX}}$}
     Two goals are mutex at horizon $h$, written $\text{mutex}_h(g_1, g_2)$, when each is reachable on its own but no reachable state holds both.
 
     \begin{columns}[T]
@@ -91,7 +86,7 @@
 \end{frame}
 
 % BUDGET: ~60s
-\begin{frame}{$\mathcal{I}_{\text{GS}}$ counts sequencing conflicts}
+\begin{frame}{Goal Sequencing Profile $\mathcal{I}_{\text{GS}}$}
     An ordered pair $(g_1, g_2)$ is a sequencing conflict at horizon $h$, written $\text{sc}_h(g_1, g_2)$, when each is reachable on its own but no execution trace achieves $g_1$ before $g_2$.
 
     \begin{columns}[T]
@@ -115,7 +110,7 @@
 
     Two affected goals over one sequencing conflict.
 
-    \sectioncitebk{bk:trust-travel}{Thesis \S4.4.5}
+    \sectioncite{Thesis \S4.4.5}
 \end{frame}
 
 % BUDGET: ~45s

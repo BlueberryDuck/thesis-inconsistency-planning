@@ -21,7 +21,7 @@
     \draw[->, thick] (drillbit) -- (hole);
     \node[oplbl] at (0, -0.85) {drill};
     \draw[->, thick] (hole)     -- node[oplbl, right] {sample} (soil);
-    \node[clbl] at (0, -5.2) {Cat 2a, unreachable};
+    \node[clbl] at (0, -5.2) {unreachable goal};
 
     % --- Cluster B: dish toggle (MX, reversible) ---
     \node[initgoal] (earth) at (4.3, 0)    {aimed\_\\earth};
@@ -29,7 +29,7 @@
     \draw[->, thick] (earth) to[bend left=45] node[oplbl, right] {aim\_probe} (probe);
     \draw[->, thick] (probe) to[bend left=45] node[oplbl, left]  {aim\_earth} (earth);
     \draw[del, <->] (earth) -- node[oplbl, right, black] {del} (probe);
-    \node[clbl] at (4.3, -5.2) {Cat 1, reversible mutex};
+    \node[clbl] at (4.3, -5.2) {reversible mutex};
 
     % --- Cluster C: surface / orbit (MX + GS) ---
     \node[initial] (surface)  at (8.4, 0)     {on\_\\surface};
@@ -43,7 +43,7 @@
     \draw[->, thick] (surface)  -- node[oplbl, left]  {map} (mapped);
     \draw[->, thick] (comms)    -- node[oplbl, below] {map} (mapped);
     \draw[del] (airborne) to[bend left=28] node[oplbl, black, right] {del comms, mapped} (mapped);
-    \node[clbl] at (10.6, -5.2) {Cat 2c, mutex + sequencing};
+    \node[clbl] at (10.6, -5.2) {mutex + sequencing};
 
     % --- Legend (symbol samples) ---
     \node[legnode, double]        at (3.4, -6.15) {};
